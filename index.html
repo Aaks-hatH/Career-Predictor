@@ -3,307 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureLink // Aakshat Hariharan Intelligence Rig</title>
+    <title>FutureLink // Rig</title>
     
     <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        :root { --accent: #2563eb; --cyber-blue: #00f2ff; }
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease, color 0.5s ease; }
+        :root { --accent: #2563eb; --cyber: #00f2ff; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.5s ease; }
         
-        .page-light { background-color: #f8fafc; color: #0f172a; }
-        .card-light { background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
-        .nav-light { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border-bottom: 1px solid #e2e8f0; }
+        /* Light Theme (Professional) */
+        .page-light { background-color: #ffffff; color: #0f172a; }
+        .nav-light { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #f1f5f9; }
+        .card-light { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05); }
 
-        .page-cyber { background-color: #020617 !important; color: #e2e8f0 !important; }
+        /* Cyber Theme (Aakshat Mode) */
+        .page-cyber { background-color: #020617 !important; color: #f8fafc !important; }
         .glass-cyber { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 255, 0.2); }
         .mono { font-family: 'Fira Code', monospace; }
         
+        /* Animations */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0; transition: opacity 1s ease; pointer-events: none; }
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .progress-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
-<body class="page-light min-h-screen transition-all duration-500">
+<body class="page-light min-h-screen">
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- Header -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 nav-light px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div id="ai-indicator" class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span class="font-extrabold tracking-tight text-xl uppercase italic">Future<span class="text-blue-600">Link</span></span>
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 nav-light px-8 py-5 flex justify-between items-center transition-all">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('home')">
+            <div id="ai-indicator" class="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse"></div>
+            <span class="font-extrabold tracking-tighter text-2xl uppercase italic">Future<span class="text-blue-600">Link</span></span>
         </div>
-        <div class="flex gap-8 text-sm font-semibold uppercase tracking-wider">
+        <div class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-widest">
             <button onclick="showSection('home')" class="hover:text-blue-600 transition">Portal</button>
             <button onclick="showSection('quiz')" class="hover:text-blue-600 transition">Sync AI</button>
-            <button onclick="showSection('about')" class="px-5 py-1.5 rounded-full bg-slate-900 text-white hover:bg-blue-600 transition text-xs">About Aakshat</button>
+            <button onclick="showSection('about')" class="px-6 py-2 rounded-full bg-slate-900 text-white hover:bg-blue-600 transition shadow-lg">About Dev</button>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-32 pb-20 px-6 max-w-6xl mx-auto">
+    <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
         
-        <!-- SECTION: HOME -->
-        <section id="home-section" class="fade-in text-center space-y-8">
-            <div class="inline-block px-4 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
-                Neural Architecture v5.0 // High-Fidelity Analysis
+        <!-- SECTION: HOME (Hero & Features) -->
+        <section id="home-section" class="fade-in space-y-24">
+            <!-- Hero -->
+            <div class="text-center space-y-8 py-12">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mx-auto">
+                    <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
+                    Neural Architecture v6.0 Operational
+                </div>
+                <h1 class="text-7xl md:text-9xl font-black tracking-tighter text-slate-900 leading-[0.85]">
+                    Decipher Your <br><span class="text-blue-600">Future Logic.</span>
+                </h1>
+                <p class="text-slate-500 text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                    Aakshat Hariharan presents the world's first <span class="text-slate-900 font-bold underline decoration-blue-500">Local-First</span> neural career rig. We use browser-native TensorFlow to map your terminal personality to the global workforce.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 pt-8">
+                    <button id="start-btn" onclick="showSection('quiz')" class="px-12 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 shadow-2xl shadow-blue-300 transition-all opacity-50 pointer-events-none uppercase tracking-widest">
+                        Initialize Sync Engine
+                    </button>
+                    <button onclick="showSection('about')" class="px-12 py-5 bg-white border border-slate-200 text-slate-900 font-black rounded-2xl hover:bg-slate-50 transition-all uppercase tracking-widest">
+                        Developer Dossier
+                    </button>
+                </div>
             </div>
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 leading-[0.9]">
-                Decode Your <br><span class="text-blue-600">Professional DNA.</span>
-            </h1>
-            <p class="text-slate-500 text-lg max-w-2xl mx-auto font-light">
-                Developed by <span class="font-bold text-slate-900">Aakshat Hariharan</span>. An explainable AI rig that cross-references 200+ data points to map your personality to the global job market.
-            </p>
-            <div class="pt-6">
-                <button id="start-btn" onclick="showSection('quiz')" class="px-12 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-2xl shadow-blue-200 transition-all opacity-50 pointer-events-none">
-                    Start Neural Synchronization
-                </button>
+
+            <!-- Explainer Cards -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-light p-10 rounded-[2.5rem] space-y-4">
+                    <div class="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-2xl font-bold italic text-xl">01</div>
+                    <h3 class="text-xl font-bold tracking-tight">Data Sovereignty</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">As a cybersecurity specialist, Aakshat built this to run in your RAM. Your personality never leaves your device.</p>
+                </div>
+                <div class="card-light p-10 rounded-[2.5rem] space-y-4">
+                    <div class="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-2xl font-bold italic text-xl">02</div>
+                    <h3 class="text-xl font-bold tracking-tight">Neural Precision</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">We leverage a Deep Neural Network (DNN) to cross-reference your traits against 22+ professional archetypes.</p>
+                </div>
+                <div class="card-light p-10 rounded-[2.5rem] space-y-4">
+                    <div class="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-2xl font-bold italic text-xl">03</div>
+                    <h3 class="text-xl font-bold tracking-tight">Explainable AI</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Understand the 'Why'. Our system provides packet-level logs of how every answer influenced the AI's final consensus.</p>
+                </div>
             </div>
         </section>
 
         <!-- SECTION: QUIZ -->
-        <section id="quiz-section" class="hidden fade-in max-w-2xl mx-auto">
-            <div class="flex justify-between items-end mb-6">
+        <section id="quiz-section" class="hidden fade-in max-w-3xl mx-auto">
+            <div class="flex justify-between items-end mb-8">
                 <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Neural Packets Received</span>
-                    <div class="text-xl font-black text-slate-900" id="q-count">0 / 30</div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Neural Packets Synced</span>
+                    <div class="text-4xl font-black text-slate-900" id="q-count">0 / 30</div>
                 </div>
                 <div class="text-right">
-                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Encryption: Active</span>
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Mode: High Fidelity</span>
                 </div>
             </div>
-            <div class="w-full bg-slate-200 h-1.5 rounded-full mb-12 overflow-hidden">
-                <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+            <div class="w-full bg-slate-100 h-2 rounded-full mb-16 overflow-hidden">
+                <div id="progress-bar" class="h-full bg-blue-600 progress-bar" style="width: 0%"></div>
             </div>
 
-            <div class="card-light p-16 rounded-[2.5rem] mb-8 min-h-[250px] flex items-center justify-center text-center">
-                <p id="q-text" class="text-3xl font-bold text-slate-800 leading-tight">Syncing...</p>
+            <div class="card-light p-20 rounded-[3.5rem] mb-12 min-h-[300px] flex items-center justify-center text-center">
+                <p id="q-text" class="text-4xl font-extrabold text-slate-800 tracking-tight leading-tight">Syncing Core...</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                <button onclick="handle(10)" class="p-4 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-bold text-[10px] uppercase">Highly True</button>
-                <button onclick="handle(7)" class="p-4 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-bold text-[10px] uppercase">Likely</button>
-                <button onclick="handle(5)" class="p-4 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-bold text-[10px] uppercase">Neutral</button>
-                <button onclick="handle(3)" class="p-4 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-bold text-[10px] uppercase">Unlikely</button>
-                <button onclick="handle(1)" class="p-4 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-bold text-[10px] uppercase">False</button>
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                <button onclick="handle(10)" class="p-5 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-black text-[10px] uppercase tracking-widest">Highly True</button>
+                <button onclick="handle(7)" class="p-5 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-black text-[10px] uppercase tracking-widest">Agree</button>
+                <button onclick="handle(5)" class="p-5 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-black text-[10px] uppercase tracking-widest">Neutral</button>
+                <button onclick="handle(3)" class="p-5 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-black text-[10px] uppercase tracking-widest">Disagree</button>
+                <button onclick="handle(1)" class="p-5 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition font-black text-[10px] uppercase tracking-widest">False</button>
             </div>
         </section>
 
-        <!-- SECTION: RESULTS -->
-        <section id="result-section" class="hidden fade-in space-y-8">
-            <div class="grid lg:grid-cols-3 gap-8">
+        <!-- SECTION: RESULTS (Dashboard) -->
+        <section id="result-section" class="hidden fade-in space-y-10">
+            <div class="grid lg:grid-cols-3 gap-10">
                 
-                <!-- Main Result Card -->
-                <div class="lg:col-span-2 space-y-8">
-                    <div class="card-light p-10 rounded-[3rem]">
-                        <div class="flex justify-between items-start mb-8">
+                <div class="lg:col-span-2 space-y-10">
+                    <div class="card-light p-12 rounded-[4rem]">
+                        <div class="flex justify-between items-start mb-10">
                             <div>
-                                <h3 class="text-blue-600 font-bold uppercase text-[10px] tracking-[0.2em] mb-2">Primary Occupational Match</h3>
-                                <h1 id="predicted-job" class="text-5xl font-black text-slate-900 tracking-tighter">...</h1>
+                                <h3 class="text-blue-600 font-bold uppercase text-[10px] tracking-widest mb-3">AI Decision Consensus</h3>
+                                <h1 id="predicted-job" class="text-6xl font-black text-slate-900 tracking-tighter">...</h1>
                             </div>
                             <div class="text-right">
-                                <div class="text-[10px] font-bold text-slate-400 uppercase">Match Score</div>
-                                <div id="match-score" class="text-3xl font-black text-blue-600">98%</div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Certainty</div>
+                                <div id="match-score" class="text-4xl font-black text-blue-600">0%</div>
                             </div>
                         </div>
 
-                        <div class="bg-blue-50 p-6 rounded-2xl mb-8">
-                            <h4 class="text-xs font-bold text-blue-700 uppercase mb-2">Neural Reasoning</h4>
-                            <p id="job-desc" class="text-slate-600 text-sm leading-relaxed mb-4"></p>
-                            <p id="match-logic" class="text-blue-800 text-sm font-semibold italic"></p>
+                        <div class="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 mb-10">
+                            <h4 class="text-xs font-bold text-blue-700 uppercase tracking-widest mb-4">Neural Matching Reason</h4>
+                            <p id="job-desc" class="text-slate-600 text-lg leading-relaxed mb-6"></p>
+                            <div class="p-4 bg-white rounded-xl border border-blue-100 text-blue-600 font-bold italic text-sm" id="match-logic"></div>
                         </div>
 
                         <div class="grid sm:grid-cols-2 gap-4">
-                            <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl text-sm">Accept Mission</button>
-                            <button onclick="rejectMatch()" class="w-full py-4 border border-slate-200 text-slate-500 font-bold rounded-xl text-sm">Recalibrate (Insufficient Data)</button>
+                            <button onclick="location.reload()" class="w-full py-5 bg-slate-900 text-white font-black rounded-2xl text-xs uppercase tracking-widest">Accept Path</button>
+                            <button onclick="rejectMatch()" class="w-full py-5 border border-slate-200 text-slate-500 font-black rounded-2xl text-xs uppercase tracking-widest">Request More Questions</button>
                         </div>
                     </div>
 
-                    <!-- Radar Chart Card -->
-                    <div class="card-light p-10 rounded-[3rem]">
-                        <h4 class="font-bold text-slate-900 mb-8 uppercase text-xs tracking-widest text-center">Neural Personality Matrix (OCEAN)</h4>
+                    <div class="card-light p-12 rounded-[4rem]">
+                        <h4 class="font-black text-slate-900 mb-10 uppercase text-xs tracking-[0.2em] text-center">Neural Personality Mapping</h4>
                         <div class="max-w-md mx-auto">
                             <canvas id="oceanChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Side Data Column -->
-                <div class="space-y-8">
-                    <!-- Top Matches -->
-                    <div class="card-light p-8 rounded-[2.5rem]">
-                        <h4 class="font-bold text-slate-900 mb-6 uppercase text-[10px] tracking-widest">Alternative Path Probabilities</h4>
-                        <div id="alt-matches" class="space-y-4">
-                            <!-- JS injected bars -->
-                        </div>
+                <div class="space-y-10">
+                    <div class="card-light p-10 rounded-[3rem]">
+                        <h4 class="font-bold text-slate-900 mb-8 uppercase text-[10px] tracking-widest">Recursive Probabilities</h4>
+                        <div id="alt-matches" class="space-y-6"></div>
                     </div>
 
-                    <!-- Packet Log -->
-                    <div class="card-light p-8 rounded-[2.5rem]">
-                        <h4 class="font-bold text-slate-900 mb-4 uppercase text-[10px] tracking-widest">Aakshat Kernel: Packet Log</h4>
-                        <div id="packet-log" class="h-80 overflow-y-auto rounded-xl p-4 text-[9px] mono text-slate-400 space-y-2 custom-scroll border border-slate-50 bg-slate-50">
-                            <!-- JS injected logs -->
-                        </div>
+                    <div class="card-light p-10 rounded-[3rem]">
+                        <h4 class="font-bold text-slate-900 mb-4 uppercase text-[10px] tracking-widest italic">Aakshat_Kernel_Logs</h4>
+                        <div id="packet-log" class="h-96 overflow-y-auto rounded-2xl p-5 text-[10px] mono text-slate-400 space-y-3 custom-scroll border border-slate-50 bg-slate-50 font-medium"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION: ABOUT (CYBER) -->
+        <!-- SECTION: ABOUT (Aakshat's Dossier) -->
         <section id="about-section" class="hidden fade-in">
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-8">
-                    <div class="glass-cyber p-12 rounded-[3rem] border-l-4 border-cyan-400">
-                        <h2 class="text-5xl font-black mb-2 mono text-white">AAKSHAT_HARIHARAN</h2>
-                        <h4 class="mono text-cyan-400 text-xs mb-10 uppercase tracking-widest">// SEC_OPS. NEURAL_NETS. ARCHITECT.</h4>
-                        <div class="space-y-6 text-slate-400 text-xl mono leading-relaxed">
-                            <p>> Identity: <span class="text-white">Middle School Developer.</span></p>
-                            <p>> Philosophy: I build explainable systems. Most AI is a "black box" that obscures the truth. My rig exposes the raw vectors, ensuring the user understands the <span class="text-white italic">why</span> behind the silicon.</p>
-                            <p>> Mission: To advance the standards of data privacy and local-first machine learning.</p>
+            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2 space-y-10">
+                    <div class="glass-cyber p-12 rounded-[4rem] border-l-[12px] border-cyan-400">
+                        <h2 class="text-6xl font-black mb-4 mono text-white tracking-tighter">AAKSHAT_HARIHARAN</h2>
+                        <h4 class="mono text-cyan-400 text-sm mb-12 uppercase tracking-[0.4em]">SYSTEM_ARCHITECT // SEC_SPECIALIST</h4>
+                        <div class="space-y-8 text-slate-400 text-xl mono leading-relaxed">
+                            <p>> User Profile: <span class="text-white font-bold italic">Middle School Developer.</span></p>
+                            <p>> Core Logic: Most AI applications exploit user data for central training. My rig uses <span class="text-white">Differential Privacy</span> concepts to keep the intelligence local.</p>
+                            <p>> The Vision: Cybersecurity isn't just about firewalls; it's about the sovereignty of the individual's digital identity. FutureLink is proof-of-concept for private, ethical machine learning.</p>
                         </div>
                     </div>
                 </div>
-                <div class="space-y-4 mono">
-                    <div class="glass-cyber p-8 rounded-[2rem] text-[10px] text-slate-500 space-y-4">
-                        <p>> ROLE: CHIEF_DEVELOPER</p>
-                        <p>> TOOLSET: KALI_LINUX / TF.JS / JS_ES6</p>
-                        <p>> STATUS: ENCRYPTED</p>
+                <div class="space-y-6">
+                    <div class="glass-cyber p-10 rounded-[3rem] mono text-[12px] text-slate-400 space-y-4">
+                        <p class="text-cyan-400 font-bold mb-4">// SESSION_INFO</p>
+                        <p>> Dev: Aakshat_H</p>
+                        <p>> Build: Neural_Rig_v6</p>
+                        <p>> Age: Middle_School</p>
+                        <p>> Status: <span class="animate-pulse text-emerald-400">UNRESTRICTED</span></p>
                     </div>
-                    <div class="glass-cyber p-8 rounded-[2rem]">
-                        <div class="flex justify-between text-[10px] text-cyan-400 mb-3"><span>CYBER_PROFICIENCY</span><span>94%</span></div>
-                        <div class="h-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-cyan-400" style="width: 94%"></div></div>
+                    <div class="glass-cyber p-10 rounded-[3rem]">
+                        <h5 class="mono text-cyan-400 text-[10px] mb-4 uppercase tracking-widest">Technical Proficiency</h5>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between text-[10px] mono text-cyan-400 mb-2"><span>Cyber_Intel</span><span>94%</span></div>
+                                <div class="h-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-cyan-400" style="width: 94%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[10px] mono text-cyan-400 mb-2"><span>Architecture</span><span>88%</span></div>
+                                <div class="h-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-cyan-400" style="width: 88%"></div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
     <script>
+        // EXPANDED DATASET (22 JOBS)
         const jobData = {
-    "Cybersecurity Analyst": {
-        v: [6, 10, 2, 4, 6],
-        d: "Protecting digital frontiers from intrusion. Requires high vigilance and systematic thinking.",
-        r: "Your high Conscientiousness and analytical focus align with the strict protocols of security operations."
-    },
-    "AI Researcher": {
-        v: [10, 9, 3, 5, 4],
-        d: "Pioneering the next wave of machine intelligence. Requires a mix of high abstract thought and discipline.",
-        r: "Your peak Openness score indicates the level of abstract creativity needed to solve non-linear AI problems."
-    },
-    "ER Surgeon": {
-        v: [5, 10, 6, 6, 8],
-        d: "Operating in high-pressure, life-or-death environments with zero margin for error.",
-        r: "Your high Neuroticism (Sensitivity) and perfect Conscientiousness suggest a high-performance, high-stakes capability."
-    },
-    "Creative Director": {
-        v: [10, 5, 9, 7, 6],
-        d: "Leading the aesthetic and conceptual vision for brands and media.",
-        r: "Your high Extraversion and Openness scores mark you as a visionary leader who thrives on collaboration."
-    },
-    "Investment Banker": {
-        v: [4, 10, 8, 3, 5],
-        d: "Executing complex financial transactions and high-stakes market moves.",
-        r: "Low Agreeableness (Competitive) and high Conscientiousness align with the ruthless precision of finance."
-    },
-    "Diplomat": {
-        v: [8, 7, 9, 10, 3],
-        d: "Representing national interests and negotiating international peace and trade.",
-        r: "Peak Agreeableness and social energy make you a master of empathy and strategic negotiation."
-    },
-    "Pilot": {
-        v: [4, 10, 6, 5, 2],
-        d: "Commanding aircraft with absolute procedural discipline and calm.",
-        r: "Extremely low Neuroticism (Stress resistance) is the primary marker for elite aviation performance."
-    },
-    "Software Architect": {
-        v: [9, 9, 4, 5, 4],
-        d: "Designing the fundamental structures of massive software ecosystems.",
-        r: "High Openness and Conscientiousness suggest you can see both the big picture and the tiny details."
-    },
-    "Criminal Lawyer": {
-        v: [6, 9, 8, 3, 5],
-        d: "Defending clients in the justice system through intense debate and research.",
-        r: "High Extraversion and low Agreeableness create the 'courtroom warrior' profile needed for litigation."
-    },
-    "Psychiatrist": {
-        v: [9, 7, 5, 9, 7],
-        d: "Diagnosing and treating complex mental health conditions.",
-        r: "High Openness (for abstract theory) and high Agreeableness (for empathy) suggest a strong clinical mind."
-    },
-    "Fine Artist": {
-        v: [10, 2, 4, 5, 9],
-        d: "Creating original works of art that challenge societal perceptions.",
-        r: "Extreme Openness and low Conscientiousness (Non-conformity) are classic indicators of the pure artistic spirit."
-    },
-    "Accountant": {
-        v: [2, 10, 3, 6, 2],
-        d: "Maintaining absolute financial accuracy and regulatory compliance.",
-        r: "Low Openness and high Conscientiousness suggest a person who thrives on order, logic, and concrete data."
-    },
-    "Mechanical Engineer": {
-        v: [7, 9, 4, 5, 3],
-        d: "Designing and building physical machines and thermal devices.",
-        r: "High Conscientiousness and low Neuroticism suggest a reliable, logical builder of complex physical systems."
-    },
-    "Elementary Teacher": {
-        v: [6, 7, 9, 10, 5],
-        d: "Educating and shaping the minds of the next generation.",
-        r: "High Extraversion and peak Agreeableness make you naturally suited for nurturing and group management."
-    },
-    "Social Media Strategist": {
-        v: [9, 5, 10, 7, 6],
-        d: "Managing the digital persona and community engagement of major brands.",
-        r: "Your peak Extraversion and high Openness scores suggest a natural talent for trend-spotting and social hype."
-    },
-    "Chef de Cuisine": {
-        v: [8, 9, 6, 4, 9],
-        d: "Leading high-pressure kitchens to create world-class culinary experiences.",
-        r: "High Conscientiousness and Neuroticism (Perfectionism) allow you to maintain high standards in chaos."
-    },
-    "Private Investigator": {
-        v: [8, 8, 3, 4, 5],
-        d: "Conducting surveillance and research to uncover hidden truths.",
-        r: "High Openness (Curiosity) and low Extraversion (Stealth) suggest a mind built for patient, deep investigation."
-    },
-    "Marketing Manager": {
-        v: [8, 7, 9, 8, 4],
-        d: "Developing and executing campaigns to drive consumer behavior.",
-        r: "A balanced profile with high social energy and creativity makes you an effective brand communicator."
-    },
-    "University Professor": {
-        v: [10, 8, 6, 6, 4],
-        d: "Teaching high-level theory and conducting original academic research.",
-        r: "The 'Scholar' profile: High Openness for theory and enough Conscientiousness to manage long-term research."
-    },
-    "Pro Athlete": {
-        v: [3, 10, 8, 4, 5],
-        d: "Competing at the highest physical levels in professional sports.",
-        r: "High Conscientiousness (Practice discipline) and Extraversion (Competitive energy) drive athletic success."
-    },
-    "Librarian": {
-        v: [7, 9, 2, 8, 2],
-        d: "Curating and organizing massive repositories of human knowledge.",
-        r: "Low Extraversion and high Conscientiousness suggest a mind that finds peace and purpose in quiet organization."
-    },
-    "Game Designer": {
-        v: [10, 8, 5, 6, 5],
-        d: "Architecting the rules, worlds, and mechanics of digital games.",
-        r: "Your high Openness score is the primary driver for creating immersive, original gameplay experiences."
-    }
-};
+            "Cybersecurity Analyst": { v: [6, 10, 2, 4, 6], d: "Defending global networks from intrusion.", r: "Your Conscientiousness and high technical focus suggest a natural fit for security protocols." },
+            "AI Researcher": { v: [10, 9, 3, 5, 4], d: "Pioneering the next wave of neural architectures.", r: "Your extreme Openness score indicates the abstract creativity needed for ML innovation." },
+            "ER Surgeon": { v: [5, 10, 6, 6, 8], d: "Critical decision-making in high-pressure medical environments.", r: "Your high Neuroticism (Sensitivity) and perfect discipline align with high-stakes surgery." },
+            "Creative Director": { v: [10, 5, 9, 7, 6], d: "Leading the aesthetic and conceptual vision for brands.", r: "High social energy and peak Openness identify you as a visionary leader." },
+            "Investment Banker": { v: [4, 10, 8, 3, 5], d: "Executing high-stakes global financial transactions.", r: "Competitive edge (Low Agreeableness) and high precision suggest finance success." },
+            "Diplomat": { v: [8, 7, 9, 10, 3], d: "Representing interests through international negotiation.", r: "Peak Agreeableness and social grace make you a master of empathy and strategy." },
+            "Pilot": { v: [4, 10, 6, 5, 2], d: "Commanding aircraft with absolute procedural calm.", r: "Ultra-low Neuroticism (Stress resistance) is your primary career marker." },
+            "Software Architect": { v: [9, 9, 4, 5, 4], d: "Designing the foundations of massive software ecosystems.", r: "Your balance in Openness and Conscientiousness reflects a master builder mentality." },
+            "Criminal Lawyer": { v: [6, 9, 8, 3, 5], d: "Litigating high-stakes cases in the justice system.", r: "High social energy and low Agreeableness create a powerful courtroom warrior profile." },
+            "Psychiatrist": { v: [9, 7, 5, 9, 7], d: "Treating complex mental health through clinical theory.", r: "Your empathy (Agreeableness) and abstract mind make you a strong healer." },
+            "Fine Artist": { v: [10, 2, 4, 5, 9], d: "Challenging societal norms through original creative works.", r: "Extreme Openness and non-conformity identify you as a pure artistic spirit." },
+            "Elementary Teacher": { v: [6, 7, 9, 10, 5], d: "Educating and shaping the minds of the next generation.", r: "Your high social energy and Agreeableness make you a natural nurturer." },
+            "Chef de Cuisine": { v: [8, 9, 6, 4, 9], d: "Leading elite kitchens through high-pressure creativity.", r: "Your high standards and perfectionism thrive in the chaos of a kitchen." },
+            "Game Designer": { v: [10, 8, 5, 6, 5], d: "Architecting immersive digital worlds and mechanics.", r: "Your peak Openness score is the primary engine for original gameplay." },
+            "Mechanical Engineer": { v: [7, 9, 4, 5, 3], d: "Designing physical machines and complex thermal devices.", r: "Logical building and high discipline suggest a strong engineering career." },
+            "Social Media Strategist": { v: [9, 5, 10, 7, 6], d: "Managing brand personas and digital hype.", r: "Your social intuition and trend-spotting make you a digital influence master." },
+            "Accountant": { v: [2, 10, 3, 6, 2], d: "Ensuring financial accuracy and regulatory compliance.", r: "A mind built for order and concrete data thrives in professional accounting." }
+        };
 
         const jobNames = Object.keys(jobData);
-        const traitNames = { O: "Openness", C: "Conscientiousness", E: "Extraversion", A: "Agreeableness", N: "Neuroticism" };
-        
         const rawQuestions = [
   {"q":"I enjoy learning new skills even when they are not required for my role.","t":"O"},
   {"q":"I like exploring unconventional solutions to work problems.","t":"O"},
@@ -344,7 +280,6 @@
   {"q":"I enjoy redefining goals as I learn more.","t":"O"},
   {"q":"I enjoy work that requires original thinking.","t":"O"},
   {"q":"I like experimenting with different work styles.","t":"O"},
-
   {"q":"I consistently meet deadlines.","t":"C"},
   {"q":"I plan my work carefully before starting.","t":"C"},
   {"q":"I follow through on commitments.","t":"C"},
@@ -384,7 +319,6 @@
   {"q":"I prepare ahead rather than rushing.","t":"C"},
   {"q":"I follow schedules closely.","t":"C"},
   {"q":"I consistently deliver on expectations.","t":"C"},
-
   {"q":"I enjoy collaborating with others.","t":"E"},
   {"q":"I feel energized by group discussions.","t":"E"},
   {"q":"I am comfortable speaking up in meetings.","t":"E"},
@@ -424,7 +358,6 @@
   {"q":"I enjoy interactive work environments.","t":"E"},
   {"q":"I am expressive about my ideas.","t":"E"},
   {"q":"I enjoy fast-moving collaborative work.","t":"E"},
-
   {"q":"I try to be considerate of colleagues' feelings.","t":"A"},
   {"q":"I value cooperation over competition.","t":"A"},
   {"q":"I am willing to compromise to resolve conflict.","t":"A"},
@@ -465,7 +398,6 @@
   {"q":"I care about the well-being of coworkers.","t":"A"},
   {"q":"I value trust and goodwill.","t":"A"},
   {"q":"I aim to be a dependable teammate.","t":"A"},
-
   {"q":"I worry about making mistakes at work.","t":"N"},
   {"q":"I feel stressed by tight deadlines.","t":"N"},
   {"q":"I often feel anxious about performance.","t":"N"},
@@ -532,10 +464,10 @@
             model.add(tf.layers.dense({units: 64, activation: 'relu'}));
             model.add(tf.layers.dense({units: jobNames.length, activation: 'softmax'}));
             model.compile({ optimizer: tf.train.adam(0.01), loss: 'categoricalCrossentropy' });
-            await model.fit(xs, ys, { epochs: 50, verbose: 0 });
-            document.getElementById('ai-indicator').classList.replace('bg-blue-500', 'bg-green-500');
+            await model.fit(xs, ys, { epochs: 40, verbose: 0 });
+            document.getElementById('ai-indicator').classList.replace('bg-blue-600', 'bg-green-500');
             document.getElementById('start-btn').classList.remove('opacity-50', 'pointer-events-none');
-            document.getElementById('start-btn').innerText = "Initiate Sync Engine";
+            document.getElementById('start-btn').innerText = "Initiate Neural Sync";
         }
 
         function showSection(id) {
@@ -545,17 +477,18 @@
             if (id === 'about') {
                 body.classList.replace('page-light', 'page-cyber');
                 nav.classList.remove('nav-light');
-                nav.classList.add('glass-cyber', 'text-white', 'border-cyan-900');
+                nav.classList.add('glass-cyber', 'text-white', 'border-slate-800');
                 canvas.style.opacity = '0.2';
             } else {
                 body.classList.replace('page-cyber', 'page-light');
                 nav.classList.add('nav-light');
-                nav.classList.remove('glass-cyber', 'text-white', 'border-cyan-900');
+                nav.classList.remove('glass-cyber', 'text-white', 'border-slate-800');
                 canvas.style.opacity = '0';
             }
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`${id}-section`).classList.remove('hidden');
             if(id === 'quiz') updateUI();
+            window.scrollTo(0,0);
         }
 
         function updateUI() {
@@ -568,11 +501,9 @@
         async function handle(val) {
             const q = questionBank[qIdx % questionBank.length];
             scores[q.t].push(val);
-            
             const log = document.getElementById('packet-log');
-            log.innerHTML += `<div>[ID:${qIdx}] TRAIT:${q.t} VALUE:${val} INJECTED</div>`;
+            log.innerHTML += `<div>[${qIdx}] INJECT_TRAIT_${q.t}: VAL_${val} SUCCESS</div>`;
             log.scrollTop = log.scrollHeight;
-
             qIdx++;
             if(qIdx >= targetQuestionCount) await analyze();
             else updateUI();
@@ -582,7 +513,6 @@
             const ocean = ['O','C','E','A','N'].map(t => scores[t].length ? (scores[t].reduce((a,b)=>a+b)/scores[t].length) : 5.0);
             const prediction = model.predict(tf.tensor2d([ocean]));
             const probs = await prediction.data();
-            
             const sortedIndices = Array.from(probs.keys()).sort((a,b) => probs[b] - probs[a]);
             const bestJob = jobNames[sortedIndices[0]];
 
@@ -594,32 +524,27 @@
             document.getElementById('job-desc').innerText = jobData[bestJob].d;
             document.getElementById('match-logic').innerText = jobData[bestJob].r;
 
-            // Render Chart
             renderRadar(ocean);
-
-            // Render Alt Probabilities
             const altContainer = document.getElementById('alt-matches');
             altContainer.innerHTML = "";
-            for(let i=1; i<4; i++) {
+            for(let i=1; i<5; i++) {
                 const name = jobNames[sortedIndices[i]];
                 const p = Math.round(probs[sortedIndices[i]] * 100);
                 altContainer.innerHTML += `
                     <div>
-                        <div class="flex justify-between text-[9px] font-bold uppercase mb-1"><span>${name}</span><span>${p}%</span></div>
-                        <div class="h-1 bg-slate-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width: ${p}%"></div></div>
+                        <div class="flex justify-between text-[9px] font-bold uppercase mb-1 text-slate-400"><span>${name}</span><span>${p}%</span></div>
+                        <div class="h-1 bg-slate-100 rounded-full"><div class="h-full bg-blue-600 rounded-full" style="width: ${p}%"></div></div>
                     </div>`;
             }
         }
 
         function renderRadar(data) {
             if (chartInstance) chartInstance.destroy();
-            const ctx = document.getElementById('oceanChart');
-            chartInstance = new Chart(ctx, {
+            chartInstance = new Chart(document.getElementById('oceanChart'), {
                 type: 'radar',
                 data: {
                     labels: ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'],
                     datasets: [{
-                        label: 'Your Personality Vector',
                         data: data,
                         backgroundColor: 'rgba(37, 99, 235, 0.2)',
                         borderColor: '#2563eb',
@@ -641,7 +566,6 @@
             updateUI();
         }
 
-        // Matrix
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
