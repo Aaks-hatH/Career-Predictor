@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureLink // Career Architect v9.0</title>
-    <meta name="description" content="Advanced career discovery platform with neural matching.">
+    <title>FutureLink // My Career Project</title>
+    <meta name="description" content="A personal project to help you find your path.">
     
     <!-- LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -125,10 +125,8 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
-    <!-- AUDIO ASSETS (Data URIs for portability) -->
-    <!-- Short beep for hover -->
+    <!-- AUDIO ASSETS -->
     <audio id="sfx-hover" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio> 
-    <!-- Placeholder for actual sound, using JS to generate synth sounds instead to save space -->
 
     <!-- BACKGROUND CANVAS -->
     <canvas id="neural-bg" class="fixed top-0 left-0 w-full h-full -z-10 opacity-30"></canvas>
@@ -136,17 +134,17 @@
 
     <!-- NAVIGATION -->
     <nav class="fixed top-0 w-full z-50 glass border-b border-white/5 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-3 group cursor-pointer" onclick="eggHunt.trigger('logo_click')">
+        <div class="flex items-center gap-3 group cursor-pointer" onclick="app.navigate('home')">
             <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl group-hover:rotate-180 transition-transform duration-500">F</div>
             <span class="font-bold text-xl tracking-tight">Future<span class="text-blue-500">Link</span></span>
         </div>
         
         <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
             <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('home')">Home</a>
-            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">Mission</a>
-            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">Database</a>
+            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">My Mission</a>
+            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">The Database</a>
             <div class="relative">
-                <input type="text" id="global-search" placeholder="Search system..." 
+                <input type="text" id="global-search" placeholder="Search my system..." 
                     class="bg-slate-800/50 border border-slate-700 rounded-full px-4 py-1.5 text-white focus:outline-none focus:border-blue-500 w-48 transition-all focus:w-64 text-xs font-mono">
                 <div class="absolute right-3 top-2 text-xs text-slate-500">⌘K</div>
             </div>
@@ -172,27 +170,27 @@
             
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8 fade-in-up" style="animation-delay: 0.1s">
                 <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                SYSTEM ONLINE // V9.0.2
+                SYSTEM ONLINE // V9.1.0
             </div>
 
             <h1 class="text-6xl md:text-8xl font-bold mb-6 tracking-tight leading-tight fade-in-up" style="animation-delay: 0.2s">
-                Discover Your <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 glitch-text cursor-pointer" onclick="eggHunt.trigger('title_glitch')">Neural Path</span>
+                I Built This To Find Your <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 glitch-text cursor-pointer" onclick="eggHunt.trigger('title_glitch')">True Calling</span>
             </h1>
 
             <p class="text-xl text-gray-400 max-w-2xl mb-10 fade-in-up" style="animation-delay: 0.3s">
-                Forget standard aptitude tests. Our adaptive AI analyzes 50+ cognitive dimensions to predict your optimal career trajectory with 99.8% accuracy.
+                I was tired of generic career tests, so I coded my own. My adaptive algorithm analyzes 50+ cognitive dimensions to predict where you actually belong.
             </p>
 
             <div class="flex gap-4 fade-in-up" style="animation-delay: 0.4s">
                 <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-white text-slate-900 rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105">
                     <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <span class="relative z-10 flex items-center gap-2">
-                        Initialize Scan <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        Let Me Analyze You <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </span>
                 </button>
                 <button onclick="terminal.toggle()" class="px-8 py-4 border border-white/10 rounded-full font-medium hover:bg-white/5 transition-colors text-gray-300 font-mono text-sm">
-                    >_ ACCESS_TERMINAL
+                    >_ ACCESS_MY_TERMINAL
                 </button>
             </div>
 
@@ -200,20 +198,85 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 w-full border-t border-white/5 pt-12 fade-in-up" style="animation-delay: 0.6s">
                 <div class="text-center">
                     <div class="text-3xl font-bold text-white mb-1 counter" data-target="2048">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">Data Points</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">Data Points I Track</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="142">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">Career Paths</div>
+                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="25">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">Roles I Added</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-white mb-1 counter" data-target="99">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">% Accuracy</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">% Accuracy Goal</div>
                 </div>
                 <div class="text-center cursor-pointer" onclick="eggHunt.collect('stat_checker')">
-                    <div class="text-3xl font-bold text-blue-500 mb-1">v9.0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">Engine Version</div>
+                    <div class="text-3xl font-bold text-blue-500 mb-1">v9.1</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">My Build Version</div>
                 </div>
+            </div>
+        </section>
+
+        <!-- VIEW: MISSION (ABOUT) -->
+        <section id="view-about" class="hidden min-h-[80vh] py-10 max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">My Mission</h2>
+                <div class="w-24 h-1 bg-blue-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+                    <p>
+                        <span class="text-blue-400 font-bold text-xl">Hi, I'm the developer.</span> 
+                        I created FutureLink because I believe standard career advice is broken. It focuses on "what you can do" instead of "who you are."
+                    </p>
+                    <p>
+                        I spent months researching cognitive patterns and tech industry roles to build a database that actually makes sense. This isn't just a random quiz—it's a reflection of my understanding of the modern tech landscape.
+                    </p>
+                    <p>
+                        My goal is simple: to help you find a career that doesn't just pay the bills, but actually feels like <em>play</em> to you.
+                    </p>
+                    <div class="pt-4">
+                        <button onclick="app.startQuiz()" class="text-blue-400 hover:text-white font-bold underline decoration-blue-500/30 hover:decoration-blue-500 transition-all">
+                            Ready to see what I built for you?
+                        </button>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-2xl border border-white/10 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="font-mono text-sm text-blue-300 mb-4">// SYSTEM_MANIFESTO.md</div>
+                    <ul class="space-y-4 font-mono text-sm text-gray-400">
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-400"></i> <span>Reject generic advice</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-400"></i> <span>Embrace chaos & creativity</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-400"></i> <span>Code is poetry</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-400"></i> <span>Data over intuition</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: DATABASE (CAREERS) -->
+        <section id="view-careers" class="hidden min-h-[80vh] py-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">The Database</h2>
+                <p class="text-gray-400">All the roles I've programmed into the system so far.</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 mb-8" id="db-filters">
+                <button onclick="app.filterDB('all')" class="px-4 py-1 rounded-full bg-blue-600 text-white text-sm">All</button>
+                <button onclick="app.filterDB('tech')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Tech</button>
+                <button onclick="app.filterDB('art')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Creative</button>
+                <button onclick="app.filterDB('lead')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Leadership</button>
+            </div>
+
+            <div id="careers-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JS -->
             </div>
         </section>
 
@@ -222,7 +285,7 @@
             <!-- Progress -->
             <div class="w-full mb-12">
                 <div class="flex justify-between text-xs text-gray-400 mb-2 font-mono">
-                    <span>PROGRESS</span>
+                    <span>ANALYSIS PROGRESS</span>
                     <span id="progress-text">0%</span>
                 </div>
                 <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -244,7 +307,7 @@
             </div>
 
             <div class="mt-8 flex justify-between w-full text-sm text-gray-500 font-mono">
-                <button onclick="quiz.prev()" class="hover:text-white transition-colors">< PREV</button>
+                <button onclick="app.navigate('home')" class="hover:text-white transition-colors">ABORT MISSION</button>
                 <span id="q-id">ID: NULL</span>
             </div>
         </section>
@@ -255,11 +318,11 @@
                 <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
                 <div class="absolute inset-4 bg-slate-800 rounded-full flex items-center justify-center font-mono text-xs text-blue-400 animate-pulse">
-                    AI
+                    MY AI
                 </div>
             </div>
-            <h2 class="text-2xl font-bold mb-2">Synthesizing Neural Profile</h2>
-            <p id="loading-text" class="text-gray-400 font-mono text-sm">Accessing global career database...</p>
+            <h2 class="text-2xl font-bold mb-2">Synthesizing Your Profile</h2>
+            <p id="loading-text" class="text-gray-400 font-mono text-sm">Comparing your answers against my database...</p>
         </section>
 
         <!-- VIEW: RESULTS -->
@@ -273,7 +336,7 @@
                                 🧠
                             </div>
                         </div>
-                        <h2 class="text-xl font-bold mb-1">Archetype Identified</h2>
+                        <h2 class="text-xl font-bold mb-1">I Identified You As A</h2>
                         <div id="archetype-name" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">
                             Digital Architect
                         </div>
@@ -283,7 +346,7 @@
                     </div>
 
                     <div class="glass p-6 rounded-2xl border border-white/10">
-                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Trait Signature</h3>
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Your Trait Signature</h3>
                         <canvas id="radar-chart"></canvas>
                     </div>
                 </div>
@@ -291,8 +354,8 @@
                 <!-- Right Col: Matches -->
                 <div class="md:col-span-8 space-y-6">
                     <div class="flex justify-between items-end mb-4">
-                        <h2 class="text-3xl font-bold">Recommended Paths</h2>
-                        <button onclick="window.print()" class="text-sm text-blue-400 hover:text-white"><i class="fas fa-download mr-2"></i>Export Report</button>
+                        <h2 class="text-3xl font-bold">My Recommendations</h2>
+                        <button onclick="window.print()" class="text-sm text-blue-400 hover:text-white"><i class="fas fa-download mr-2"></i>Save Report</button>
                     </div>
 
                     <div id="career-matches" class="space-y-4">
@@ -300,9 +363,9 @@
                     </div>
 
                     <div class="glass p-8 rounded-2xl border border-dashed border-white/10 mt-8 text-center">
-                        <h3 class="text-lg font-bold mb-2">Not satisfied?</h3>
-                        <p class="text-gray-400 text-sm mb-4">Our database updates hourly. Try adjusting your parameters.</p>
-                        <button onclick="app.reset()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors">Restart Analysis</button>
+                        <h3 class="text-lg font-bold mb-2">Not what you expected?</h3>
+                        <p class="text-gray-400 text-sm mb-4">My algorithm is constantly learning. Try answering differently.</p>
+                        <button onclick="app.reset()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors">Restart My Analysis</button>
                     </div>
                 </div>
             </div>
@@ -312,14 +375,14 @@
         <div id="inventory-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
             <div class="bg-slate-900 border border-white/10 w-full max-w-2xl rounded-2xl p-8 transform scale-95 transition-transform duration-300 shadow-2xl">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold font-mono text-blue-400">> ARTIFACT_COLLECTION</h2>
+                    <h2 class="text-2xl font-bold font-mono text-blue-400">> MY_ARTIFACTS</h2>
                     <button onclick="app.toggleInventory()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
                 </div>
                 <div id="inventory-grid" class="grid grid-cols-4 md:grid-cols-5 gap-4">
                     <!-- Eggs injected here -->
                 </div>
                 <div class="mt-6 pt-6 border-t border-white/5 text-center">
-                    <p class="text-xs text-gray-500 font-mono">COLLECT ALL 12 ARTIFACTS TO UNLOCK GOD MODE</p>
+                    <p class="text-xs text-gray-500 font-mono">COLLECT ALL 12 SECRETS I HID TO UNLOCK GOD MODE</p>
                 </div>
             </div>
         </div>
@@ -336,7 +399,7 @@
             <div class="opacity-50">Initializing secure shell...</div>
             <div class="opacity-50">Connected to 192.168.X.X</div>
             <br>
-            <div>Welcome to FutureLink Admin Console.</div>
+            <div>Welcome to My Admin Console.</div>
             <div>Type 'help' for available commands.</div>
             <br>
         </div>
@@ -395,17 +458,17 @@
         const DB = {
             questions: [
                 // CREATIVE
-                { id: 'c1', text: "You're given a blank canvas. What's your first move?", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
+                { id: 'c1', text: "I give you a blank canvas. What's your first move?", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
                     { text: "Sketch a chaotic abstract concept", weights: { art: 2, chaos: 1 } },
                     { text: "Plan a geometric grid structure", weights: { art: 1, tech: 1, order: 2 } },
                     { text: "Ask someone what they want to see", weights: { social: 2, lead: 1 } }
                 ]},
-                { id: 'c2', text: "A project is failing. How do you fix it?", category: 'Problem Solving', weights: { lead: 2, tech: 1 }, options: [
+                { id: 'c2', text: "My project is failing. How do you fix it?", category: 'Problem Solving', weights: { lead: 2, tech: 1 }, options: [
                     { text: "Redesign the core visual identity", weights: { art: 3 } },
                     { text: "Analyze the data to find the bottleneck", weights: { tech: 2, logic: 2 } },
                     { text: "Rally the team for a brainstorm", weights: { social: 3, lead: 2 } }
                 ]},
-                { id: 'c3', text: "You need to explain a complex idea. You use...", category: 'Communication', weights: { social: 1 }, options: [
+                { id: 'c3', text: "You need to explain a complex idea to me. You use...", category: 'Communication', weights: { social: 1 }, options: [
                     { text: "A detailed technical diagram", weights: { tech: 2, logic: 1 } },
                     { text: "A relatable metaphor or story", weights: { social: 2, art: 1 } },
                     { text: "A bulleted list of action items", weights: { order: 2, lead: 1 } }
@@ -416,10 +479,10 @@
                     { text: "A bustling cafe with people watching", weights: { social: 2, chaos: 1 } }
                 ]},
                 // TECH
-                { id: 't1', text: "You discover a bug in a popular app. You...", category: 'Technical', weights: { tech: 3 }, options: [
+                { id: 't1', text: "You discover a bug in my app. You...", category: 'Technical', weights: { tech: 3 }, options: [
                     { text: "Ignore it, not my problem", weights: { chaos: 1 } },
                     { text: "Write a script to exploit it", weights: { tech: 3, chaos: 2 } },
-                    { text: "Report it to the developers detailedly", weights: { tech: 1, social: 1, order: 2 } }
+                    { text: "Report it to me detailedly", weights: { tech: 1, social: 1, order: 2 } }
                 ]},
                 { id: 't2', text: "Choose a superpower:", category: 'Personality', weights: {}, options: [
                     { text: "Control machines with your mind", weights: { tech: 3 } },
@@ -479,6 +542,32 @@
                     { text: "Empty, everything in folders", weights: { order: 3, logic: 1 } },
                     { text: "Covered in files, but I know where everything is", weights: { chaos: 2, art: 1 } },
                     { text: "I use a search bar for everything", weights: { tech: 2 } }
+                ]},
+                // NEW QUESTIONS
+                { id: 'n1', text: "You're learning a new skill. You prefer...", category: 'Learning', weights: { logic: 1 }, options: [
+                    { text: "Watching video tutorials", weights: { art: 1, social: 1 } },
+                    { text: "Reading the documentation", weights: { logic: 2, order: 1 } },
+                    { text: "Just building something and failing", weights: { chaos: 2, tech: 1 } }
+                ]},
+                { id: 'n2', text: "Your code/design isn't working. You...", category: 'Resilience', weights: {}, options: [
+                    { text: "Walk away and clear your head", weights: { social: 1, art: 1 } },
+                    { text: "Grind it out until it works", weights: { tech: 2, order: 1 } },
+                    { text: "Ask a community for help", weights: { social: 2, lead: 1 } }
+                ]},
+                { id: 'n3', text: "Ideally, your day is...", category: 'Routine', weights: { order: 2 }, options: [
+                    { text: "Structured 9-5 with clear goals", weights: { order: 3 } },
+                    { text: "Flexible, working when inspired", weights: { chaos: 2, art: 2 } },
+                    { text: "Sprints of intense focus", weights: { tech: 1, logic: 1 } }
+                ]},
+                { id: 'n4', text: "You care most about...", category: 'Priorities', weights: {}, options: [
+                    { text: "The user experience", weights: { art: 2, social: 2 } },
+                    { text: "The code quality", weights: { tech: 2, logic: 2 } },
+                    { text: "The business value", weights: { lead: 3, order: 1 } }
+                ]},
+                { id: 'n5', text: "In a meeting, you are...", category: 'Collaboration', weights: { social: 1 }, options: [
+                    { text: "Taking detailed notes", weights: { order: 2, logic: 1 } },
+                    { text: "Leading the conversation", weights: { lead: 3 } },
+                    { text: "Doodling or coding on the side", weights: { art: 1, tech: 1 } }
                 ]}
             ],
             careers: [
@@ -489,7 +578,22 @@
                 { title: "Creative Director", tags: ['art', 'lead'], desc: "Visionary leadership for aesthetic endeavors." },
                 { title: "Cybersecurity Analyst", tags: ['tech', 'chaos', 'logic'], desc: "Thinking like a hacker to stop hackers." },
                 { title: "Social Worker", tags: ['social', 'empathy'], desc: "Directly improving lives through connection." },
-                { title: "Startup Founder", tags: ['lead', 'chaos', 'tech'], desc: "High risk, high reward, total ownership." }
+                { title: "Startup Founder", tags: ['lead', 'chaos', 'tech'], desc: "High risk, high reward, total ownership." },
+                // NEW ROLES
+                { title: "DevOps Engineer", tags: ['tech', 'order', 'chaos'], desc: "Automating the bridge between code and deployment." },
+                { title: "Game Developer", tags: ['tech', 'art', 'logic'], desc: "Creating immersive worlds through code and physics." },
+                { title: "Technical Writer", tags: ['tech', 'social', 'order'], desc: "Translating complex systems into human language." },
+                { title: "QA Engineer", tags: ['tech', 'order', 'logic'], desc: "The last line of defense against bugs." },
+                { title: "Blockchain Developer", tags: ['tech', 'chaos', 'logic'], desc: "Building decentralized trustless systems." },
+                { title: "AR/VR Designer", tags: ['art', 'tech', 'chaos'], desc: "Crafting realities beyond the screen." },
+                { title: "IT Project Manager", tags: ['lead', 'order', 'tech'], desc: "Keeping the technical ship sailing smooth." },
+                { title: "Developer Advocate", tags: ['social', 'tech', 'lead'], desc: "The voice of the developer community." },
+                { title: "AI Ethics Researcher", tags: ['logic', 'social', 'tech'], desc: "Ensuring our future overlords are nice." },
+                { title: "Cloud Architect", tags: ['tech', 'order', 'lead'], desc: "Designing scalable systems in the sky." },
+                { title: "Mobile Developer", tags: ['tech', 'art', 'logic'], desc: "Putting the world in people's pockets." },
+                { title: "System Administrator", tags: ['tech', 'order', 'logic'], desc: "The silent guardian of uptime." },
+                { title: "Marketing Technologist", tags: ['social', 'tech', 'art'], desc: "Where data meets storytelling." },
+                { title: "Sales Engineer", tags: ['social', 'tech', 'lead'], desc: "Solving client problems with technical solutions." }
             ],
             eggs: [
                 { id: 'konami', name: 'Konami Code', icon: '🎮', desc: 'Up Up Down Down...' },
@@ -523,6 +627,7 @@
             init: () => {
                 app.renderBackground();
                 app.checkTime();
+                app.renderCareersGrid(); // Pre-render database
                 
                 // Global Key Listener
                 document.addEventListener('keydown', eggHunt.handleKey);
@@ -572,6 +677,45 @@
 
             reset: () => {
                 app.startQuiz();
+            },
+
+            renderCareersGrid: () => {
+                const grid = document.getElementById('careers-grid');
+                grid.innerHTML = DB.careers.map(c => `
+                    <div class="glass p-6 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all hover:-translate-y-1 group" data-tags="${c.tags.join(',')}">
+                        <h3 class="font-bold text-lg mb-2 group-hover:text-blue-400 transition-colors">${c.title}</h3>
+                        <p class="text-sm text-gray-400 mb-4">${c.desc}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${c.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-white/5 text-gray-500">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            filterDB: (filter) => {
+                const cards = document.querySelectorAll('#careers-grid > div');
+                const buttons = document.querySelectorAll('#db-filters button');
+                
+                // Update buttons
+                buttons.forEach(b => {
+                    if(b.innerText.toLowerCase().includes(filter) || (filter === 'all' && b.innerText === 'All')) {
+                        b.classList.remove('bg-white/5', 'text-gray-300');
+                        b.classList.add('bg-blue-600', 'text-white');
+                    } else {
+                        b.classList.add('bg-white/5', 'text-gray-300');
+                        b.classList.remove('bg-blue-600', 'text-white');
+                    }
+                });
+
+                // Filter cards
+                cards.forEach(card => {
+                    const tags = card.getAttribute('data-tags');
+                    if(filter === 'all' || tags.includes(filter)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
             },
 
             renderBackground: () => {
@@ -673,12 +817,12 @@
                 // Adaptive Logic: Pick question based on lowest confidence or random unasked
                 const unasked = DB.questions.filter(q => !state.history.includes(q.id));
                 
-                if(unasked.length === 0 || state.history.length >= 8) { // End after 8 questions or empty
+                if(unasked.length === 0 || state.history.length >= 10) { // Increased to 10 questions
                     quiz.finish();
                     return;
                 }
 
-                // Simple adaptive: Random for now, but could weight by current scores
+                // Simple adaptive: Random for now
                 const nextQ = unasked[Math.floor(Math.random() * unasked.length)];
                 state.history.push(nextQ.id);
                 
@@ -703,7 +847,7 @@
                     qId.innerText = `ID: ${q.id.toUpperCase()}`;
                     
                     // Update Progress
-                    const pct = Math.round((state.history.length / 8) * 100);
+                    const pct = Math.round((state.history.length / 10) * 100);
                     prog.style.width = `${pct}%`;
                     progText.innerText = `${pct}%`;
 
@@ -733,18 +877,6 @@
                 quiz.loadNext();
             },
 
-            prev: () => {
-                if(state.history.length > 1) {
-                    state.history.pop(); // Remove current
-                    const prevId = state.history.pop(); // Remove prev to re-add
-                    // Note: Score rollback is hard without history stack of scores. 
-                    // For this demo, we just restart if they go back too much or ignore score rollback.
-                    // Let's just restart the question flow from that ID.
-                    // Actually, simple "Prev" is hard in adaptive. Let's just alert.
-                    alert("Neural pathways are forward-only in this version.");
-                }
-            },
-
             finish: () => {
                 app.navigate('loading');
                 setTimeout(() => {
@@ -772,8 +904,8 @@
                 document.getElementById('archetype-name').innerText = top.title;
                 document.getElementById('archetype-desc').innerText = top.desc;
 
-                // Render List
-                document.getElementById('career-matches').innerHTML = matches.slice(0, 3).map((m, i) => `
+                // Render List (Top 5 now)
+                document.getElementById('career-matches').innerHTML = matches.slice(0, 5).map((m, i) => `
                     <div class="glass p-4 rounded-xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
                         <div class="font-bold text-2xl text-gray-600">0${i+1}</div>
                         <div class="flex-grow">
@@ -793,7 +925,7 @@
                     data: {
                         labels: ['Art', 'Tech', 'Social', 'Logic', 'Lead', 'Chaos'],
                         datasets: [{
-                            label: 'Neural Profile',
+                            label: 'Your Profile',
                             data: [scores.art, scores.tech, scores.social, scores.logic, scores.lead, scores.chaos],
                             backgroundColor: 'rgba(59, 130, 246, 0.2)',
                             borderColor: '#3b82f6',
