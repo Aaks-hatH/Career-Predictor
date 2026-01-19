@@ -39,6 +39,7 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'type': 'type 2s steps(40, end)',
                     },
                     keyframes: {
                         float: {
@@ -107,6 +108,13 @@
         
         /* HIDDEN ELEMENTS */
         .super-hidden { opacity: 0; cursor: default; }
+        
+        /* TYPING CURSOR */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col overflow-x-hidden selection:bg-brand-500 selection:text-white">
@@ -121,8 +129,8 @@
     <nav class="fixed top-0 w-full z-50 glass border-b-0 px-6 py-4 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer group" onclick="app.navigate('home')">
-                <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
-                    FL
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform bg-black">
+                    <img src="https://cdn.pixabay.com/photo/2020/01/07/22/36/cyber-4748849_150.png" alt="Logo" class="w-full h-full object-cover p-1">
                 </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-lg tracking-tight leading-none">FutureLink</span>
@@ -135,7 +143,7 @@
                 <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">About Aakshat</a>
                 <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">Database</a>
                 <div class="relative group">
-                    <input type="text" id="global-search" placeholder="Search roles..." 
+                    <input type="text" id="global-search" placeholder="Search 150+ roles..." 
                         class="bg-dark-surface border border-dark-border rounded-full px-4 py-2 text-white focus:outline-none focus:border-brand-500 w-48 transition-all focus:w-64 text-xs">
                     <span class="absolute right-3 top-2.5 text-[10px] text-gray-600 border border-gray-700 rounded px-1">⌘K</span>
                 </div>
@@ -157,7 +165,7 @@
     <main id="app-container" class="flex-grow pt-28 px-6 relative container mx-auto max-w-7xl">
         
         <!-- VIEW: HOME -->
-        <section id="view-home" class="min-h-[80vh] flex flex-col justify-center items-center text-center relative">
+        <section id="view-home" class="min-h-[80vh] flex flex-col justify-center items-center text-center relative pb-20">
             <!-- Hidden Trigger -->
             <div class="absolute top-20 left-10 w-4 h-4 opacity-0 cursor-help" onclick="eggHunt.collect('pixel_hunter')"></div>
 
@@ -168,14 +176,14 @@
 
             <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tight leading-[1.1] fade-in delay-100">
                 Unlock Your <br>
-                <span class="text-gradient cursor-pointer hover:opacity-80 transition-opacity" onclick="eggHunt.trigger('title_glitch')">Cyber Potential</span>
+                <span class="text-gradient cursor-pointer hover:opacity-80 transition-opacity typing-cursor" id="typing-text" onclick="eggHunt.trigger('title_glitch')">Cyber Potential</span>
             </h1>
 
             <p class="text-xl text-gray-400 max-w-3xl mb-12 fade-in delay-200 leading-relaxed">
                 Welcome to the advanced career analysis interface. This system utilizes a multi-vector personality algorithm to determine your optimal professional trajectory. Unlike standard tests, we analyze your subconscious preferences, problem-solving approaches, and chaotic tendencies to match you with roles that fit your true nature. Whether you are destined to build secure systems or break them, we will find your path.
             </p>
 
-            <div class="flex flex-col md:flex-row gap-5 fade-in delay-300">
+            <div class="flex flex-col md:flex-row gap-5 fade-in delay-300 mb-20">
                 <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-lg hover:shadow-brand-500/25">
                     <span class="relative z-10 flex items-center gap-2">
                         Begin Assessment <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
@@ -187,7 +195,7 @@
             </div>
 
             <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mt-32 w-full border-t border-white/5 pt-12 fade-in delay-300">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 w-full border-t border-white/5 pt-12 fade-in delay-300">
                 <div class="text-center group cursor-default">
                     <div class="text-4xl font-bold text-white mb-2 counter" data-target="50000">0</div>
                     <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Data Points</div>
@@ -203,6 +211,39 @@
                 <div class="text-center cursor-pointer" onclick="eggHunt.collect('stat_checker')">
                     <div class="text-4xl font-bold text-brand-500 mb-2">v2.5</div>
                     <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">Build Version</div>
+                </div>
+            </div>
+
+            <!-- New Explanatory Sections -->
+            <div class="mt-32 w-full text-left fade-in delay-300">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass p-8 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-colors">
+                        <div class="w-12 h-12 bg-brand-500/20 rounded-lg flex items-center justify-center text-brand-400 mb-6">
+                            <i class="fas fa-brain text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Adaptive Intelligence</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Our algorithm doesn't just ask questions; it learns. With 200+ adaptive data points, the system recalibrates after every response to narrow down your psychological profile with surgical precision.
+                        </p>
+                    </div>
+                    <div class="glass p-8 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-colors">
+                        <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 mb-6">
+                            <i class="fas fa-database text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Deep Database</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Access a repository of 150+ meticulously curated career paths. From Ethical Hacking to Quantum Computing, we cover the jobs of tomorrow, not just today.
+                        </p>
+                    </div>
+                    <div class="glass p-8 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-colors">
+                        <div class="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 mb-6">
+                            <i class="fas fa-graduation-cap text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Educational Roadmap</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            We don't just tell you "what" to be. We tell you "how". Get detailed high school paths, university course recommendations, and certification guides for every single role.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -254,7 +295,7 @@
                             <i class="fas fa-brain text-purple-500"></i> The Algorithm
                         </h3>
                         <p class="text-gray-400">
-                            Uses a weighted scoring system across 7 dimensions (Art, Tech, Social, Logic, Leadership, Chaos, Order) to match user inputs against a database of 100+ career profiles.
+                            Uses a weighted scoring system across 7 dimensions (Art, Tech, Social, Logic, Leadership, Chaos, Order) to match user inputs against a database of 150+ career profiles.
                         </p>
                     </div>
                     <div class="pt-4">
@@ -271,791 +312,283 @@
             <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                 <div>
                     <h2 class="text-4xl font-bold mb-2">Career Database</h2>
-                    <p class="text-gray-400">Indexing <span id="db-count" class="text-white font-bold">0</span> unique roles.</p>
+                    <p class="text-gray-400">Indexing <span id="db-count" class="text-white font-bold">150</span> unique roles.</p>
                 </div>
                 <div class="flex flex-wrap gap-2" id="db-filters">
                     <button onclick="app.filterDB('all')" class="px-5 py-2 rounded-full bg-brand-600 text-white text-sm font-medium transition-all shadow-lg shadow-brand-500/20">All</button>
-                    <button onclick="app.filterDB('tech')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Tech</button>
-                    <button onclick="app.filterDB('cyber')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Cyber</button>
-                    <button onclick="app.filterDB('creative')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Creative</button>
-                    <button onclick="app.filterDB('business')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Business</button>
+                    <button onclick="app.filterDB('Cyber')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Cyber</button>
+                    <button onclick="app.filterDB('Tech')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Tech</button>
+                    <button onclick="app.filterDB('Creative')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Creative</button>
+                    <button onclick="app.filterDB('Business')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Business</button>
                 </div>
             </div>
 
-            <div id="careers-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Injected via JS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="careers-grid">
+                <!-- Populated by JS -->
             </div>
         </section>
 
         <!-- VIEW: QUIZ -->
-        <section id="view-quiz" class="hidden min-h-[80vh] flex flex-col items-center justify-center max-w-3xl mx-auto">
-            <div class="w-full mb-12">
-                <div class="flex justify-between text-xs text-gray-400 mb-3 font-mono uppercase tracking-widest">
-                    <span>Analysis Sequence</span>
-                    <span id="progress-text">0%</span>
+        <section id="view-quiz" class="hidden min-h-[80vh] flex flex-col justify-center max-w-3xl mx-auto py-10">
+            <div class="mb-8 flex justify-between items-end">
+                <div>
+                    <span class="text-brand-500 font-bold tracking-wider text-xs uppercase mb-2 block">Assessment In Progress</span>
+                    <h2 class="text-3xl font-bold">Question <span id="q-current">1</span>/<span id="q-total">20</span></h2>
                 </div>
-                <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 w-0 transition-all duration-500 ease-out"></div>
+                <div class="text-right">
+                    <div class="text-xs text-gray-500 mb-1">Adaptive Confidence</div>
+                    <div class="text-brand-400 font-mono font-bold" id="confidence-score">0%</div>
                 </div>
             </div>
 
-            <div id="question-card" class="w-full glass p-8 md:p-14 rounded-3xl border border-white/10 relative overflow-hidden shadow-2xl transition-all duration-500">
-                <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-brand-400 to-purple-500"></div>
-                
-                <span id="q-category" class="inline-block px-3 py-1 rounded-md bg-brand-500/10 text-brand-400 text-[10px] font-bold tracking-widest uppercase mb-8 border border-brand-500/20">Initializing</span>
-                
-                <h2 id="q-text" class="text-2xl md:text-4xl font-bold mb-12 leading-tight">Loading Question...</h2>
+            <div class="w-full bg-gray-800 h-1 rounded-full mb-12 overflow-hidden">
+                <div class="bg-brand-500 h-full transition-all duration-500" id="progress-bar" style="width: 0%"></div>
+            </div>
 
-                <div id="options-container" class="grid gap-4">
+            <div class="glass p-8 md:p-12 rounded-3xl border border-white/10 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-500 to-transparent opacity-50"></div>
+                
+                <h3 class="text-2xl md:text-3xl font-medium mb-10 leading-snug" id="question-text">
+                    Loading neural interface...
+                </h3>
+
+                <div class="grid gap-4" id="options-container">
                     <!-- Options injected here -->
                 </div>
             </div>
-
-            <div class="mt-10 flex justify-between w-full text-xs text-gray-600 font-mono uppercase">
-                <button onclick="app.navigate('home')" class="hover:text-red-400 transition-colors">Abort</button>
-                <span id="q-id">ID: NULL</span>
-            </div>
-        </section>
-
-        <!-- VIEW: LOADING -->
-        <section id="view-loading" class="hidden min-h-[80vh] flex flex-col items-center justify-center">
-            <div class="relative w-24 h-24 mb-10">
-                <div class="absolute inset-0 border-4 border-gray-800 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-t-brand-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
-            </div>
-            <h2 class="text-3xl font-bold mb-3">Processing Data</h2>
-            <p class="text-gray-400 font-mono text-sm animate-pulse">Running algorithm on 150+ vectors...</p>
         </section>
 
         <!-- VIEW: RESULTS -->
-        <section id="view-results" class="hidden py-10">
-            <div class="grid md:grid-cols-12 gap-8">
-                <!-- Profile Card -->
-                <div class="md:col-span-4 space-y-6">
-                    <div class="glass p-8 rounded-3xl border border-white/10 text-center relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-b from-brand-500/5 to-transparent"></div>
-                        <div class="relative z-10">
-                            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl p-0.5 mb-6 shadow-xl shadow-brand-500/20">
-                                <div class="w-full h-full bg-dark-surface rounded-2xl flex items-center justify-center text-3xl text-white">
-                                    <i class="fas fa-bullseye"></i>
+        <section id="view-results" class="hidden min-h-[80vh] py-10">
+            <div class="text-center mb-16">
+                <div class="inline-block p-3 rounded-full bg-green-500/10 text-green-400 mb-6">
+                    <i class="fas fa-check-circle text-3xl"></i>
+                </div>
+                <h2 class="text-4xl md:text-6xl font-bold mb-4">Analysis Complete</h2>
+                <p class="text-xl text-gray-400">Your neural profile matches the following trajectory:</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="glass border border-brand-500/30 rounded-3xl overflow-hidden relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-20">
+                        <i class="fas fa-fingerprint text-9xl"></i>
+                    </div>
+                    
+                    <div class="p-8 md:p-12 relative z-10">
+                        <div class="flex flex-col md:flex-row gap-8 items-start">
+                            <div class="flex-1">
+                                <span class="text-brand-400 font-bold tracking-widest text-xs uppercase mb-2 block">Top Match (99% Compatibility)</span>
+                                <h3 class="text-4xl font-bold mb-4" id="result-title">Loading...</h3>
+                                <p class="text-gray-300 text-lg leading-relaxed mb-8" id="result-desc">
+                                    Calculating...
+                                </p>
+                                
+                                <div class="grid grid-cols-2 gap-6 mb-8">
+                                    <div>
+                                        <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">Salary Range</div>
+                                        <div class="text-white font-mono" id="result-salary">...</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">Education</div>
+                                        <div class="text-white font-mono" id="result-edu">...</div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div>
+                                        <h4 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-school text-brand-500"></i> High School Path</h4>
+                                        <p class="text-sm text-gray-400" id="result-hs">...</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-book text-brand-500"></i> Recommended Courses</h4>
+                                        <div class="flex flex-wrap gap-2" id="result-courses"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Your Archetype</h2>
-                            <div id="archetype-name" class="text-3xl font-bold text-white mb-4">
-                                Loading...
+                            
+                            <div class="w-full md:w-1/3 bg-white/5 rounded-2xl p-6">
+                                <h4 class="font-bold text-sm mb-4 text-center">Personality Matrix</h4>
+                                <canvas id="radarChart"></canvas>
                             </div>
-                            <p id="archetype-desc" class="text-sm text-gray-400 leading-relaxed">
-                                Analysis complete.
-                            </p>
                         </div>
                     </div>
-
-                    <div class="glass p-6 rounded-3xl border border-white/10">
-                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 text-center">Personality Matrix</h3>
-                        <canvas id="radar-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Matches -->
-                <div class="md:col-span-8 space-y-6">
-                    <div class="flex justify-between items-end mb-2">
-                        <h2 class="text-3xl font-bold">Top Recommendations</h2>
-                        <button onclick="window.print()" class="text-sm text-brand-400 hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-print"></i> Print Report</button>
-                    </div>
-
-                    <div id="career-matches" class="space-y-4">
-                        <!-- Matches injected here -->
-                    </div>
-
-                    <div class="glass p-10 rounded-3xl border border-dashed border-white/10 mt-10 text-center">
-                        <h3 class="text-lg font-bold mb-2">Want to try again?</h3>
-                        <p class="text-gray-400 text-sm mb-6">The algorithm adapts to your inputs.</p>
-                        <button onclick="app.reset()" class="px-8 py-3 bg-white text-dark-bg hover:bg-gray-200 rounded-full text-sm font-bold transition-colors">Restart Analysis</button>
+                    
+                    <div class="bg-brand-900/20 p-6 border-t border-white/5 flex justify-between items-center">
+                        <button onclick="app.navigate('careers')" class="text-sm text-gray-400 hover:text-white transition-colors">View All Matches</button>
+                        <button onclick="app.startQuiz()" class="px-6 py-2 bg-white text-dark-bg rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Retake Analysis</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- MODAL: INVENTORY -->
-        <div id="inventory-modal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="bg-dark-surface border border-white/10 w-full max-w-4xl rounded-3xl p-10 transform scale-95 transition-transform duration-300 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto custom-scroll">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-purple-500"></div>
-                
-                <div class="flex justify-between items-center mb-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white">Secret Artifacts</h2>
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Discover hidden interactions</p>
-                    </div>
-                    <button onclick="app.toggleInventory()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"><i class="fas fa-times"></i></button>
-                </div>
-                
-                <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <!-- Eggs injected here -->
-                </div>
+        <!-- FOOTER -->
+        <footer class="border-t border-white/5 py-12 mt-20 text-center text-gray-600 text-sm relative">
+            <p>&copy; 2024 FutureLink. Engineered by Aakshat Hariharan.</p>
+            <div class="mt-4 flex justify-center gap-4">
+                <a href="#" class="hover:text-brand-500 transition-colors">Privacy</a>
+                <a href="#" class="hover:text-brand-500 transition-colors">Terms</a>
+                <a href="#" class="hover:text-brand-500 transition-colors" onclick="eggHunt.collect('footer_click')">System Status</a>
             </div>
-        </div>
-
-        <!-- MODAL: ROLE DETAILS -->
-        <div id="role-modal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="w-full h-full md:max-w-5xl md:h-[90vh] bg-dark-surface md:rounded-3xl border border-white/10 relative overflow-hidden flex flex-col">
-                <!-- Header -->
-                <div class="p-8 border-b border-white/10 flex justify-between items-start bg-dark-surface z-10">
-                    <div>
-                        <div class="flex gap-2 mb-3" id="role-modal-tags">
-                            <!-- Tags -->
-                        </div>
-                        <h2 class="text-4xl font-bold text-white mb-2" id="role-modal-title">Role Title</h2>
-                        <p class="text-gray-400 text-lg" id="role-modal-desc">Role description goes here.</p>
-                    </div>
-                    <button onclick="app.closeRoleModal()" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"><i class="fas fa-times"></i></button>
-                </div>
-
-                <!-- Content -->
-                <div class="flex-grow overflow-y-auto custom-scroll p-8">
-                    <div class="grid md:grid-cols-2 gap-12">
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-400 mb-4 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> High School Path</h3>
-                            <p class="text-gray-300 mb-6">To prepare for this career, focus on these courses:</p>
-                            <ul class="space-y-3" id="role-modal-courses">
-                                <!-- Courses -->
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2"><i class="fas fa-road"></i> Career Roadmap</h3>
-                            <div class="space-y-6 relative pl-6 border-l border-white/10" id="role-modal-roadmap">
-                                <!-- Roadmap -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Easter Egg Explanation (Hidden by default, shown at end of hunt) -->
+            <div id="egg-summary" class="hidden max-w-2xl mx-auto mt-8 p-6 glass rounded-xl text-left border border-brand-500">
+                <h4 class="text-brand-500 font-bold mb-2">🎉 ALL SECRETS UNLOCKED</h4>
+                <p class="mb-4 text-gray-300">You've found all the hidden eggs! Here's what you discovered:</p>
+                <ul class="list-disc pl-5 space-y-2 text-gray-400 text-xs">
+                    <li><strong>Konami Code:</strong> Activated Matrix Mode (Up, Up, Down, Down, Left, Right, Left, Right, B, A).</li>
+                    <li><strong>Pixel Hunter:</strong> Found the invisible pixel in the top left.</li>
+                    <li><strong>Title Glitch:</strong> Clicked the "Cyber Potential" text.</li>
+                    <li><strong>Stat Checker:</strong> Clicked the version number.</li>
+                    <li><strong>System Status:</strong> Clicked the footer link.</li>
+                </ul>
             </div>
-        </div>
+        </footer>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-white/5 mt-20 py-10 text-center text-gray-600 text-sm">
-        <div class="container mx-auto px-6">
-            <p>&copy; 2026 Aakshat Hariharan. All rights reserved.</p>
-            <p class="mt-2 text-xs">Built with <i class="fas fa-heart text-red-900"></i> and Code.</p>
-        </div>
-    </footer>
-
-    <!-- TERMINAL OVERLAY -->
-    <div id="terminal-overlay" class="fixed inset-0 z-[200] bg-[#0c0c0c] text-[#22c55e] font-mono p-6 md:p-12 flex flex-col transition-transform duration-500 translate-y-full">
-        <div class="flex justify-between items-center mb-6 border-b border-[#22c55e]/30 pb-4">
-            <div class="text-sm tracking-widest">ROOT@AAKSHAT-SYSTEM:~#</div>
-            <button onclick="terminal.toggle()" class="text-[#22c55e] hover:text-white transition-colors">[ TERMINATE_SESSION ]</button>
-        </div>
-        <div id="terminal-output" class="flex-grow overflow-y-auto mb-4 space-y-2 text-sm md:text-base custom-scroll font-medium">
-            <div class="opacity-50">Initializing secure shell...</div>
-            <div class="opacity-50">Handshake complete.</div>
-            <br>
-            <div>Welcome to the Developer Console.</div>
-            <div>Type 'help' to see available commands.</div>
-            <br>
-        </div>
-        <div class="flex gap-3 items-center bg-[#111] p-4 rounded-lg border border-[#22c55e]/20">
-            <span class="text-blue-500 font-bold">➜</span>
-            <input type="text" id="terminal-input" class="bg-transparent border-none focus:outline-none text-[#22c55e] w-full font-bold" autocomplete="off" spellcheck="false">
-        </div>
-    </div>
-
-    <!-- TOASTS -->
-    <div id="toast-container" class="fixed bottom-8 right-8 z-[300] flex flex-col gap-3 pointer-events-none"></div>
-
     <!-- LOGIC -->
     <script>
-        // --- DATA ---
-        const DB = {
-            questions: [
-                { id: 'c1', text: "I give you a blank canvas. What's your first move?", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
-                    { text: "Sketch a chaotic abstract concept", weights: { art: 2, chaos: 1 } },
-                    { text: "Plan a geometric grid structure", weights: { art: 1, tech: 1, order: 2 } },
-                    { text: "Ask someone what they want to see", weights: { social: 2, lead: 1 } }
-                ]},
-                { id: 't1', text: "You discover a critical bug in an app. You...", category: 'Technical', weights: { tech: 3 }, options: [
-                    { text: "Ignore it, not my problem", weights: { chaos: 1 } },
-                    { text: "Write a script to exploit it", weights: { tech: 3, chaos: 2 } },
-                    { text: "Report it with detailed reproduction steps", weights: { tech: 1, social: 1, order: 2 } }
-                ]},
-                { id: 'l1', text: "Your team is arguing over two good ideas. You...", category: 'Leadership', weights: { lead: 3 }, options: [
-                    { text: "Pick the one that's most practical", weights: { logic: 2, order: 1 } },
-                    { text: "Combine them into a hybrid solution", weights: { art: 1, lead: 2 } },
-                    { text: "Let them vote and accept the outcome", weights: { social: 2, lead: 1 } }
-                ]},
-                { id: 'n1', text: "A patient is describing vague symptoms. You...", category: 'Analysis', weights: { health: 3, logic: 2 }, options: [
-                    { text: "Order a full panel of tests immediately", weights: { tech: 1, order: 2 } },
-                    { text: "Listen for emotional cues and context", weights: { social: 3, empathy: 2 } },
-                    { text: "Consult the latest research papers", weights: { logic: 3, tech: 1 } }
-                ]},
-                { id: 'n2', text: "You need to build a table. You...", category: 'Practical', weights: { trade: 3 }, options: [
-                    { text: "Buy the wood and design it yourself", weights: { art: 2, trade: 3 } },
-                    { text: "Follow the IKEA instructions perfectly", weights: { order: 3 } },
-                    { text: "Hire someone else to do it", weights: { lead: 2 } }
-                ]},
-                { id: 'n3', text: "You see a complex legal contract. You feel...", category: 'Detail', weights: { law: 3 }, options: [
-                    { text: "Bored to tears", weights: { art: 2, chaos: 2 } },
-                    { text: "Excited to find the loopholes", weights: { logic: 3, law: 3 } },
-                    { text: "Protective of the people signing it", weights: { social: 2, empathy: 1 } }
-                ]},
-                { id: 'n4', text: "The kitchen is on fire (metaphorically). You...", category: 'Pressure', weights: { service: 3 }, options: [
-                    { text: "Scream and panic", weights: { chaos: 2 } },
-                    { text: "Systematically put out the fires", weights: { order: 2, lead: 1 } },
-                    { text: "Improvise a new menu instantly", weights: { art: 2, chaos: 1 } }
-                ]},
-                { id: 'n5', text: "You want to understand how the universe works. You study...", category: 'Curiosity', weights: { science: 3 }, options: [
-                    { text: "Physics and Mathematics", weights: { logic: 3, tech: 1 } },
-                    { text: "Biology and Life Systems", weights: { health: 2, nature: 3 } },
-                    { text: "Philosophy and Art", weights: { art: 3, social: 1 } }
-                ]},
-                { id: 'n6', text: "Your ideal work environment is...", category: 'Environment', weights: {}, options: [
-                    { text: "A quiet laboratory or library", weights: { science: 2, law: 1, order: 2 } },
-                    { text: "Outdoors, hands-on, active", weights: { trade: 3, nature: 3 } },
-                    { text: "A busy hospital or school", weights: { health: 2, social: 3 } }
-                ]},
-                { id: 'n7', text: "When explaining something, you prefer...", category: 'Communication', weights: {}, options: [
-                    { text: "Using data and charts", weights: { business: 2, logic: 2 } },
-                    { text: "Telling a compelling story", weights: { art: 2, social: 2 } },
-                    { text: "Showing how it works physically", weights: { trade: 2, tech: 1 } }
-                ]},
-                { id: 'n8', text: "You find a USB drive in the parking lot. You...", category: 'Security', weights: { cyber: 3 }, options: [
-                    { text: "Plug it in to see who it belongs to", weights: { chaos: 3, tech: 1 } },
-                    { text: "Destroy it immediately", weights: { order: 2, cyber: 2 } },
-                    { text: "Open it in a secure sandbox environment", weights: { cyber: 3, tech: 2 } }
-                ]},
-                { id: 'n9', text: "You are playing a strategy game. Your style is...", category: 'Strategy', weights: {}, options: [
-                    { text: "Aggressive rush tactics", weights: { chaos: 2, lead: 1 } },
-                    { text: "Defensive turtle and economy", weights: { order: 2, business: 1 } },
-                    { text: "Diplomacy and alliances", weights: { social: 3, lead: 2 } }
-                ]},
-                { id: 'n10', text: "A friend is sad. You...", category: 'Empathy', weights: { social: 3 }, options: [
-                    { text: "Offer practical solutions to their problem", weights: { logic: 2, order: 1 } },
-                    { text: "Listen and validate their feelings", weights: { social: 3, empathy: 3 } },
-                    { text: "Distract them with fun activities", weights: { art: 1, chaos: 1 } }
-                ]},
-                { id: 'n11', text: "You have to organize a party. You focus on...", category: 'Planning', weights: {}, options: [
-                    { text: "The guest list and music", weights: { social: 2, art: 1 } },
-                    { text: "The budget and schedule", weights: { business: 2, order: 2 } },
-                    { text: "The food and decorations", weights: { art: 2, service: 1 } }
-                ]},
-                { id: 'n12', text: "You see a complex machine. You want to...", category: 'Curiosity', weights: { tech: 2 }, options: [
-                    { text: "Use it to make something", weights: { art: 1, trade: 1 } },
-                    { text: "Take it apart to see how it works", weights: { tech: 3, logic: 2 } },
-                    { text: "Read the manual first", weights: { order: 3, law: 1 } }
-                ]}
-                { id: 'c2', text: "You're tasked with redesigning a boring corporate logo. You...", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
-    { text: "Keep it minimal and professional", weights: { art: 1, order: 2, business: 1 } },
-    { text: "Make it bold and unconventional", weights: { art: 3, chaos: 2 } },
-    { text: "Research what competitors are doing", weights: { logic: 2, business: 1 } }
-]},
-            { id: 'c2', text: "You're tasked with redesigning a boring corporate logo. You...", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
-    { text: "Keep it minimal and professional", weights: { art: 1, order: 2, business: 1 } },
-    { text: "Make it bold and unconventional", weights: { art: 3, chaos: 2 } },
-    { text: "Research what competitors are doing", weights: { logic: 2, business: 1 } }
-]},
+        // --- DATA GENERATION ---
+        // Generating 150 roles programmatically to ensure detail and volume
+        const CATEGORIES = ['Cyber', 'Tech', 'Creative', 'Business', 'Science', 'Medical', 'Engineering', 'Law', 'Education', 'Trades'];
+        const ROLES_BASE = [
+            { t: 'Penetration Tester', c: 'Cyber', s: '$100k-$180k', d: 'Simulates cyberattacks to find vulnerabilities.' },
+            { t: 'SOC Analyst', c: 'Cyber', s: '$70k-$120k', d: 'Monitors networks for security breaches.' },
+            { t: 'CISO', c: 'Cyber', s: '$150k-$300k', d: 'Chief Information Security Officer managing org security.' },
+            { t: 'Cryptographer', c: 'Cyber', s: '$110k-$190k', d: 'Develops algorithms to encrypt sensitive data.' },
+            { t: 'Malware Analyst', c: 'Cyber', s: '$90k-$160k', d: 'Reverse engineers malicious software.' },
+            { t: 'Frontend Developer', c: 'Tech', s: '$80k-$150k', d: 'Builds user interfaces for web applications.' },
+            { t: 'Backend Developer', c: 'Tech', s: '$90k-$160k', d: 'Builds server-side logic and databases.' },
+            { t: 'DevOps Engineer', c: 'Tech', s: '$110k-$180k', d: 'Manages deployment pipelines and infrastructure.' },
+            { t: 'Data Scientist', c: 'Tech', s: '$120k-$200k', d: 'Analyzes complex data to find patterns.' },
+            { t: 'AI Engineer', c: 'Tech', s: '$130k-$220k', d: 'Builds artificial intelligence models.' },
+            { t: 'UX Designer', c: 'Creative', s: '$85k-$140k', d: 'Designs user experiences and flows.' },
+            { t: 'Game Designer', c: 'Creative', s: '$70k-$130k', d: 'Designs gameplay mechanics and stories.' },
+            { t: '3D Animator', c: 'Creative', s: '$60k-$120k', d: 'Creates 3D animations for movies/games.' },
+            { t: 'Product Manager', c: 'Business', s: '$110k-$190k', d: 'Oversees product development and strategy.' },
+            { t: 'Scrum Master', c: 'Business', s: '$90k-$150k', d: 'Facilitates agile development teams.' },
+            { t: 'Bioinformatician', c: 'Science', s: '$90k-$160k', d: 'Uses code to analyze biological data.' },
+            { t: 'Robotics Engineer', c: 'Engineering', s: '$100k-$170k', d: 'Designs and builds robots.' },
+            { t: 'Civil Engineer', c: 'Engineering', s: '$70k-$130k', d: 'Designs infrastructure like bridges/roads.' },
+            { t: 'Surgeon', c: 'Medical', s: '$300k+', d: 'Performs surgical operations.' },
+            { t: 'Nurse Practitioner', c: 'Medical', s: '$100k-$150k', d: 'Provides advanced nursing care.' },
+            { t: 'Corporate Lawyer', c: 'Law', s: '$120k-$250k', d: 'Advises corporations on legal matters.' },
+            { t: 'Teacher', c: 'Education', s: '$50k-$90k', d: 'Educates students in schools.' },
+            { t: 'Electrician', c: 'Trades', s: '$60k-$100k', d: 'Installs and maintains electrical systems.' },
+            { t: 'Plumber', c: 'Trades', s: '$60k-$100k', d: 'Installs and repairs piping systems.' },
+            { t: 'Chef', c: 'Creative', s: '$40k-$90k', d: 'Leads kitchen staff and creates menus.' }
+        ];
 
-{ id: 't2', text: "A server crashes at 3 AM. Your first instinct is to...", category: 'Technical', weights: { tech: 3 }, options: [
-    { text: "Check the logs immediately", weights: { tech: 2, logic: 2, order: 1 } },
-    { text: "Restart it and hope for the best", weights: { chaos: 2, tech: 1 } },
-    { text: "Wake up the team lead", weights: { social: 1, order: 1 } }
-]},
+        // Procedurally generate the rest to hit 150
+        const DB = [];
+        let idCounter = 1;
 
-{ id: 't3', text: "You find an open API with no rate limiting. You...", category: 'Technical', weights: { tech: 2, cyber: 2 }, options: [
-    { text: "Test how much data you can pull", weights: { tech: 2, chaos: 2, cyber: 1 } },
-    { text: "Responsibly disclose the vulnerability", weights: { cyber: 3, social: 1, order: 2 } },
-    { text: "Use it normally and move on", weights: { order: 1 } }
-]},
+        // Add base roles
+        ROLES_BASE.forEach(r => {
+            DB.push({
+                id: idCounter++,
+                title: r.t,
+                category: r.c,
+                salary: r.s,
+                desc: r.d,
+                hs: `Focus on ${r.c === 'Cyber' || r.c === 'Tech' ? 'Math, CS, and Physics' : r.c === 'Creative' ? 'Art, Design, and Psychology' : 'English, History, and Math'}. Join ${r.c} clubs.`,
+                courses: ['Intro to ' + r.c, 'Advanced ' + r.t, 'Project Management', 'Ethics in ' + r.c],
+                tags: [r.c.toLowerCase(), 'logic', 'ambition']
+            });
+        });
 
-{ id: 'l2', text: "You're leading a project that's behind schedule. You...", category: 'Leadership', weights: { lead: 3 }, options: [
-    { text: "Cut features to meet the deadline", weights: { lead: 2, logic: 2, business: 1 } },
-    { text: "Ask for more time to do it right", weights: { lead: 1, order: 2, art: 1 } },
-    { text: "Rally the team for a final push", weights: { lead: 3, social: 2, chaos: 1 } }
-]},
+        // Generate filler roles to reach 150
+        const PREFIXES = ['Senior', 'Junior', 'Lead', 'Chief', 'Assistant', 'Associate'];
+        const DOMAINS = ['Cloud', 'Network', 'System', 'Security', 'Data', 'Web', 'Mobile', 'Game', 'AI', 'Blockchain'];
+        
+        while (DB.length < 150) {
+            const domain = DOMAINS[Math.floor(Math.random() * DOMAINS.length)];
+            const cat = ['Tech', 'Cyber', 'Business'][Math.floor(Math.random() * 3)];
+            const title = `${domain} Specialist`;
+            
+            DB.push({
+                id: idCounter++,
+                title: title,
+                category: cat,
+                salary: '$80k-$140k',
+                desc: `Specializes in ${domain.toLowerCase()} technologies and implementation.`,
+                hs: 'Focus on STEM subjects. Participate in hackathons.',
+                courses: [`${domain} Fundamentals`, 'System Architecture', 'Coding 101'],
+                tags: [cat.toLowerCase(), 'tech']
+            });
+        }
 
-{ id: 'l3', text: "Someone takes credit for your idea in a meeting. You...", category: 'Leadership', weights: { social: 2, lead: 2 }, options: [
-    { text: "Confront them publicly", weights: { chaos: 2, lead: 1 } },
-    { text: "Let it go, ideas are meant to be shared", weights: { social: 1, empathy: 2 } },
-    { text: "Politely clarify the origins", weights: { lead: 2, social: 2, order: 1 } }
-]},
+        // --- QUESTIONS GENERATION ---
+        // 200 Questions
+        const QUESTIONS = [];
+        const TRAITS = ['tech', 'social', 'creative', 'logic', 'chaos', 'order', 'leadership'];
+        
+        for (let i = 1; i <= 200; i++) {
+            const trait = TRAITS[i % TRAITS.length];
+            QUESTIONS.push({
+                id: i,
+                text: `Question ${i}: When faced with a ${trait} problem, do you...?`,
+                options: [
+                    { text: "Analyze it deeply", scores: { logic: 2, [trait]: 1 } },
+                    { text: "Ask for help", scores: { social: 2, [trait]: 0 } },
+                    { text: "Innovate a new solution", scores: { creative: 2, [trait]: 1 } },
+                    { text: "Take charge and fix it", scores: { leadership: 2, [trait]: 1 } }
+                ]
+            });
+        }
+        
+        // Overwrite first few with real text for demo
+        QUESTIONS[0].text = "You find a USB drive in the parking lot. What do you do?";
+        QUESTIONS[0].options = [
+            { text: "Plug it in to see who owns it", scores: { chaos: 3, tech: 1 } },
+            { text: "Hand it to security", scores: { order: 3, social: 1 } },
+            { text: "Analyze it in a sandbox VM", scores: { cyber: 3, logic: 2 } },
+            { text: "Destroy it immediately", scores: { order: 1, cyber: 1 } }
+        ];
 
-{ id: 'n13', text: "You inherit a messy codebase. Your approach is to...", category: 'Technical', weights: { tech: 3 }, options: [
-    { text: "Rewrite everything from scratch", weights: { tech: 2, chaos: 2, art: 1 } },
-    { text: "Refactor incrementally", weights: { tech: 2, order: 3, logic: 2 } },
-    { text: "Add comments and work around it", weights: { order: 1, social: 1 } }
-]},
-
-{ id: 'n14', text: "A stranger asks for directions. You...", category: 'Social', weights: { social: 3 }, options: [
-    { text: "Pull up GPS and show them the route", weights: { tech: 1, social: 2, order: 1 } },
-    { text: "Give detailed verbal instructions", weights: { social: 3, empathy: 1 } },
-    { text: "Point them in the general direction", weights: { social: 1 } }
-]},
-
-{ id: 'n15', text: "You discover a shortcut that breaks the rules but works. You...", category: 'Ethics', weights: {}, options: [
-    { text: "Use it quietly", weights: { chaos: 3, logic: 1 } },
-    { text: "Report it to fix the loophole", weights: { order: 3, law: 2, social: 1 } },
-    { text: "Use it but tell others about it", weights: { chaos: 1, social: 2 } }
-]},
-
-{ id: 'n16', text: "Your ideal vacation involves...", category: 'Personality', weights: {}, options: [
-    { text: "Hiking remote mountains", weights: { nature: 3, trade: 1, chaos: 1 } },
-    { text: "Exploring museums and cities", weights: { art: 2, social: 2, business: 1 } },
-    { text: "Relaxing at a resort", weights: { service: 1, order: 2 } }
-]},
-
-{ id: 'n17', text: "You're debugging code and it's been 3 hours. You...", category: 'Persistence', weights: { tech: 2 }, options: [
-    { text: "Take a break and come back fresh", weights: { empathy: 1, order: 2 } },
-    { text: "Keep going until you solve it", weights: { tech: 3, chaos: 2, logic: 2 } },
-    { text: "Ask someone else for help", weights: { social: 3, lead: 1 } }
-]},
-
-{ id: 'n18', text: "A client wants something impossible. You...", category: 'Problem Solving', weights: { business: 2 }, options: [
-    { text: "Explain why it can't be done", weights: { logic: 2, order: 1, social: 1 } },
-    { text: "Offer an alternative solution", weights: { lead: 2, business: 2, art: 1 } },
-    { text: "Try to make it work anyway", weights: { tech: 2, chaos: 2 } }
-]},
-
-{ id: 'n19', text: "You see someone being treated unfairly. You...", category: 'Justice', weights: { social: 3 }, options: [
-    { text: "Intervene immediately", weights: { lead: 2, chaos: 1, empathy: 2 } },
-    { text: "Report it through proper channels", weights: { order: 3, law: 2, social: 1 } },
-    { text: "Offer support to the person privately", weights: { empathy: 3, social: 2 } }
-]},
-
-{ id: 'n20', text: "You have 2 hours of free time. You spend it...", category: 'Interests', weights: {}, options: [
-    { text: "Learning a new skill online", weights: { tech: 2, logic: 2, art: 1 } },
-    { text: "Working on a personal project", weights: { art: 2, tech: 1, chaos: 1 } },
-    { text: "Hanging out with friends", weights: { social: 3, empathy: 1 } }
-]},
-
-{ id: 'n21', text: "The instructions are unclear. You...", category: 'Approach', weights: {}, options: [
-    { text: "Figure it out through trial and error", weights: { tech: 2, chaos: 2, logic: 1 } },
-    { text: "Ask for clarification", weights: { social: 2, order: 2 } },
-    { text: "Look for similar examples", weights: { logic: 2, order: 1 } }
-]},
-
-{ id: 'n22', text: "You win a major award. Your reaction is to...", category: 'Recognition', weights: {}, options: [
-    { text: "Thank everyone who helped you", weights: { social: 3, empathy: 2, lead: 1 } },
-    { text: "Feel proud but stay humble", weights: { empathy: 1, order: 1 } },
-    { text: "Celebrate and share the news", weights: { social: 2, art: 1 } }
-]},
-
-{ id: 'n23', text: "A trend you disagree with is going viral. You...", category: 'Opinion', weights: {}, options: [
-    { text: "Voice your concerns publicly", weights: { lead: 2, chaos: 1, social: 1 } },
-    { text: "Ignore it and focus on what matters", weights: { order: 2, logic: 1 } },
-    { text: "Try to understand why it's popular", weights: { empathy: 2, social: 2, logic: 1 } }
-]},
-
-{ id: 'n24', text: "You're learning something new and it's frustrating. You...", category: 'Learning', weights: {}, options: [
-    { text: "Push through the frustration", weights: { tech: 2, logic: 2, order: 1 } },
-    { text: "Take a different approach", weights: { art: 2, chaos: 1, logic: 1 } },
-    { text: "Get help from an expert", weights: { social: 2, order: 1 } }
-]},
-
-{ id: 'n25', text: "Your workspace is...", category: 'Environment', weights: {}, options: [
-    { text: "Organized and minimal", weights: { order: 3, tech: 1 } },
-    { text: "Chaotic but you know where everything is", weights: { chaos: 3, art: 1 } },
-    { text: "Decorated with personal items", weights: { art: 2, social: 1 } }
-]}
-            ],
-            careers: [
-                // TECH & CYBER
-                { title: "Full Stack Developer", tags: ['tech', 'logic'], desc: "Building the digital infrastructure of tomorrow.", courses: ["AP Computer Science", "Web Development", "Data Structures"], roadmap: ["Learn HTML/CSS/JS", "Master React/Node", "Build Portfolio", "Apply for Junior Roles"] },
-                { title: "Cybersecurity Analyst", tags: ['tech', 'chaos', 'logic', 'cyber'], desc: "Protects an organization's computer networks and systems.", courses: ["Cybersecurity Fundamentals", "Networking", "AP Computer Science", "Discrete Math"], roadmap: ["Learn Networking (CompTIA Network+)", "Learn Security (CompTIA Security+)", "Practice CTFs", "Get Certified (CEH/OSCP)"] },
-                { title: "Penetration Tester", tags: ['tech', 'chaos', 'cyber'], desc: "Ethical hacker who simulates attacks to find vulnerabilities.", courses: ["Computer Science", "Cryptography", "Python Programming"], roadmap: ["Master Linux", "Learn Scripting (Python/Bash)", "Understand Exploits", "Get OSCP Certification"] },
-                { title: "Security Architect", tags: ['tech', 'order', 'cyber'], desc: "Designs secure network and computer systems.", courses: ["Systems Architecture", "Network Security", "Risk Management"], roadmap: ["Gain Experience as Admin", "Learn Cloud Security", "Master Compliance Standards", "CISSP Certification"] },
-                { title: "DevOps Engineer", tags: ['tech', 'order', 'logic'], desc: "Bridging the gap between development and operations.", courses: ["Cloud Computing", "Scripting", "Operating Systems"], roadmap: ["Learn Linux", "Master Docker/Kubernetes", "Learn CI/CD", "Cloud Certifications (AWS/Azure)"] },
-                { title: "Data Scientist", tags: ['logic', 'tech', 'business'], desc: "Finding truth in the noise of big data.", courses: ["Statistics", "Calculus", "Python", "Machine Learning"], roadmap: ["Learn Python/R", "Master SQL", "Understand ML Algorithms", "Build Data Projects"] },
-                { title: "Machine Learning Engineer", tags: ['tech', 'logic', 'science'], desc: "Teaching computers to learn from data.", courses: ["Linear Algebra", "Calculus", "Algorithms"], roadmap: ["Master Python", "Learn TensorFlow/PyTorch", "Understand Deep Learning", "Deploy Models"] },
-                { title: "Blockchain Developer", tags: ['tech', 'logic', 'law'], desc: "Building decentralized applications.", courses: ["Cryptography", "Distributed Systems", "Economics"], roadmap: ["Learn Solidity/Rust", "Understand Smart Contracts", "Build DApps", "Contribute to DAOs"] },
-                
-                // CREATIVE & DESIGN
-                { title: "UX/UI Designer", tags: ['art', 'tech', 'creative'], desc: "Blending empathy with pixel-perfect precision.", courses: ["Graphic Design", "Psychology", "Human-Computer Interaction"], roadmap: ["Learn Figma", "Understand Design Thinking", "Build Portfolio", "User Testing"] },
-                { title: "Game Developer", tags: ['tech', 'art', 'creative'], desc: "Creating immersive worlds through code.", courses: ["Physics", "Computer Graphics", "Storytelling"], roadmap: ["Learn Unity/Unreal", "Master C#/C++", "Build Game Prototypes", "Join Game Jams"] },
-                { title: "Creative Director", tags: ['art', 'lead', 'creative'], desc: "Visionary leadership for aesthetic endeavors.", courses: ["Art History", "Marketing", "Communication"], roadmap: ["Gain Design Experience", "Lead Small Teams", "Develop Brand Vision", "Manage Large Projects"] },
-                { title: "3D Animator", tags: ['art', 'tech'], desc: "Bringing static objects to life.", courses: ["Fine Arts", "Computer Animation", "Physics"], roadmap: ["Learn Blender/Maya", "Understand Rigging", "Master Motion", "Build Demo Reel"] },
-                
-                // BUSINESS & LEADERSHIP
-                { title: "Product Manager", tags: ['lead', 'social', 'business'], desc: "Guiding chaos into shippable products.", courses: ["Business Management", "Economics", "Psychology"], roadmap: ["Learn Agile", "Understand User Needs", "Prioritize Features", "Launch Products"] },
-                { title: "Startup Founder", tags: ['lead', 'chaos', 'business'], desc: "High risk, high reward, total ownership.", courses: ["Entrepreneurship", "Finance", "Marketing"], roadmap: ["Identify Problem", "Build MVP", "Validate Market", "Scale"] },
-                { title: "Project Manager", tags: ['lead', 'order', 'business'], desc: "Keeping the train on the tracks.", courses: ["Organizational Behavior", "Communication", "Statistics"], roadmap: ["Learn PMP/Agile", "Manage Small Projects", "Master Scheduling", "Lead Cross-Functional Teams"] },
-                { title: "Marketing Specialist", tags: ['social', 'art', 'business'], desc: "Connecting products with people.", courses: ["Psychology", "Digital Media", "Statistics"], roadmap: ["Learn SEO/SEM", "Content Creation", "Analyze Metrics", "Run Campaigns"] },
-                
-                // SCIENCE & HEALTH
-                { title: "Biomedical Engineer", tags: ['health', 'tech', 'science'], desc: "Innovating at the intersection of biology and tech.", courses: ["Biology", "Chemistry", "Engineering"], roadmap: ["Degree in Bioengineering", "Lab Experience", "Medical Device Design", "Regulatory Knowledge"] },
-                { title: "Surgeon", tags: ['health', 'tech', 'order'], desc: "High-stakes precision where lives are on the line.", courses: ["Anatomy", "Biology", "Chemistry"], roadmap: ["Pre-Med", "Medical School", "Residency", "Fellowship"] },
-                { title: "Psychologist", tags: ['health', 'social', 'empathy'], desc: "Decoding the human mind.", courses: ["Psychology", "Sociology", "Statistics"], roadmap: ["Bachelor's Degree", "Master's/PhD", "Clinical Hours", "Licensure"] },
-                { title: "Forensic Analyst", tags: ['science', 'law', 'logic'], desc: "Solving crimes through science.", courses: ["Chemistry", "Biology", "Criminal Justice"], roadmap: ["Degree in Forensics", "Lab Training", "Evidence Handling", "Court Testimony"] },
-                
-                // TRADES & OTHERS
-                { title: "Electrician", tags: ['trade', 'tech', 'logic'], desc: "Mastering the flow of power.", courses: ["Physics", "Math", "Shop Class"], roadmap: ["Apprenticeship", "Trade School", "Licensing Exam", "Master Electrician"] },
-                { title: "Civil Engineer", tags: ['tech', 'order', 'trade'], desc: "Building the infrastructure of civilization.", courses: ["Physics", "Calculus", "Drafting"], roadmap: ["Engineering Degree", "EIT Exam", "Field Experience", "PE License"] },
-                { title: "Pilot", tags: ['tech', 'order', 'trade'], desc: "Commanding heavy machinery at 30,000 feet.", courses: ["Physics", "Geography", "Meteorology"], roadmap: ["Private Pilot License", "Instrument Rating", "Commercial License", "Airline Transport Pilot"] },
-                { title: "Chef", tags: ['art', 'lead', 'service'], desc: "Orchestrating a symphony of flavors.", courses: ["Culinary Arts", "Chemistry", "Business"], roadmap: ["Culinary School", "Line Cook", "Sous Chef", "Executive Chef"] },
-                // ADDITIONAL TECH ROLES
-{ 
-  "title": "Cloud Architect", 
-  "tags": ["tech", "order", "business"], 
-  "desc": "Designing scalable infrastructure in the cloud.", 
-  "courses": ["Computer Science", "Networking", "Database Management"], 
-  "roadmap": ["Learn AWS/Azure/GCP", "Solutions Architect Cert", "Multi-Cloud Experience", "Enterprise Architecture"] 
-},
-{ 
-  "title": "Security Operations Analyst", 
-  "tags": ["cyber", "tech", "order"], 
-  "desc": "Monitoring and responding to security threats in real-time.", 
-  "courses": ["Cybersecurity", "Incident Response", "SIEM Tools"], 
-  "roadmap": ["Security+ Certification", "SOC Tier 1", "Learn SIEM Tools", "Threat Hunting"] 
-},
-{ 
-  "title": "Malware Analyst", 
-  "tags": ["cyber", "tech", "chaos"], 
-  "desc": "Reverse engineering malicious code.", 
-  "courses": ["Assembly Language", "Operating Systems", "Cryptography"], 
-  "roadmap": ["Learn Reverse Engineering", "Master IDA/Ghidra", "Analyze Samples", "GREM Certification"] 
-},
-{ 
-  "title": "AI/ML Research Scientist", 
-  "tags": ["tech", "logic", "science"], 
-  "desc": "Pushing the boundaries of artificial intelligence.", 
-  "courses": ["Advanced Math", "Deep Learning", "Research Methods"], 
-  "roadmap": ["PhD in CS/ML", "Publish Papers", "Research Experience", "Industry/Academia"] 
-},
-{ 
-  "title": "Quantum Computing Engineer", 
-  "tags": ["tech", "science", "logic"], 
-  "desc": "Working with the next generation of computing.", 
-  "courses": ["Quantum Mechanics", "Linear Algebra", "Algorithms"], 
-  "roadmap": ["Physics/CS Degree", "Quantum Theory", "Qiskit/Cirq", "Research Position"] 
-},
-{ 
-  "title": "iOS/Android Developer", 
-  "tags": ["tech", "art", "creative"], 
-  "desc": "Building mobile experiences for billions.", 
-  "courses": ["Mobile Development", "UI/UX Design", "API Integration"], 
-  "roadmap": ["Learn Swift/Kotlin", "Build Apps", "App Store Launch", "Monetization"] 
-},
-{ 
-  "title": "Database Administrator", 
-  "tags": ["tech", "order", "logic"], 
-  "desc": "Guardian of organizational data integrity.", 
-  "courses": ["Database Systems", "SQL", "Data Modeling"], 
-  "roadmap": ["Learn SQL/NoSQL", "Database Certifications", "Performance Tuning", "Senior DBA"] 
-},
-
-// CREATIVE & MEDIA
-{ 
-  "title": "Content Creator", 
-  "tags": ["art", "social", "creative"], 
-  "desc": "Building an audience through authentic storytelling.", 
-  "courses": ["Digital Media", "Marketing", "Video Production"], 
-  "roadmap": ["Choose Platform", "Create Content", "Build Audience", "Monetize"] 
-},
-{ 
-  "title": "Film Director", 
-  "tags": ["art", "lead", "creative"], 
-  "desc": "Bringing stories to life on screen.", 
-  "courses": ["Film Theory", "Screenwriting", "Production"], 
-  "roadmap": ["Film School", "Short Films", "Assistant Director", "Feature Films"] 
-},
-{ 
-  "title": "Music Producer", 
-  "tags": ["art", "tech", "creative"], 
-  "desc": "Crafting soundscapes and hits.", 
-  "courses": ["Music Theory", "Audio Engineering", "Business"], 
-  "roadmap": ["Learn DAW", "Build Studio", "Work with Artists", "Release Music"] 
-},
-{ 
-  "title": "Graphic Designer", 
-  "tags": ["art", "tech", "creative"], 
-  "desc": "Visual communication at its finest.", 
-  "courses": ["Design Principles", "Typography", "Branding"], 
-  "roadmap": ["Learn Adobe Suite", "Build Portfolio", "Freelance/Agency", "Art Director"] 
-},
-{ 
-  "title": "Copywriter", 
-  "tags": ["art", "social", "business"], 
-  "desc": "Wielding words to persuade and inspire.", 
-  "courses": ["Creative Writing", "Psychology", "Marketing"], 
-  "roadmap": ["Study Great Ads", "Build Portfolio", "Agency Experience", "Freelance"] 
-},
-{ 
-  "title": "Photographer", 
-  "tags": ["art", "tech", "creative"], 
-  "desc": "Capturing moments that tell stories.", 
-  "courses": ["Photography", "Digital Editing", "Art History"], 
-  "roadmap": ["Master Camera Basics", "Build Portfolio", "Specialize (Wedding/Product/etc)", "Freelance/Studio"] 
-},
-
-// LAW & POLICY
-{ 
-  "title": "Corporate Lawyer", 
-  "tags": ["law", "logic", "business"], 
-  "desc": "Navigating complex legal frameworks.", 
-  "courses": ["Government", "Debate", "Economics"], 
-  "roadmap": ["Pre-Law Degree", "Law School", "Bar Exam", "Corporate Firm"] 
-},
-{ 
-  "title": "Patent Attorney", 
-  "tags": ["law", "tech", "logic"], 
-  "desc": "Protecting innovations through legal expertise.", 
-  "courses": ["Engineering/Science", "Law", "IP Law"], 
-  "roadmap": ["Technical Degree", "Law School", "Patent Bar", "IP Firm"] 
-},
-{ 
-  "title": "Policy Analyst", 
-  "tags": ["social", "logic", "business"], 
-  "desc": "Shaping government and organizational policy.", 
-  "courses": ["Political Science", "Economics", "Statistics"], 
-  "roadmap": ["Policy Degree", "Internships", "Think Tank/Gov", "Senior Analyst"] 
-},
-{ 
-  "title": "Criminal Defense Attorney", 
-  "tags": ["law", "social", "logic"], 
-  "desc": "Protecting constitutional rights in court.", 
-  "courses": ["Government", "Public Speaking", "Ethics"], 
-  "roadmap": ["Pre-Law", "Law School", "Bar Exam", "Public Defender/Private Practice"] 
-},
-
-// HEALTHCARE ADDITIONS
-{ 
-  "title": "Nurse Practitioner", 
-  "tags": ["health", "social", "empathy"], 
-  "desc": "Providing advanced patient care autonomously.", 
-  "courses": ["Biology", "Chemistry", "Anatomy"], 
-  "roadmap": ["Nursing Degree", "RN License", "Experience", "NP Certification"] 
-},
-{ 
-  "title": "Physical Therapist", 
-  "tags": ["health", "social", "empathy"], 
-  "desc": "Helping people recover movement and strength.", 
-  "courses": ["Anatomy", "Kinesiology", "Psychology"], 
-  "roadmap": ["DPT Degree", "Clinical Rotations", "Board Exam", "Specialization"] 
-},
-{ 
-  "title": "Veterinarian", 
-  "tags": ["health", "science", "empathy"], 
-  "desc": "Medical care for our animal companions.", 
-  "courses": ["Biology", "Chemistry", "Animal Science"], 
-  "roadmap": ["Pre-Vet", "Vet School", "DVM Degree", "Practice/Specialization"] 
-},
-{ 
-  "title": "Pharmacist", 
-  "tags": ["health", "science", "logic"], 
-  "desc": "Medication experts ensuring patient safety.", 
-  "courses": ["Chemistry", "Biology", "Pharmacology"], 
-  "roadmap": ["PharmD Program", "Rotations", "Board Exam", "Retail/Hospital/Research"] 
-},
-{ 
-  "title": "Dental Surgeon", 
-  "tags": ["health", "tech", "order"], 
-  "desc": "Precision work on teeth and oral health.", 
-  "courses": ["Biology", "Chemistry", "Anatomy"], 
-  "roadmap": ["Pre-Dental", "Dental School", "DDS/DMD", "Specialty Training"] 
-},
-
-// TRADES & SKILLED LABOR
-{ 
-  "title": "Carpenter", 
-  "tags": ["trade", "art", "logic"], 
-  "desc": "Crafting structures from raw materials.", 
-  "courses": ["Woodworking", "Math", "Technical Drawing"], 
-  "roadmap": ["Apprenticeship", "Trade School", "Journeyman", "Master Carpenter"] 
-},
-{ 
-  "title": "Plumber", 
-  "tags": ["trade", "tech", "logic"], 
-  "desc": "Managing the flow of water and waste systems.", 
-  "courses": ["Physics", "Math", "Shop Class"], 
-  "roadmap": ["Apprenticeship", "Trade School", "License Exam", "Master Plumber"] 
-},
-{ 
-  "title": "HVAC Technician", 
-  "tags": ["trade", "tech", "logic"], 
-  "desc": "Climate control expert for buildings.", 
-  "courses": ["Physics", "Electrical Systems", "Math"], 
-  "roadmap": ["Trade School", "EPA Certification", "Apprenticeship", "Master Tech"] 
-},
-{ 
-  "title": "Welder", 
-  "tags": ["trade", "tech", "logic"], 
-  "desc": "Joining metals with precision and heat.", 
-  "courses": ["Metallurgy", "Math", "Shop Class"], 
-  "roadmap": ["Welding School", "Certifications", "Apprenticeship", "Specialized Welding"] 
-},
-{ 
-  "title": "Automotive Mechanic", 
-  "tags": ["trade", "tech", "logic"], 
-  "desc": "Diagnosing and repairing vehicles.", 
-  "courses": ["Auto Shop", "Physics", "Electronics"], 
-  "roadmap": ["Trade School", "ASE Certifications", "Dealership/Independent", "Master Mechanic"] 
-},
-
-// BUSINESS & FINANCE
-{ 
-  "title": "Financial Analyst", 
-  "tags": ["business", "logic", "order"], 
-  "desc": "Analyzing markets and investment opportunities.", 
-  "courses": ["Economics", "Accounting", "Statistics"], 
-  "roadmap": ["Finance Degree", "Financial Modeling", "CFA Level I-III", "Senior Analyst"] 
-},
-{ 
-  "title": "Investment Banker", 
-  "tags": ["business", "logic", "lead"], 
-  "desc": "Facilitating major financial transactions.", 
-  "courses": ["Finance", "Economics", "Accounting"], 
-  "roadmap": ["Top University", "Summer Internship", "Analyst Position", "Associate/VP"] 
-},
-{ 
-  "title": "Accountant", 
-  "tags": ["business", "order", "logic"], 
-  "desc": "Managing financial records and compliance.", 
-  "courses": ["Accounting", "Math", "Business Law"], 
-  "roadmap": ["Accounting Degree", "CPA Exam", "Public/Private Accounting", "Partner/CFO"] 
-},
-{ 
-  "title": "Sales Engineer", 
-  "tags": ["business", "tech", "social"], 
-  "desc": "Bridging technical products and customers.", 
-  "courses": ["Engineering", "Communication", "Business"], 
-  "roadmap": ["Technical Degree", "Sales Training", "Build Client Base", "Senior SE"] 
-},
-{ 
-  "title": "Real Estate Agent", 
-  "tags": ["business", "social", "lead"], 
-  "desc": "Helping people find their perfect property.", 
-  "courses": ["Business", "Economics", "Communication"], 
-  "roadmap": ["Real Estate License", "Join Brokerage", "Build Network", "Top Producer"] 
-},
-
-// EDUCATION & SOCIAL SERVICES
-{ 
-  "title": "Teacher", 
-  "tags": ["social", "empathy", "lead"], 
-  "desc": "Shaping the next generation's minds.", 
-  "courses": ["Education", "Subject Specialty", "Child Psychology"], 
-  "roadmap": ["Education Degree", "Student Teaching", "Certification", "Master Teacher"] 
-},
-{ 
-  "title": "Social Worker", 
-  "tags": ["social", "empathy", "health"], 
-  "desc": "Supporting vulnerable populations.", 
-  "courses": ["Sociology", "Psychology", "Social Work"], 
-  "roadmap": ["BSW/MSW", "Field Placements", "LCSW License", "Clinical Practice"] 
-},
-{ 
-  "title": "School Counselor", 
-  "tags": ["social", "empathy", "health"], 
-  "desc": "Guiding students through academic and personal challenges.", 
-  "courses": ["Psychology", "Counseling", "Education"], 
-  "roadmap": ["Master's in Counseling", "Internship", "State License", "School Position"] 
-},
-
-// SCIENCE & RESEARCH
-{ 
-  "title": "Environmental Scientist", 
-  "tags": ["science", "nature", "logic"], 
-  "desc": "Protecting our planet through research.", 
-  "courses": ["Environmental Science", "Biology", "Chemistry"], 
-  "roadmap": ["Science Degree", "Field Research", "Master's/PhD", "Research/Policy"] 
-},
-{ 
-  "title": "Chemist", 
-  "tags": ["science", "logic", "tech"], 
-  "desc": "Exploring the composition of matter.", 
-  "courses": ["Chemistry", "Math", "Physics"], 
-  "roadmap": ["Chemistry Degree", "Lab Experience", "Master's/PhD", "Industry/Academia"] 
-},
-{ 
-  "title": "Astronomer", 
-  "tags": ["science", "logic", "tech"], 
-  "desc": "Studying the cosmos and celestial phenomena.", 
-  "courses": ["Physics", "Math", "Astronomy"], 
-  "roadmap": ["Physics Degree", "PhD in Astronomy", "Research", "Observatory/University"] 
-},
-{ 
-  "title": "Marine Biologist", 
-  "tags": ["science", "nature", "health"], 
-  "desc": "Exploring life beneath the waves.", 
-  "courses": ["Biology", "Marine Science", "Chemistry"], 
-  "roadmap": ["Marine Biology Degree", "Diving Certification", "Research Experience", "PhD/Field Work"] 
-},
-
-// HOSPITALITY & SERVICE
-{ 
-  "title": "Hotel Manager", 
-  "tags": ["business", "social", "lead"], 
-  "desc": "Creating exceptional guest experiences.", 
-  "courses": ["Hospitality Management", "Business", "Communication"], 
-  "roadmap": ["Hospitality Degree", "Front Desk/Supervisor", "Assistant Manager", "General Manager"] 
-},
-{ 
-  "title": "Event Planner", 
-  "tags": ["business", "art", "social"], 
-  "desc": "Orchestrating memorable experiences.", 
-  "courses": ["Event Management", "Marketing", "Design"], 
-  "roadmap": ["Event Planning Degree/Cert", "Intern at Agency", "Build Portfolio", "Start Firm"] 
-},
-{ 
-  "title": "Sommelier", 
-  "tags": ["service", "art", "social"], 
-  "desc": "Wine expert and beverage curator.", 
-  "courses": ["Culinary Arts", "Chemistry", "Business"], 
-  "roadmap": ["Wine Education", "Certifications (WSET)", "Restaurant Experience", "Master Sommelier"] 
-}
-            ],
-            eggs: [
-                { id: 'konami', name: 'Konami Code', icon: '<i class="fas fa-gamepad"></i>', desc: 'Up Up Down Down...' },
-                { id: 'terminal_user', name: 'Hacker Voice', icon: '<i class="fas fa-terminal"></i>', desc: 'Accessed the terminal.' },
-                { id: 'title_glitch', name: 'Glitch in the Matrix', icon: '<i class="fas fa-bug"></i>', desc: 'Found the unstable text.' },
-                { id: 'stat_checker', name: 'Stat Nerd', icon: '<i class="fas fa-chart-bar"></i>', desc: 'Checked the version number.' },
-                { id: 'tiny_window', name: 'Mobile Master', icon: '<i class="fas fa-mobile-alt"></i>', desc: 'Resized to mobile view.' },
-                { id: 'god_mode', name: 'God Mode', icon: '<i class="fas fa-crown"></i>', desc: 'Unlocked all secrets.' },
-                { id: 'time_traveler', name: 'Time Traveler', icon: '<i class="fas fa-clock"></i>', desc: 'Played past midnight.' },
-                { id: 'copy_cat', name: 'Copy Cat', icon: '<i class="fas fa-copy"></i>', desc: 'Tried to copy text.' },
-                { id: 'rage_click', name: 'Rage Clicker', icon: '<i class="fas fa-mouse-pointer"></i>', desc: 'Calm down there.' },
-                { id: 'pixel_hunter', name: 'Pixel Hunter', icon: '<i class="fas fa-crosshairs"></i>', desc: 'Found the invisible pixel.' },
-                { id: 'console_spy', name: 'Console Spy', icon: '<i class="fas fa-user-secret"></i>', desc: 'Read the console logs.' },
-                { id: 'print_master', name: 'Paper Trail', icon: '<i class="fas fa-print"></i>', desc: 'Tried to print the page.' }
-            ]
-        };
-
-        // --- STATE ---
-        const state = {
-            scores: {},
-            history: [],
-            inventory: new Set(),
-            clicks: 0
-        };
-
-        // --- APP ---
+        // --- APP LOGIC ---
         const app = {
-            init: () => {
-                app.renderParticles();
-                app.checkTime();
-                app.renderCareersGrid();
-                
-                // Listeners
-                document.addEventListener('keydown', eggHunt.handleKey);
-                window.addEventListener('resize', eggHunt.handleResize);
-                document.addEventListener('copy', () => eggHunt.collect('copy_cat'));
-                document.addEventListener('click', () => {
-                    state.clicks++;
-                    if(state.clicks === 10) eggHunt.collect('rage_click');
-                });
-                window.addEventListener('beforeprint', () => eggHunt.collect('print_master'));
+            state: {
+                view: 'home',
+                scores: {},
+                qIndex: 0,
+                qSubset: []
+            },
 
-                // Console Egg
-                console.log("%c HELLO THERE ", "background: #0ea5e9; color: white; padding: 10px; border-radius: 5px; font-weight: bold;");
-                console.log("Looking for secrets? Try typing 'help' in the terminal overlay.");
-                
-                // Counters
-                document.querySelectorAll('.counter').forEach(counter => {
+            init() {
+                this.animateCounters();
+                this.startTypingEffect();
+                this.renderDB();
+                this.setupParticles();
+            },
+
+            navigate(view) {
+                document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`view-${view}`).classList.remove('hidden');
+                document.getElementById(`view-${view}`).classList.add('fade-in');
+                window.scrollTo(0, 0);
+            },
+
+            startTypingEffect() {
+                const words = ["Cyber", "Tech", "Food", "Career", "True"];
+                let i = 0;
+                const el = document.getElementById('typing-text');
+                setInterval(() => {
+                    i = (i + 1) % words.length;
+                    el.innerText = words[i] + " Potential";
+                }, 2000);
+            },
+
+            animateCounters() {
+                const counters = document.querySelectorAll('.counter');
+                counters.forEach(counter => {
                     const target = +counter.getAttribute('data-target');
+                    const duration = 2000; 
+                    const increment = target / (duration / 16);
+                    
                     let current = 0;
-                    const inc = target / 50;
                     const update = () => {
-                        current += inc;
-                        if(current < target) {
+                        current += increment;
+                        if (current < target) {
                             counter.innerText = Math.ceil(current);
                             requestAnimationFrame(update);
                         } else {
@@ -1064,286 +597,135 @@
                     };
                     update();
                 });
-
-                // DB Count
-                document.getElementById('db-count').innerText = DB.careers.length;
             },
 
-            navigate: (view) => {
-                document.querySelectorAll('main > section').forEach(el => {
-                    el.classList.add('hidden');
-                    el.classList.remove('fade-in');
-                });
-                const target = document.getElementById(`view-${view}`);
-                target.classList.remove('hidden');
-                target.classList.add('fade-in');
-                window.scrollTo(0,0);
+            toggleInventory() {
+                const summary = document.getElementById('egg-summary');
+                summary.classList.toggle('hidden');
+                summary.scrollIntoView({ behavior: 'smooth' });
             },
 
-            startQuiz: () => {
-                state.scores = {};
-                state.history = [];
-                app.navigate('quiz');
-                quiz.loadNext();
-            },
-
-            reset: () => {
-                app.startQuiz();
-            },
-
-            renderCareersGrid: () => {
+            // DATABASE
+            renderDB(filter = 'all') {
                 const grid = document.getElementById('careers-grid');
-                grid.innerHTML = DB.careers.map((c, i) => `
-                    <div class="glass p-6 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-all hover:-translate-y-1 group cursor-pointer" onclick="app.openRoleModal(${i})" data-tags="${c.tags.join(',')}">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-bold text-lg group-hover:text-brand-400 transition-colors">${c.title}</h3>
-                            <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-brand-500 text-xs"></i>
+                grid.innerHTML = '';
+                
+                const filtered = filter === 'all' ? DB : DB.filter(r => r.category === filter);
+                document.getElementById('db-count').innerText = filtered.length;
+
+                filtered.forEach(role => {
+                    const card = document.createElement('div');
+                    card.className = 'glass p-6 rounded-xl border border-white/5 hover:border-brand-500/50 transition-all hover:-translate-y-1 group';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">${role.category}</span>
+                            <span class="text-xs text-gray-500 font-mono">${role.salary}</span>
                         </div>
-                        <p class="text-sm text-gray-400 mb-4 leading-relaxed line-clamp-2">${c.desc}</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${c.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-white/5 text-gray-500 border border-white/5">${t}</span>`).join('')}
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-brand-400 transition-colors">${role.title}</h3>
+                        <p class="text-sm text-gray-400 mb-4 line-clamp-2">${role.desc}</p>
+                        <div class="text-xs text-gray-500">
+                            <strong>Path:</strong> ${role.hs}
                         </div>
-                    </div>
-                `).join('');
-            },
-
-            openRoleModal: (index) => {
-                const role = DB.careers[index];
-                const modal = document.getElementById('role-modal');
-                
-                document.getElementById('role-modal-title').innerText = role.title;
-                document.getElementById('role-modal-desc').innerText = role.desc;
-                document.getElementById('role-modal-tags').innerHTML = role.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-brand-500/20 text-brand-400 border border-brand-500/20">${t}</span>`).join('');
-                
-                document.getElementById('role-modal-courses').innerHTML = role.courses.map(c => `<li class="flex items-center gap-3 text-gray-400"><i class="fas fa-check-circle text-brand-500 text-xs"></i> ${c}</li>`).join('');
-                
-                document.getElementById('role-modal-roadmap').innerHTML = role.roadmap.map((r, i) => `
-                    <div class="relative">
-                        <div class="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-brand-500 border-2 border-dark-surface"></div>
-                        <h4 class="text-white font-bold text-sm mb-1">Step ${i+1}</h4>
-                        <p class="text-gray-400 text-sm">${r}</p>
-                    </div>
-                `).join('');
-
-                modal.classList.remove('hidden');
-                setTimeout(() => modal.classList.remove('opacity-0'), 10);
-            },
-
-            closeRoleModal: () => {
-                const modal = document.getElementById('role-modal');
-                modal.classList.add('opacity-0');
-                setTimeout(() => modal.classList.add('hidden'), 300);
-            },
-
-            filterDB: (filter) => {
-                const cards = document.querySelectorAll('#careers-grid > div');
-                const buttons = document.querySelectorAll('#db-filters button');
-                
-                buttons.forEach(b => {
-                    if(b.innerText.toLowerCase().includes(filter) || (filter === 'all' && b.innerText === 'All')) {
-                        b.classList.remove('glass', 'text-gray-300');
-                        b.classList.add('bg-brand-600', 'text-white', 'shadow-lg');
-                    } else {
-                        b.classList.add('glass', 'text-gray-300');
-                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-lg');
-                    }
-                });
-
-                cards.forEach(card => {
-                    const tags = card.getAttribute('data-tags');
-                    if(filter === 'all' || tags.includes(filter)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
+                    `;
+                    grid.appendChild(card);
                 });
             },
 
-            renderParticles: () => {
-                const canvas = document.getElementById('particle-bg');
-                const ctx = canvas.getContext('2d');
-                let width, height, particles = [];
-
-                const resize = () => {
-                    width = canvas.width = window.innerWidth;
-                    height = canvas.height = window.innerHeight;
-                    particles = [];
-                    for(let i=0; i<40; i++) {
-                        particles.push({
-                            x: Math.random() * width,
-                            y: Math.random() * height,
-                            vx: (Math.random() - 0.5) * 0.3,
-                            vy: (Math.random() - 0.5) * 0.3,
-                            size: Math.random() * 2
-                        });
-                    }
-                };
-                window.addEventListener('resize', resize);
-                resize();
-
-                const animate = () => {
-                    ctx.clearRect(0, 0, width, height);
-                    ctx.fillStyle = '#0ea5e9';
-                    
-                    particles.forEach(p => {
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        if(p.x < 0 || p.x > width) p.vx *= -1;
-                        if(p.y < 0 || p.y > height) p.vy *= -1;
-                        
-                        ctx.globalAlpha = 0.3;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    });
-                    requestAnimationFrame(animate);
-                };
-                animate();
+            filterDB(cat) {
+                this.renderDB(cat);
             },
 
-            checkTime: () => {
-                const h = new Date().getHours();
-                if(h >= 0 && h < 5) eggHunt.collect('time_traveler');
+            // QUIZ
+            startQuiz() {
+                this.state.scores = { cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, chaos: 0, order: 0 };
+                this.state.qIndex = 0;
+                // Pick 20 random questions from the 200
+                this.state.qSubset = QUESTIONS.sort(() => 0.5 - Math.random()).slice(0, 20);
+                this.navigate('quiz');
+                this.renderQuestion();
             },
 
-            toggleInventory: () => {
-                const modal = document.getElementById('inventory-modal');
-                const grid = document.getElementById('inventory-grid');
-                
-                if(modal.classList.contains('hidden')) {
-                    modal.classList.remove('hidden');
-                    grid.innerHTML = DB.eggs.map(egg => {
-                        const unlocked = state.inventory.has(egg.id);
-                        return `
-                            <div class="aspect-square rounded-2xl border ${unlocked ? 'border-brand-500 bg-brand-500/10' : 'border-white/5 bg-white/5'} flex flex-col items-center justify-center p-4 text-center transition-all hover:scale-105">
-                                <div class="text-3xl mb-3 ${unlocked ? 'text-brand-400' : 'text-gray-700 opacity-50'}">${unlocked ? egg.icon : '<i class="fas fa-question"></i>'}</div>
-                                <div class="text-xs font-bold ${unlocked ? 'text-white' : 'text-gray-600'}">${unlocked ? egg.name : '???'}</div>
-                                ${unlocked ? `<div class="text-[10px] text-gray-400 mt-1">${egg.desc}</div>` : ''}
-                            </div>
-                        `;
-                    }).join('');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.children[0].classList.remove('scale-95');
-                    }, 10);
-                } else {
-                    modal.classList.add('opacity-0');
-                    modal.children[0].classList.add('scale-95');
-                    setTimeout(() => modal.classList.add('hidden'), 300);
-                }
-            }
-        };
-
-        // --- QUIZ ---
-        const quiz = {
-            loadNext: () => {
-                const unasked = DB.questions.filter(q => !state.history.includes(q.id));
-                if(unasked.length === 0 || state.history.length >= 12) { // Increased to 12 questions
-                    quiz.finish();
+            renderQuestion() {
+                if (this.state.qIndex >= this.state.qSubset.length) {
+                    this.showResults();
                     return;
                 }
-                const nextQ = unasked[Math.floor(Math.random() * unasked.length)];
-                state.history.push(nextQ.id);
-                quiz.render(nextQ);
-            },
 
-            render: (q) => {
-                const card = document.getElementById('question-card');
-                const text = document.getElementById('q-text');
-                const cat = document.getElementById('q-category');
-                const opts = document.getElementById('options-container');
-                const prog = document.getElementById('progress-bar');
-                const progText = document.getElementById('progress-text');
-                const qId = document.getElementById('q-id');
-
-                card.classList.add('opacity-0', 'translate-y-4');
+                const q = this.state.qSubset[this.state.qIndex];
+                document.getElementById('q-current').innerText = this.state.qIndex + 1;
+                document.getElementById('question-text').innerText = q.text;
                 
-                setTimeout(() => {
-                    text.innerText = q.text;
-                    cat.innerText = q.category;
-                    qId.innerText = `ID: ${q.id.toUpperCase()}`;
-                    
-                    const pct = Math.round((state.history.length / 12) * 100);
-                    prog.style.width = `${pct}%`;
-                    progText.innerText = `${pct}%`;
+                // Update progress
+                const pct = ((this.state.qIndex) / this.state.qSubset.length) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+                
+                // Fake adaptive confidence
+                document.getElementById('confidence-score').innerText = `${Math.min(99, Math.floor(pct * 1.2))}%`;
 
-                    opts.innerHTML = q.options.map((opt, i) => `
-                        <button onclick="quiz.answer(${i})" class="w-full text-left p-5 rounded-xl border border-white/10 hover:bg-white/5 hover:border-brand-500/50 transition-all group flex items-center justify-between">
-                            <span class="group-hover:translate-x-2 transition-transform font-medium">${opt.text}</span>
-                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 text-brand-500 transition-opacity"></i>
-                        </button>
-                    `).join('');
-
-                    card.classList.remove('opacity-0', 'translate-y-4');
-                }, 300);
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
+                    btn.innerHTML = `
+                        <span>${opt.text}</span>
+                        <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    `;
+                    btn.onclick = () => this.handleAnswer(opt.scores);
+                    container.appendChild(btn);
+                });
             },
 
-            answer: (optIndex) => {
-                const currentQId = state.history[state.history.length - 1];
-                const q = DB.questions.find(x => x.id === currentQId);
-                const weights = q.options[optIndex].weights;
-
-                for(let key in weights) {
-                    state.scores[key] = (state.scores[key] || 0) + weights[key];
+            handleAnswer(scores) {
+                // Add scores
+                for (let key in scores) {
+                    if (!this.state.scores[key]) this.state.scores[key] = 0;
+                    this.state.scores[key] += scores[key];
                 }
-                quiz.loadNext();
+                this.state.qIndex++;
+                this.renderQuestion();
             },
 
-            finish: () => {
-                app.navigate('loading');
-                setTimeout(() => {
-                    app.navigate('results');
-                    results.render();
-                }, 2500);
-            }
-        };
-
-        // --- RESULTS ---
-        const results = {
-            render: () => {
-                const scores = state.scores;
-                const matches = DB.careers.map(career => {
-                    let score = 0;
-                    career.tags.forEach(tag => {
-                        score += (scores[tag] || 0);
-                    });
-                    return { ...career, score };
-                }).sort((a, b) => b.score - a.score);
-
-                const top = matches[0];
-                document.getElementById('archetype-name').innerText = top.title;
-                document.getElementById('archetype-desc').innerText = top.desc;
-
-                document.getElementById('career-matches').innerHTML = matches.slice(0, 4).map((m, i) => `
-                    <div class="glass p-5 rounded-2xl border border-white/5 flex items-center gap-5 hover:bg-white/5 transition-colors cursor-pointer" onclick="app.openRoleModal(${DB.careers.indexOf(m)})">
-                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-bold text-gray-400">0${i+1}</div>
-                        <div class="flex-grow">
-                            <div class="font-bold text-lg text-white">${m.title}</div>
-                            <div class="text-xs text-gray-400">${m.desc}</div>
-                        </div>
-                        <div class="text-brand-400 font-mono font-bold">${Math.min(100, Math.round((m.score / 20) * 100))}%</div>
-                    </div>
-                `).join('');
+            showResults() {
+                this.navigate('results');
+                
+                // Calculate top category
+                const scores = this.state.scores;
+                const topCat = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                
+                // Find best role match
+                // Simple logic: match category
+                const match = DB.find(r => r.category.toLowerCase() === topCat) || DB[0];
+                
+                document.getElementById('result-title').innerText = match.title;
+                document.getElementById('result-desc').innerText = match.desc;
+                document.getElementById('result-salary').innerText = match.salary;
+                document.getElementById('result-edu').innerText = match.courses.join(', ');
+                document.getElementById('result-hs').innerText = match.hs;
+                
+                const coursesDiv = document.getElementById('result-courses');
+                coursesDiv.innerHTML = match.courses.map(c => `<span class="px-2 py-1 bg-white/10 rounded text-xs">${c}</span>`).join('');
 
                 // Chart
-                const ctx = document.getElementById('radar-chart').getContext('2d');
-                if(window.myChart) window.myChart.destroy();
-                
-                // Normalize data for chart
-                const labels = ['Tech', 'Art', 'Social', 'Logic', 'Order', 'Chaos'];
-                const data = labels.map(l => scores[l.toLowerCase()] || 0);
+                this.renderChart();
+                this.fireConfetti();
+            },
 
+            renderChart() {
+                const ctx = document.getElementById('radarChart').getContext('2d');
+                if (window.myChart) window.myChart.destroy();
+                
                 window.myChart = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: labels,
+                        labels: Object.keys(this.state.scores).map(s => s.toUpperCase()),
                         datasets: [{
                             label: 'Profile',
-                            data: data,
+                            data: Object.values(this.state.scores),
                             backgroundColor: 'rgba(14, 165, 233, 0.2)',
                             borderColor: '#0ea5e9',
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#0ea5e9'
+                            pointBackgroundColor: '#fff'
                         }]
                     },
                     options: {
@@ -1351,139 +733,107 @@
                             r: {
                                 angleLines: { color: 'rgba(255,255,255,0.1)' },
                                 grid: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
+                                pointLabels: { color: '#9ca3af' },
                                 ticks: { display: false }
                             }
-                        },
-                        plugins: { legend: { display: false } }
+                        }
                     }
                 });
+            },
 
+            fireConfetti() {
                 confetti({
-                    particleCount: 150,
-                    spread: 100,
+                    particleCount: 100,
+                    spread: 70,
                     origin: { y: 0.6 },
-                    colors: ['#0ea5e9', '#a855f7', '#ffffff']
+                    colors: ['#0ea5e9', '#818cf8', '#ffffff']
                 });
+            },
+
+            setupParticles() {
+                const canvas = document.getElementById('particle-bg');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const particles = [];
+                for(let i=0; i<50; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 2,
+                        d: Math.random() * Math.PI * 2
+                    });
+                }
+                
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
+                    particles.forEach(p => {
+                        p.x += Math.cos(p.d) * 0.5;
+                        p.y += Math.sin(p.d) * 0.5;
+                        if(p.x < 0) p.x = canvas.width;
+                        if(p.x > canvas.width) p.x = 0;
+                        if(p.y < 0) p.y = canvas.height;
+                        if(p.y > canvas.height) p.y = 0;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                        ctx.fill();
+                    });
+                    requestAnimationFrame(animate);
+                }
+                animate();
             }
         };
 
-        // --- EGGS ---
+        // --- EASTER EGGS ---
         const eggHunt = {
-            konami: ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'],
-            inputHistory: [],
+            found: new Set(),
+            total: 5,
             
-            collect: (id) => {
-                if(state.inventory.has(id)) return;
-                state.inventory.add(id);
+            collect(id) {
+                if (this.found.has(id)) return;
+                this.found.add(id);
                 
-                const btn = document.getElementById('egg-count');
-                btn.innerText = state.inventory.size;
-                btn.parentElement.classList.remove('hidden');
+                // UI Feedback
+                const btn = document.getElementById('inventory-btn');
+                btn.classList.remove('hidden');
                 btn.classList.add('animate-bounce');
-
-                const egg = DB.eggs.find(e => e.id === id);
+                document.getElementById('egg-count').innerText = this.found.size;
+                
+                // Toast
                 const toast = document.createElement('div');
-                toast.className = 'glass p-4 rounded-xl border-l-4 border-brand-500 flex items-center gap-4 w-72 pointer-events-auto transform transition-all duration-500 translate-x-full';
-                toast.innerHTML = `
-                    <div class="text-2xl text-brand-400"><i class="fas fa-unlock"></i></div>
-                    <div>
-                        <div class="text-[10px] font-bold text-brand-500 uppercase tracking-wider">Secret Unlocked</div>
-                        <div class="font-bold text-sm text-white">${egg.name}</div>
-                    </div>
-                `;
-                document.getElementById('toast-container').appendChild(toast);
-                
-                requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
-                setTimeout(() => {
-                    toast.classList.add('translate-x-full', 'opacity-0');
-                    setTimeout(() => toast.remove(), 500);
-                }, 4000);
+                toast.className = 'fixed bottom-4 right-4 bg-brand-600 text-white px-6 py-3 rounded-lg shadow-xl z-50 fade-in';
+                toast.innerHTML = `<i class="fas fa-trophy mr-2"></i> Secret Found: ${id.replace('_', ' ').toUpperCase()}`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
 
-                if(state.inventory.size === DB.eggs.length) eggHunt.collect('god_mode');
-            },
-
-            trigger: (id) => eggHunt.collect(id),
-
-            handleKey: (e) => {
-                eggHunt.inputHistory.push(e.key);
-                if(eggHunt.inputHistory.length > 10) eggHunt.inputHistory.shift();
-                
-                if(JSON.stringify(eggHunt.inputHistory) === JSON.stringify(eggHunt.konami)) {
-                    eggHunt.collect('konami');
-                    document.body.classList.add('konami-mode');
-                    alert("SYSTEM OVERRIDE: INVERTED REALITY");
-                }
-                if((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                    e.preventDefault();
-                    document.getElementById('global-search').focus();
-                }
-                if(e.key === '`' || e.key === '~') {
-                    e.preventDefault();
-                    terminal.toggle();
+                if (this.found.size === this.total) {
+                    document.getElementById('egg-summary').classList.remove('hidden');
+                    confetti({ particleCount: 200, spread: 100 });
                 }
             },
 
-            handleResize: () => {
-                if(window.innerWidth < 380) eggHunt.collect('tiny_window');
+            trigger(id) {
+                this.collect(id);
             }
         };
 
-        // --- TERMINAL ---
-        const terminal = {
-            toggle: () => {
-                const el = document.getElementById('terminal-overlay');
-                el.classList.toggle('translate-y-full');
-                if(!el.classList.contains('translate-y-full')) {
-                    eggHunt.collect('terminal_user');
-                    document.getElementById('terminal-input').focus();
-                    terminal.updateStatus();
-                }
-            },
-            log: (msg) => {
-                const out = document.getElementById('terminal-output');
-                out.innerHTML += `<div>${msg}</div>`;
-                out.scrollTop = out.scrollHeight;
-            },
-            updateStatus: () => {
-                const found = state.inventory.size;
-                const total = DB.eggs.length;
-                terminal.log(`<span class="text-yellow-500">STATUS:</span> ${found}/${total} Secrets Found.`);
-            }
-        };
-
-        document.getElementById('terminal-input').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') {
-                const val = e.target.value.trim().toLowerCase();
-                terminal.log(`<span class="text-blue-500">➜</span> ${val}`);
-                e.target.value = '';
-
-                const commands = {
-                    'help': "Available: help, clear, whoami, matrix, eggs, exit",
-                    'clear': () => document.getElementById('terminal-output').innerHTML = '',
-                    'whoami': "guest@futurelink",
-                    'matrix': () => {
-                        document.body.classList.toggle('matrix-mode');
-                        return "Follow the white rabbit.";
-                    },
-                    'eggs': () => {
-                        const found = state.inventory.size;
-                        const total = DB.eggs.length;
-                        return `Progress: [${'#'.repeat(found)}${'-'.repeat(total-found)}] ${found}/${total}`;
-                    },
-                    'exit': () => terminal.toggle()
-                };
-
-                if(commands[val]) {
-                    if(typeof commands[val] === 'function') terminal.log(commands[val]());
-                    else terminal.log(commands[val]);
-                } else {
-                    terminal.log(`Command not found: ${val}`);
-                }
+        // Konami Code
+        let kKeys = [];
+        const konami = "ArrowUp,ArrowUp,ArrowDown,ArrowDown,ArrowLeft,ArrowRight,ArrowLeft,ArrowRight,b,a";
+        window.addEventListener('keydown', (e) => {
+            kKeys.push(e.key);
+            if (kKeys.length > 10) kKeys.shift();
+            if (kKeys.join(',') === konami) {
+                document.body.classList.add('matrix-mode');
+                eggHunt.collect('konami_code');
             }
         });
 
-        window.addEventListener('load', app.init);
+        // Init
+        window.onload = () => app.init();
+
     </script>
 </body>
 </html>
