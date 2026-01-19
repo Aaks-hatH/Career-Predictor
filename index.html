@@ -696,326 +696,445 @@
 
         // --- APP LOGIC ---
         const app = {
-            state: {
-                view: 'home',
-                scores: {},
-                qIndex: 0,
-                currentPool: 'general',
-                history: []
-            },
+    state: {
+        view: 'home',
+        scores: {},
+        qIndex: 0,
+        askedQuestionIds: new Set(),
+        questionSequence: [] // Store the actual sequence of questions
+    },
 
-            init() {
-                this.animateCounters();
-                this.startTypingEffect();
-                this.renderDB();
-                this.setupParticles();
-            },
+    init() {
+        this.animateCounters();
+        this.startTypingEffect();
+        this.renderDB();
+        this.setupParticles();
+    },
 
-            navigate(view) {
-                document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`view-${view}`).classList.remove('hidden');
-                document.getElementById(`view-${view}`).classList.add('fade-in');
-                window.scrollTo(0, 0);
-            },
+    navigate(view) {
+        document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`view-${view}`).classList.remove('hidden');
+        document.getElementById(`view-${view}`).classList.add('fade-in');
+        window.scrollTo(0, 0);
+    },
 
-            startTypingEffect() {
-                const words = ["Cyber", "Tech", "Food", "Career", "True"];
-                let i = 0;
-                const el = document.getElementById('typing-text');
-                setInterval(() => {
-                    i = (i + 1) % words.length;
-                    el.innerText = words[i] + " Potential";
-                }, 2000);
-            },
+    startTypingEffect() {
+        const words = ["Cyber", "Tech", "Food", "Career", "True"];
+        let i = 0;
+        const el = document.getElementById('typing-text');
+        setInterval(() => {
+            i = (i + 1) % words.length;
+            el.innerText = words[i] + " Potential";
+        }, 2000);
+    },
 
-            animateCounters() {
-                const counters = document.querySelectorAll('.counter');
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const duration = 2000; 
-                    const increment = target / (duration / 16);
-                    
-                    let current = 0;
-                    const update = () => {
-                        current += increment;
-                        if (current < target) {
-                            counter.innerText = Math.ceil(current);
-                            requestAnimationFrame(update);
-                        } else {
-                            counter.innerText = target;
-                        }
-                    };
-                    update();
-                });
-            },
-
-            toggleInventory() {
-                const summary = document.getElementById('egg-summary');
-                summary.classList.toggle('hidden');
-                summary.scrollIntoView({ behavior: 'smooth' });
-            },
-
-            // DATABASE
-            renderDB(filter = 'all') {
-                const grid = document.getElementById('careers-grid');
-                grid.innerHTML = '';
-                
-                const filtered = filter === 'all' ? DB : DB.filter(r => r.category === filter);
-                document.getElementById('db-count').innerText = filtered.length;
-
-                filtered.forEach(role => {
-                    const card = document.createElement('div');
-                    card.className = 'glass p-6 rounded-xl border border-white/5 hover:border-brand-500/50 transition-all hover:-translate-y-1 group';
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">${role.category}</span>
-                            <span class="text-xs text-gray-500 font-mono">${role.salary}</span>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2 group-hover:text-brand-400 transition-colors">${role.title}</h3>
-                        <p class="text-sm text-gray-400 mb-4 line-clamp-2">${role.desc}</p>
-                        <div class="text-xs text-gray-500">
-                            <strong>Path:</strong> ${role.hs}
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            },
-
-            filterDB(cat) {
-                this.renderDB(cat);
-            },
-
-            // QUIZ
-            startQuiz() {
-                this.state.scores = { cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, chaos: 0, order: 0, social: 0, science: 0, leadership: 0, medical: 0 };
-                this.state.qIndex = 0;
-                this.state.currentPool = 'general';
-                this.state.history = [];
-                this.navigate('quiz');
-                this.renderQuestion();
-            },
-
-            getTopCategory() {
-                return Object.keys(this.state.scores).reduce((a, b) => this.state.scores[a] > this.state.scores[b] ? a : b);
-            },
-
-            getNextQuestion() {
-                // ADAPTIVE LOGIC
-                // 1. First 5 questions are always General
-                if (this.state.qIndex < 5) {
-                    return QUESTION_POOLS.general[this.state.qIndex];
+    animateCounters() {
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const duration = 2000; 
+            const increment = target / (duration / 16);
+            
+            let current = 0;
+            const update = () => {
+                current += increment;
+                if (current < target) {
+                    counter.innerText = Math.ceil(current);
+                    requestAnimationFrame(update);
+                } else {
+                    counter.innerText = target;
                 }
+            };
+            update();
+        });
+    },
 
-                // 2. Determine dominant trait
-                const topTrait = this.getTopCategory();
-                
-                // 3. Switch pool based on trait
-                let pool = QUESTION_POOLS.general; // fallback
-                if (['tech', 'cyber', 'logic'].includes(topTrait)) pool = QUESTION_POOLS.tech;
-                else if (['creative', 'social', 'chaos'].includes(topTrait)) pool = QUESTION_POOLS.creative;
-                else if (['business', 'leadership', 'order'].includes(topTrait)) pool = QUESTION_POOLS.business;
-                else if (['science', 'medical'].includes(topTrait)) pool = QUESTION_POOLS.science;
+    toggleInventory() {
+        const summary = document.getElementById('egg-summary');
+        summary.classList.toggle('hidden');
+        summary.scrollIntoView({ behavior: 'smooth' });
+    },
 
-                // 4. Get a random question from that pool that hasn't been asked
-                // (Simple implementation: just pick one by index modulo length for now to ensure continuity, 
-                // or random. Let's do random from pool)
-                const available = pool.filter(q => !this.state.history.includes(q.text));
-                if (available.length === 0) {
-                    // If pool exhausted, fallback to general or random generation
-                    return {
-                        text: `Scenario #${this.state.qIndex + 1}: A complex situation arises in the ${topTrait} field. You:`,
-                        options: [
-                            { text: "Analyze logic", scores: { logic: 2 } },
-                            { text: "Innovate", scores: { creative: 2 } },
-                            { text: "Lead", scores: { leadership: 2 } },
-                            { text: "Hack it", scores: { cyber: 2 } }
-                        ]
-                    };
-                }
-                return available[Math.floor(Math.random() * available.length)];
-            },
+    // DATABASE
+    renderDB(filter = 'all') {
+        const grid = document.getElementById('careers-grid');
+        grid.innerHTML = '';
+        
+        const filtered = filter === 'all' ? DB : DB.filter(r => r.category === filter);
+        document.getElementById('db-count').innerText = filtered.length;
 
-            renderQuestion() {
-                if (this.state.qIndex >= 20) { // Cap at 20 questions
-                    this.showResults();
-                    return;
-                }
+        filtered.forEach(role => {
+            const card = document.createElement('div');
+            card.className = 'glass p-6 rounded-xl border border-white/5 hover:border-brand-500/50 transition-all hover:-translate-y-1 group';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">${role.category}</span>
+                    <span class="text-xs text-gray-500 font-mono">${role.salary}</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 group-hover:text-brand-400 transition-colors">${role.title}</h3>
+                <p class="text-sm text-gray-400 mb-4 line-clamp-2">${role.desc}</p>
+                <div class="text-xs text-gray-500">
+                    <strong>Path:</strong> ${role.hs}
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    },
 
-                const q = this.getNextQuestion();
-                this.state.history.push(q.text);
+    filterDB(cat) {
+        this.renderDB(cat);
+    },
 
-                document.getElementById('q-current').innerText = this.state.qIndex + 1;
-                document.getElementById('question-text').innerText = q.text;
-                
-                // Update progress
-                const pct = ((this.state.qIndex) / 20) * 100;
-                document.getElementById('progress-bar').style.width = `${pct}%`;
-                
-                // Adaptive confidence (fake but feels real)
-                const topScore = Math.max(...Object.values(this.state.scores));
-                const confidence = Math.min(99, Math.floor((topScore / (this.state.qIndex * 2 || 1)) * 100));
-                document.getElementById('confidence-score').innerText = `${confidence}%`;
-
-                const container = document.getElementById('options-container');
-                container.innerHTML = '';
-                
-                q.options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
-                    btn.innerHTML = `
-                        <span>${opt.text}</span>
-                        <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                    `;
-                    btn.onclick = () => this.handleAnswer(opt.scores);
-                    container.appendChild(btn);
-                });
-            },
-
-            handleAnswer(scores) {
-                // Add scores
-                for (let key in scores) {
-                    if (!this.state.scores[key]) this.state.scores[key] = 0;
-                    this.state.scores[key] += scores[key];
-                }
-                this.state.qIndex++;
-                this.renderQuestion();
-            },
-
-            showResults() {
-                this.navigate('results');
-                
-                // Calculate top category
-                const topCat = this.getTopCategory();
-                
-                // Find best role match
-                // Improved matching: find role with matching category AND highest tag overlap
-                let matches = DB.filter(r => r.category.toLowerCase() === topCat || r.tags.includes(topCat));
-                if (matches.length === 0) matches = DB; // Fallback
-                
-                const match = matches[Math.floor(Math.random() * matches.length)];
-                
-                document.getElementById('result-title').innerText = match.title;
-                document.getElementById('result-desc').innerText = match.desc;
-                document.getElementById('result-salary').innerText = match.salary;
-                document.getElementById('result-edu').innerText = match.courses.join(', ');
-                document.getElementById('result-hs').innerText = match.hs;
-                
-                const coursesDiv = document.getElementById('result-courses');
-                coursesDiv.innerHTML = match.courses.map(c => `<span class="px-2 py-1 bg-white/10 rounded text-xs">${c}</span>`).join('');
-
-                // Chart
-                this.renderChart();
-                this.fireConfetti();
-            },
-
-            renderChart() {
-                const ctx = document.getElementById('radarChart').getContext('2d');
-                if (window.myChart) window.myChart.destroy();
-                
-                // Filter top 6 traits for chart to keep it clean
-                const sortedTraits = Object.entries(this.state.scores)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 6);
-
-                window.myChart = new Chart(ctx, {
-                    type: 'radar',
-                    data: {
-                        labels: sortedTraits.map(s => s[0].toUpperCase()),
-                        datasets: [{
-                            label: 'Profile',
-                            data: sortedTraits.map(s => s[1]),
-                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                            borderColor: '#0ea5e9',
-                            pointBackgroundColor: '#fff'
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            r: {
-                                angleLines: { color: 'rgba(255,255,255,0.1)' },
-                                grid: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
-                                ticks: { display: false }
-                            }
-                        }
-                    }
-                });
-            },
-
-            fireConfetti() {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#0ea5e9', '#818cf8', '#ffffff']
-                });
-            },
-
-            setupParticles() {
-                const canvas = document.getElementById('particle-bg');
-                const ctx = canvas.getContext('2d');
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                
-                const particles = [];
-                for(let i=0; i<50; i++) {
-                    particles.push({
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height,
-                        r: Math.random() * 2,
-                        d: Math.random() * Math.PI * 2
-                    });
-                }
-                
-                function animate() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
-                    particles.forEach(p => {
-                        p.x += Math.cos(p.d) * 0.5;
-                        p.y += Math.sin(p.d) * 0.5;
-                        if(p.x < 0) p.x = canvas.width;
-                        if(p.x > canvas.width) p.x = 0;
-                        if(p.y < 0) p.y = canvas.height;
-                        if(p.y > canvas.height) p.y = 0;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                        ctx.fill();
-                    });
-                    requestAnimationFrame(animate);
-                }
-                animate();
-            },
-
-            // GOD MODE (Reward)
-            enableGodMode() {
-                document.body.classList.add('matrix-mode');
-                const summary = document.getElementById('egg-summary');
-                summary.innerHTML = `
-                    <h4 class="text-green-500 font-bold mb-4 text-xl">⚡ GOD MODE ACTIVATED</h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="app.forceMatch('Cyber')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CYBER</button>
-                        <button onclick="app.forceMatch('Business')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CEO</button>
-                        <button onclick="app.maxStats()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">MAX STATS</button>
-                        <button onclick="app.toggleGravity()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">ZERO GRAVITY</button>
-                    </div>
-                `;
-            },
-
-            forceMatch(cat) {
-                this.state.scores[cat.toLowerCase()] = 999;
-                this.showResults();
-            },
-
-            maxStats() {
-                for(let k in this.state.scores) this.state.scores[k] = 100;
-                this.renderChart();
-            },
-
-            toggleGravity() {
-                document.body.style.transform = document.body.style.transform ? '' : 'rotate(180deg)';
-                document.body.style.transition = 'transform 2s ease';
-            }
+    // QUIZ - FIXED VERSION
+    startQuiz() {
+        this.state.scores = { 
+            cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, 
+            chaos: 0, order: 0, social: 0, science: 0, leadership: 0, medical: 0 
         };
+        this.state.qIndex = 0;
+        this.state.askedQuestionIds = new Set();
+        this.state.questionSequence = this.generateQuestionSequence();
+        this.navigate('quiz');
+        this.renderQuestion();
+    },
+
+    generateQuestionSequence() {
+        // Create unique IDs for all questions first
+        let questionId = 0;
+        Object.keys(QUESTION_POOLS).forEach(poolName => {
+            QUESTION_POOLS[poolName].forEach(q => {
+                if (!q.id) q.id = `${poolName}_${questionId++}`;
+            });
+        });
+
+        // Pre-generate a sequence of 20 diverse questions
+        const sequence = [];
+        
+        // First 5 are always from general pool (in order)
+        for (let i = 0; i < 5 && i < QUESTION_POOLS.general.length; i++) {
+            sequence.push(QUESTION_POOLS.general[i]);
+        }
+
+        // Remaining 15 will be selected adaptively during quiz
+        // (we'll generate them on-the-fly based on user responses)
+        
+        return sequence;
+    },
+
+    getTopCategory() {
+        const entries = Object.entries(this.state.scores);
+        if (entries.length === 0) return 'tech';
+        return entries.reduce((a, b) => a[1] > b[1] ? a : b)[0];
+    },
+
+    getTop3Categories() {
+        return Object.entries(this.state.scores)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(e => e[0]);
+    },
+
+    getNextQuestion() {
+        // For first 5 questions, use pre-generated sequence
+        if (this.state.qIndex < 5) {
+            return this.state.questionSequence[this.state.qIndex];
+        }
+
+        // After question 5, adaptively choose based on scores
+        const topCategories = this.getTop3Categories();
+        
+        // Determine which pool to use
+        let selectedPool = QUESTION_POOLS.general;
+        
+        for (let category of topCategories) {
+            if (['tech', 'cyber', 'logic'].includes(category)) {
+                selectedPool = QUESTION_POOLS.tech;
+                break;
+            } else if (['creative', 'social', 'chaos'].includes(category)) {
+                selectedPool = QUESTION_POOLS.creative;
+                break;
+            } else if (['business', 'leadership', 'order'].includes(category)) {
+                selectedPool = QUESTION_POOLS.business;
+                break;
+            } else if (['science', 'medical'].includes(category)) {
+                selectedPool = QUESTION_POOLS.science;
+                break;
+            }
+        }
+
+        // Get questions from selected pool that haven't been asked
+        const availableQuestions = selectedPool.filter(q => 
+            !this.state.askedQuestionIds.has(q.id)
+        );
+
+        // If pool is exhausted, try other pools
+        if (availableQuestions.length === 0) {
+            const allPools = [
+                ...QUESTION_POOLS.general,
+                ...QUESTION_POOLS.tech,
+                ...QUESTION_POOLS.creative,
+                ...QUESTION_POOLS.business,
+                ...QUESTION_POOLS.science
+            ];
+            
+            const anyAvailable = allPools.filter(q => 
+                !this.state.askedQuestionIds.has(q.id)
+            );
+
+            if (anyAvailable.length > 0) {
+                return anyAvailable[Math.floor(Math.random() * anyAvailable.length)];
+            }
+            
+            // Last resort: generate a unique dynamic question
+            return this.generateDynamicQuestion();
+        }
+
+        // Return random question from available
+        return availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+    },
+
+    generateDynamicQuestion() {
+        const topTrait = this.getTopCategory();
+        const dynamicId = `dynamic_${this.state.qIndex}_${Date.now()}`;
+        
+        const scenarios = [
+            {
+                text: `You're working on a ${topTrait}-related project with a tight deadline. Your approach:`,
+                options: [
+                    { text: "Focus on quality, even if it takes longer", scores: { order: 2, logic: 2 } },
+                    { text: "Ship fast, iterate later", scores: { chaos: 2, business: 2 } },
+                    { text: "Balance both speed and quality", scores: { leadership: 2, tech: 1 } },
+                    { text: "Delegate and oversee", scores: { leadership: 3 } }
+                ]
+            },
+            {
+                text: `A major challenge appears in the ${topTrait} domain. You:`,
+                options: [
+                    { text: "Research extensively before acting", scores: { science: 2, logic: 2 } },
+                    { text: "Trust your instincts and dive in", scores: { chaos: 2, creative: 2 } },
+                    { text: "Consult with experts first", scores: { social: 2, order: 1 } },
+                    { text: "Break it down into smaller problems", scores: { logic: 3, tech: 1 } }
+                ]
+            },
+            {
+                text: `You discover a new tool that could revolutionize your ${topTrait} work. You:`,
+                options: [
+                    { text: "Immediately experiment with it", scores: { tech: 3, chaos: 1 } },
+                    { text: "Read all documentation first", scores: { order: 3, logic: 1 } },
+                    { text: "Wait for community feedback", scores: { social: 2, order: 1 } },
+                    { text: "Stick with proven methods", scores: { order: 2 } }
+                ]
+            }
+        ];
+
+        const question = scenarios[Math.floor(Math.random() * scenarios.length)];
+        question.id = dynamicId;
+        return question;
+    },
+
+    renderQuestion() {
+        if (this.state.qIndex >= 20) {
+            this.showResults();
+            return;
+        }
+
+        const q = this.getNextQuestion();
+        
+        // Mark this question as asked
+        this.state.askedQuestionIds.add(q.id);
+
+        document.getElementById('q-current').innerText = this.state.qIndex + 1;
+        document.getElementById('question-text').innerText = q.text;
+        
+        // Update progress
+        const pct = ((this.state.qIndex) / 20) * 100;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+        
+        // Adaptive confidence
+        const topScore = Math.max(...Object.values(this.state.scores));
+        const totalScore = Object.values(this.state.scores).reduce((a, b) => a + b, 0);
+        const confidence = this.state.qIndex > 0 
+            ? Math.min(99, Math.floor((topScore / totalScore) * 100)) 
+            : 0;
+        document.getElementById('confidence-score').innerText = `${confidence}%`;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
+            btn.innerHTML = `
+                <span>${opt.text}</span>
+                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            `;
+            btn.onclick = () => this.handleAnswer(opt.scores);
+            container.appendChild(btn);
+        });
+    },
+
+    handleAnswer(scores) {
+        // Add scores
+        for (let key in scores) {
+            if (!this.state.scores[key]) this.state.scores[key] = 0;
+            this.state.scores[key] += scores[key];
+        }
+        this.state.qIndex++;
+        this.renderQuestion();
+    },
+
+    showResults() {
+        this.navigate('results');
+        
+        // Calculate top category
+        const topCat = this.getTopCategory();
+        
+        // Better matching algorithm
+        const categoryMatches = DB.filter(r => 
+            r.category.toLowerCase() === topCat || 
+            r.tags.includes(topCat)
+        );
+        
+        // Score each match based on tag overlap with top 3 traits
+        const top3 = this.getTop3Categories();
+        const scoredMatches = categoryMatches.map(role => {
+            let score = 0;
+            top3.forEach((trait, index) => {
+                if (role.tags.includes(trait)) {
+                    score += (3 - index); // Weight by rank
+                }
+            });
+            return { role, score };
+        });
+
+        // Sort by score and pick best match
+        scoredMatches.sort((a, b) => b.score - a.score);
+        const match = scoredMatches.length > 0 
+            ? scoredMatches[0].role 
+            : DB[Math.floor(Math.random() * DB.length)];
+        
+        document.getElementById('result-title').innerText = match.title;
+        document.getElementById('result-desc').innerText = match.desc;
+        document.getElementById('result-salary').innerText = match.salary;
+        document.getElementById('result-edu').innerText = match.courses.join(', ');
+        document.getElementById('result-hs').innerText = match.hs;
+        
+        const coursesDiv = document.getElementById('result-courses');
+        coursesDiv.innerHTML = match.courses.map(c => 
+            `<span class="px-2 py-1 bg-white/10 rounded text-xs">${c}</span>`
+        ).join('');
+
+        this.renderChart();
+        this.fireConfetti();
+    },
+
+    renderChart() {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (window.myChart) window.myChart.destroy();
+        
+        const sortedTraits = Object.entries(this.state.scores)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6);
+
+        window.myChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: sortedTraits.map(s => s[0].toUpperCase()),
+                datasets: [{
+                    label: 'Profile',
+                    data: sortedTraits.map(s => s[1]),
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: '#0ea5e9',
+                    pointBackgroundColor: '#fff'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#9ca3af', font: { size: 10 } },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+    },
+
+    fireConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#0ea5e9', '#818cf8', '#ffffff']
+        });
+    },
+
+    setupParticles() {
+        const canvas = document.getElementById('particle-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        for(let i=0; i<50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 2,
+                d: Math.random() * Math.PI * 2
+            });
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
+            particles.forEach(p => {
+                p.x += Math.cos(p.d) * 0.5;
+                p.y += Math.sin(p.d) * 0.5;
+                if(p.x < 0) p.x = canvas.width;
+                if(p.x > canvas.width) p.x = 0;
+                if(p.y < 0) p.y = canvas.height;
+                if(p.y > canvas.height) p.y = 0;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    },
+
+    // GOD MODE (Reward)
+    enableGodMode() {
+        document.body.classList.add('matrix-mode');
+        const summary = document.getElementById('egg-summary');
+        summary.innerHTML = `
+            <h4 class="text-green-500 font-bold mb-4 text-xl">⚡ GOD MODE ACTIVATED</h4>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="app.forceMatch('Cyber')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CYBER</button>
+                <button onclick="app.forceMatch('Business')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CEO</button>
+                <button onclick="app.maxStats()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">MAX STATS</button>
+                <button onclick="app.toggleGravity()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">ZERO GRAVITY</button>
+            </div>
+        `;
+    },
+
+    forceMatch(cat) {
+        this.state.scores[cat.toLowerCase()] = 999;
+        this.showResults();
+    },
+
+    maxStats() {
+        for(let k in this.state.scores) this.state.scores[k] = 100;
+        this.renderChart();
+    },
+
+    toggleGravity() {
+        document.body.style.transform = document.body.style.transform ? '' : 'rotate(180deg)';
+        document.body.style.transition = 'transform 2s ease';
+    }
+};
 
         // --- EASTER EGGS ---
         const eggHunt = {
