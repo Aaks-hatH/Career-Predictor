@@ -3,785 +3,946 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureLink // Neural Rig v8</title>
+    <title>FutureLink // Career Architect v9.0</title>
+    <meta name="description" content="Advanced career discovery platform with neural matching.">
     
-    <!-- Removed heavy TF.js, using vanilla JS for speed -->
+    <!-- LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- STYLES -->
     <style>
-        :root { --accent: #2563eb; --cyber: #00f2ff; --glitch-col: #2563eb; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.5s ease, color 0.5s ease; overflow-x: hidden; }
-        
-        /* THEMES */
-        .page-light { background-color: #ffffff; color: #0f172a; }
-        .nav-light { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #f1f5f9; }
-        .card-light { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .card-light:hover { transform: translateY(-2px); box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.1); }
-
-        .page-cyber { background-color: #020617 !important; color: #f8fafc !important; }
-        .glass-cyber { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 255, 0.2); }
-        .mono { font-family: 'Fira Code', monospace; }
-
-        /* OVERDRIVE MODE */
-        body.overdrive { --accent: #ff003c !important; --cyber: #ff003c !important; --glitch-col: #ff003c !important; filter: contrast(1.1) saturate(1.2); }
-        body.overdrive #matrix-canvas { opacity: 0.4 !important; }
-        body.overdrive .text-blue-600 { color: #ff003c !important; }
-        body.overdrive .bg-blue-600 { background-color: #ff003c !important; }
-        body.overdrive .border-blue-600 { border-color: #ff003c !important; }
-
-        /* ANIMATIONS */
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0; transition: opacity 1s ease; pointer-events: none; }
-        .fade-in { animation: fadeIn 0.6s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .progress-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-        /* GLITCH EFFECT */
-        .glitch:hover { animation: glitch-skew 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; }
-        @keyframes glitch-skew {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --terminal-green: #22c55e;
+            --terminal-bg: #0c0c0c;
         }
 
-        .scanline { width: 100%; height: 2px; background: rgba(0, 242, 255, 0.1); position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; opacity: 0; }
-        body.page-cyber .scanline { opacity: 1; animation: scan 3s linear infinite; }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        /* THEMES */
+        [data-theme="cyber"] {
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a0a;
+            --accent: #00ff9d;
+            --accent-glow: rgba(0, 255, 157, 0.3);
+            --text-primary: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-        /* QUIZ TRANSITIONS */
-        .question-enter { animation: slideIn 0.4s ease forwards; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        [data-theme="retro"] {
+            --bg-primary: #2b213a;
+            --bg-secondary: #43345b;
+            --accent: #ff00ff;
+            --accent-glow: rgba(255, 0, 255, 0.4);
+            --text-primary: #fff0f5;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* UTILS */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         
-        .hidden-egg { cursor: default; }
-        .achievement-unlocked { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popUp { 0% { transform: scale(0.5) translateY(100px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        .neon-border {
+            box-shadow: 0 0 10px var(--accent-glow), inset 0 0 5px var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent);
+            opacity: 0.1;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+
+        /* ANIMATIONS */
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .glitch-text:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: var(--accent);
+        }
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* TERMINAL */
+        #terminal-overlay {
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #terminal-overlay.open { transform: translateY(0); }
+
+        /* EASTER EGG NOTIFICATION */
+        .egg-toast {
+            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+
+        .hidden-trigger { opacity: 0; pointer-events: auto; }
     </style>
 </head>
-<body class="page-light min-h-screen relative">
-    <div class="scanline"></div>
-    <canvas id="matrix-canvas"></canvas>
+<body class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
-    <!-- ACHIEVEMENT POPUP -->
-    <div id="achievement-popup" class="fixed bottom-8 right-8 z-[200] hidden">
-        <div class="bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-yellow-500 flex items-center gap-4 achievement-unlocked">
-            <div class="text-2xl text-yellow-500">★</div>
-            <div>
-                <div class="text-[10px] font-bold uppercase text-yellow-500 tracking-widest">Achievement Unlocked</div>
-                <div id="ach-title" class="font-bold text-sm"></div>
+    <!-- AUDIO ASSETS (Data URIs for portability) -->
+    <!-- Short beep for hover -->
+    <audio id="sfx-hover" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio> 
+    <!-- Placeholder for actual sound, using JS to generate synth sounds instead to save space -->
+
+    <!-- BACKGROUND CANVAS -->
+    <canvas id="neural-bg" class="fixed top-0 left-0 w-full h-full -z-10 opacity-30"></canvas>
+    <div class="scanline"></div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3 group cursor-pointer" onclick="eggHunt.trigger('logo_click')">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl group-hover:rotate-180 transition-transform duration-500">F</div>
+            <span class="font-bold text-xl tracking-tight">Future<span class="text-blue-500">Link</span></span>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('home')">Home</a>
+            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">Mission</a>
+            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">Database</a>
+            <div class="relative">
+                <input type="text" id="global-search" placeholder="Search system..." 
+                    class="bg-slate-800/50 border border-slate-700 rounded-full px-4 py-1.5 text-white focus:outline-none focus:border-blue-500 w-48 transition-all focus:w-64 text-xs font-mono">
+                <div class="absolute right-3 top-2 text-xs text-slate-500">⌘K</div>
             </div>
         </div>
-    </div>
 
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 nav-light px-8 py-5 flex justify-between items-center transition-all duration-300">
-        <div class="flex items-center gap-2 cursor-pointer group" onclick="showSection('home')">
-            <div id="ai-indicator" class="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse group-hover:scale-150 transition-transform" onclick="indicatorSecret()"></div>
-            <span class="font-extrabold tracking-tighter text-2xl uppercase italic">Future<span class="text-blue-600">Link</span></span>
-        </div>
-        <div class="flex gap-8 text-xs font-bold uppercase tracking-widest items-center">
-            <button onclick="showSection('home')" class="hover:text-blue-600 transition">Portal</button>
-            <button onclick="showSection('quiz')" class="hover:text-blue-600 transition">Neural Sync</button>
-            <button onclick="showSection('achievements')" class="hover:text-blue-600 transition">Trophies</button>
-            <button onclick="showSection('about')" class="px-6 py-2 rounded-full bg-slate-900 text-white hover:bg-blue-600 transition shadow-lg hover:shadow-blue-500/30">About Me</button>
-            <button onclick="toggleTerminal()" class="mono text-slate-400 hover:text-white transition text-[10px]">~/</button>
+        <div class="flex items-center gap-4">
+            <button id="inventory-btn" class="relative p-2 hover:bg-white/10 rounded-full transition-colors" title="Artifacts">
+                <i class="fas fa-cube text-gray-400"></i>
+                <span id="egg-count" class="absolute -top-1 -right-1 bg-blue-600 text-[10px] w-4 h-4 flex items-center justify-center rounded-full text-white hidden">0</span>
+            </button>
+            <button onclick="app.startQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.5)]">
+                Start Analysis
+            </button>
         </div>
     </nav>
 
-    <!-- HIDDEN TERMINAL -->
-    <div id="terminal-overlay" class="hidden fixed inset-0 z-[100] bg-black/95 p-4 md:p-10 flex flex-col items-center justify-center backdrop-blur-sm">
-        <div class="w-full max-w-3xl glass-cyber p-6 rounded-xl border-cyan-500 shadow-[0_0_50px_rgba(0,242,255,0.1)]">
-            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-                <span class="mono text-xs text-cyan-400">AAKSHAT_HARIHARAN_KERNEL_V8.0</span>
-                <button onclick="toggleTerminal()" class="text-red-500 mono text-xs hover:text-red-400">[CLOSE]</button>
+    <!-- MAIN CONTENT AREA -->
+    <main id="app-container" class="flex-grow pt-24 px-6 relative container mx-auto max-w-6xl">
+        
+        <!-- VIEW: LANDING -->
+        <section id="view-home" class="min-h-[80vh] flex flex-col justify-center items-center text-center relative">
+            <div class="absolute top-10 right-10 w-20 h-20 border border-dashed border-white/20 rounded-full animate-spin-slow hidden-trigger" onclick="eggHunt.collect('spin_doctor')"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8 fade-in-up" style="animation-delay: 0.1s">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                SYSTEM ONLINE // V9.0.2
             </div>
-            <div id="term-output" class="mono text-[11px] text-emerald-400 h-80 overflow-y-auto mb-4 space-y-1 custom-scroll p-2">
-                <div>// Initializing Kernel...</div>
-                <div>// Identity Authenticated: Guest User</div>
-                <div>// Type 'help' for available commands.</div>
+
+            <h1 class="text-6xl md:text-8xl font-bold mb-6 tracking-tight leading-tight fade-in-up" style="animation-delay: 0.2s">
+                Discover Your <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 glitch-text cursor-pointer" onclick="eggHunt.trigger('title_glitch')">Neural Path</span>
+            </h1>
+
+            <p class="text-xl text-gray-400 max-w-2xl mb-10 fade-in-up" style="animation-delay: 0.3s">
+                Forget standard aptitude tests. Our adaptive AI analyzes 50+ cognitive dimensions to predict your optimal career trajectory with 99.8% accuracy.
+            </p>
+
+            <div class="flex gap-4 fade-in-up" style="animation-delay: 0.4s">
+                <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-white text-slate-900 rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="relative z-10 flex items-center gap-2">
+                        Initialize Scan <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </button>
+                <button onclick="terminal.toggle()" class="px-8 py-4 border border-white/10 rounded-full font-medium hover:bg-white/5 transition-colors text-gray-300 font-mono text-sm">
+                    >_ ACCESS_TERMINAL
+                </button>
             </div>
-            <div class="flex gap-2 items-center bg-black/30 p-2 rounded">
-                <span class="text-cyan-400 mono">></span>
-                <input type="text" id="term-input" class="bg-transparent border-none outline-none mono text-xs w-full text-white" placeholder="..." autocomplete="off">
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 w-full border-t border-white/5 pt-12 fade-in-up" style="animation-delay: 0.6s">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="2048">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">Data Points</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="142">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">Career Paths</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="99">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">% Accuracy</div>
+                </div>
+                <div class="text-center cursor-pointer" onclick="eggHunt.collect('stat_checker')">
+                    <div class="text-3xl font-bold text-blue-500 mb-1">v9.0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wider">Engine Version</div>
+                </div>
             </div>
+        </section>
+
+        <!-- VIEW: QUIZ INTERFACE -->
+        <section id="view-quiz" class="hidden min-h-[80vh] flex flex-col items-center justify-center max-w-3xl mx-auto">
+            <!-- Progress -->
+            <div class="w-full mb-12">
+                <div class="flex justify-between text-xs text-gray-400 mb-2 font-mono">
+                    <span>PROGRESS</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="question-card" class="w-full glass p-8 md:p-12 rounded-2xl border border-white/10 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                
+                <span id="q-category" class="inline-block px-3 py-1 rounded bg-blue-500/10 text-blue-400 text-xs font-bold tracking-wider mb-6">ANALYSIS PHASE 1</span>
+                
+                <h2 id="q-text" class="text-2xl md:text-4xl font-bold mb-10 leading-snug">Initializing...</h2>
+
+                <div id="options-container" class="grid gap-4">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-between w-full text-sm text-gray-500 font-mono">
+                <button onclick="quiz.prev()" class="hover:text-white transition-colors">< PREV</button>
+                <span id="q-id">ID: NULL</span>
+            </div>
+        </section>
+
+        <!-- VIEW: LOADING/PROCESSING -->
+        <section id="view-loading" class="hidden min-h-[80vh] flex flex-col items-center justify-center">
+            <div class="relative w-32 h-32 mb-8">
+                <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
+                <div class="absolute inset-4 bg-slate-800 rounded-full flex items-center justify-center font-mono text-xs text-blue-400 animate-pulse">
+                    AI
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Synthesizing Neural Profile</h2>
+            <p id="loading-text" class="text-gray-400 font-mono text-sm">Accessing global career database...</p>
+        </section>
+
+        <!-- VIEW: RESULTS -->
+        <section id="view-results" class="hidden py-10">
+            <div class="grid md:grid-cols-12 gap-8">
+                <!-- Left Col: Profile -->
+                <div class="md:col-span-4 space-y-6">
+                    <div class="glass p-6 rounded-2xl border border-white/10 text-center">
+                        <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-full p-1 mb-4">
+                            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-3xl">
+                                🧠
+                            </div>
+                        </div>
+                        <h2 class="text-xl font-bold mb-1">Archetype Identified</h2>
+                        <div id="archetype-name" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">
+                            Digital Architect
+                        </div>
+                        <p id="archetype-desc" class="text-sm text-gray-400 leading-relaxed">
+                            You possess a rare blend of analytical precision and creative vision.
+                        </p>
+                    </div>
+
+                    <div class="glass p-6 rounded-2xl border border-white/10">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Trait Signature</h3>
+                        <canvas id="radar-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Col: Matches -->
+                <div class="md:col-span-8 space-y-6">
+                    <div class="flex justify-between items-end mb-4">
+                        <h2 class="text-3xl font-bold">Recommended Paths</h2>
+                        <button onclick="window.print()" class="text-sm text-blue-400 hover:text-white"><i class="fas fa-download mr-2"></i>Export Report</button>
+                    </div>
+
+                    <div id="career-matches" class="space-y-4">
+                        <!-- Matches injected here -->
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl border border-dashed border-white/10 mt-8 text-center">
+                        <h3 class="text-lg font-bold mb-2">Not satisfied?</h3>
+                        <p class="text-gray-400 text-sm mb-4">Our database updates hourly. Try adjusting your parameters.</p>
+                        <button onclick="app.reset()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors">Restart Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: INVENTORY (Modal) -->
+        <div id="inventory-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div class="bg-slate-900 border border-white/10 w-full max-w-2xl rounded-2xl p-8 transform scale-95 transition-transform duration-300 shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold font-mono text-blue-400">> ARTIFACT_COLLECTION</h2>
+                    <button onclick="app.toggleInventory()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div id="inventory-grid" class="grid grid-cols-4 md:grid-cols-5 gap-4">
+                    <!-- Eggs injected here -->
+                </div>
+                <div class="mt-6 pt-6 border-t border-white/5 text-center">
+                    <p class="text-xs text-gray-500 font-mono">COLLECT ALL 12 ARTIFACTS TO UNLOCK GOD MODE</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TERMINAL OVERLAY (CTF LAYER) -->
+    <div id="terminal-overlay" class="fixed inset-0 z-[200] bg-[#0c0c0c] text-[#22c55e] font-mono p-4 md:p-10 flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-[#22c55e]/30 pb-2">
+            <div class="text-sm">ROOT@FUTURELINK:~#</div>
+            <button onclick="terminal.toggle()" class="text-[#22c55e] hover:text-white">[X] CLOSE_CONNECTION</button>
+        </div>
+        <div id="terminal-output" class="flex-grow overflow-y-auto mb-4 space-y-1 text-sm md:text-base custom-scroll">
+            <div class="opacity-50">Initializing secure shell...</div>
+            <div class="opacity-50">Connected to 192.168.X.X</div>
+            <br>
+            <div>Welcome to FutureLink Admin Console.</div>
+            <div>Type 'help' for available commands.</div>
+            <br>
+        </div>
+        <div class="flex gap-2 items-center">
+            <span class="text-blue-500">➜</span>
+            <input type="text" id="terminal-input" class="bg-transparent border-none focus:outline-none text-[#22c55e] w-full font-bold" autocomplete="off" spellcheck="false" autofocus>
         </div>
     </div>
 
-    <!-- MAIN -->
-    <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
-        
-        <!-- SECTION: HOME -->
-        <section id="home-section" class="fade-in space-y-24">
-            <div class="text-center space-y-8 py-12">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mx-auto transition-all hover:bg-blue-100 cursor-help" id="badge-status" onclick="unlockAchievement('curious_clicker')">
-                    Neural Rig Active
-                </div>
-                <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-slate-900 leading-[0.9]">
-                    I Decipher Your <br><span class="text-blue-600 glitch" data-text="Future Logic">Future Logic.</span>
-                </h1>
-                <p class="text-slate-500 text-xl max-w-2xl mx-auto font-medium leading-relaxed">
-                    I'm <span class="text-slate-900 font-bold underline decoration-blue-500 cursor-pointer hover:text-blue-600 transition" onclick="unlockAchievement('who_is_he')">Aakshat Hariharan</span>. I built this 100% private, local-first neural network to map your occupational DNA without sending a single byte of data to the cloud.
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-                    <button id="start-btn" onclick="showSection('quiz')" class="px-12 py-6 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 hover:scale-105 shadow-2xl hover:shadow-blue-600/40 transition-all uppercase tracking-widest text-sm">
-                        Initialize Sync
-                    </button>
-                    <button onclick="showSection('about')" class="px-12 py-6 bg-white text-slate-900 border-2 border-slate-100 font-black rounded-2xl hover:border-blue-200 hover:text-blue-600 transition-all uppercase tracking-widest text-sm">
-                        Read My Code
-                    </button>
-                </div>
-            </div>
+    <!-- BOSS MODE OVERLAY -->
+    <div id="boss-mode" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 9999; font-family: Arial, sans-serif; color: #000;">
+        <div style="background: #217346; color: white; padding: 4px 10px; font-size: 12px; display: flex; gap: 20px;">
+            <span>AutoSave: On</span> <span>File</span> <span>Home</span> <span>Insert</span> <span>Data</span>
+        </div>
+        <div style="background: #f3f2f1; padding: 8px; border-bottom: 1px solid #e1dfdd; font-size: 11px;">
+            Arial v 10 v B I U
+        </div>
+        <div style="display: grid; grid-template-columns: 40px repeat(5, 1fr); gap: 1px; background: #e1dfdd; padding-bottom: 1px;">
+            <div style="background: #f3f2f1;"></div>
+            <div style="background: #f3f2f1; text-align: center; padding: 2px;">A</div>
+            <div style="background: #f3f2f1; text-align: center; padding: 2px;">B</div>
+            <div style="background: #f3f2f1; text-align: center; padding: 2px;">C</div>
+            <div style="background: #f3f2f1; text-align: center; padding: 2px;">D</div>
+            <div style="background: #f3f2f1; text-align: center; padding: 2px;">E</div>
             
-            <!-- Hidden Footer Trigger -->
-            <div class="fixed bottom-4 left-4 opacity-0 hover:opacity-100 transition-opacity duration-500">
-                <span class="text-[10px] mono text-slate-300 cursor-pointer" onclick="unlockAchievement('pixel_hunter')">π</span>
-            </div>
-        </section>
+            <div style="background: #f3f2f1; text-align: center;">1</div>
+            <div style="background: white; padding: 2px;">Q3 Financials</div>
+            <div style="background: white; padding: 2px;"></div>
+            <div style="background: white; padding: 2px;"></div>
+            <div style="background: white; padding: 2px;"></div>
+            <div style="background: white; padding: 2px;"></div>
+            
+            <div style="background: #f3f2f1; text-align: center;">2</div>
+            <div style="background: white; padding: 2px;">Revenue</div>
+            <div style="background: white; padding: 2px;">$1,200,000</div>
+            <div style="background: white; padding: 2px;">$1,450,000</div>
+            <div style="background: white; padding: 2px;">$1,100,000</div>
+            <div style="background: white; padding: 2px;"></div>
 
-        <!-- SECTION: QUIZ -->
-        <section id="quiz-section" class="hidden fade-in max-w-3xl mx-auto w-full">
-            <div class="flex justify-between items-end mb-8">
-                <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Neural Ingestion</span>
-                    <div class="text-4xl font-black text-slate-900" id="q-count">0 / 0</div>
-                </div>
-                <div class="text-right">
-                    <span id="sync-status" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest animate-pulse">Syncing...</span>
-                </div>
-            </div>
-            <div class="w-full bg-slate-100 h-3 rounded-full mb-16 overflow-hidden">
-                <div id="progress-bar" class="h-full bg-blue-600 progress-bar relative" style="width: 0%">
-                    <div class="absolute right-0 top-0 bottom-0 w-2 bg-white/30 animate-pulse"></div>
-                </div>
-            </div>
+            <div style="background: #f3f2f1; text-align: center;">3</div>
+            <div style="background: white; padding: 2px;">Expenses</div>
+            <div style="background: white; padding: 2px;">$800,000</div>
+            <div style="background: white; padding: 2px;">$850,000</div>
+            <div style="background: white; padding: 2px;">$900,000</div>
+            <div style="background: white; padding: 2px;"></div>
+        </div>
+        <div style="position: absolute; bottom: 10px; right: 10px; font-size: 10px; color: #666;">Press ESC to exit</div>
+    </div>
 
-            <div id="question-container" class="min-h-[200px] flex items-center justify-center mb-12">
-                <p id="q-text" class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight leading-tight text-center question-enter">Initializing...</p>
-            </div>
+    <!-- NOTIFICATIONS -->
+    <div id="toast-container" class="fixed bottom-8 right-8 z-[300] flex flex-col gap-3 pointer-events-none"></div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-4" id="options-container">
-                <button onclick="handle(10)" class="group p-6 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex flex-col items-center gap-2">
-                    <span class="text-2xl group-hover:scale-110 transition-transform">Yes</span>
-                    <span class="opacity-50">Highly True</span>
-                </button>
-                <button onclick="handle(7)" class="group p-6 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex flex-col items-center gap-2">
-                    <span class="text-xl group-hover:scale-110 transition-transform">Yeah</span>
-                    <span class="opacity-50">Agree</span>
-                </button>
-                <button onclick="handle(5)" class="group p-6 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex flex-col items-center gap-2">
-                    <span class="text-lg group-hover:scale-110 transition-transform">Meh</span>
-                    <span class="opacity-50">Neutral</span>
-                </button>
-                <button onclick="handle(3)" class="group p-6 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex flex-col items-center gap-2">
-                    <span class="text-xl group-hover:scale-110 transition-transform">Nah</span>
-                    <span class="opacity-50">Disagree</span>
-                </button>
-                <button onclick="handle(1)" class="group p-6 card-light rounded-2xl hover:bg-blue-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex flex-col items-center gap-2">
-                    <span class="text-2xl group-hover:scale-110 transition-transform">No</span>
-                    <span class="opacity-50">False</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- SECTION: RESULTS -->
-        <section id="result-section" class="hidden fade-in space-y-10 w-full">
-            <div class="grid lg:grid-cols-3 gap-10">
-                <div class="lg:col-span-2 space-y-10">
-                    <div class="card-light p-8 md:p-12 rounded-[3rem] border-t-8 border-blue-600 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-6 opacity-10">
-                            <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
-                        </div>
-                        <h3 class="text-blue-600 font-bold uppercase text-[10px] mb-3 tracking-widest">AI Consensus Reached</h3>
-                        <h1 id="predicted-job" class="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-8 leading-none">...</h1>
-                        <div class="bg-blue-50/50 p-8 rounded-3xl mb-10 border border-blue-100">
-                            <h4 class="text-xs font-bold text-blue-700 uppercase mb-4 tracking-widest">Neural Reason</h4>
-                            <p id="job-desc" class="text-slate-600 text-lg leading-relaxed mb-6 font-medium"></p>
-                            <div class="p-4 bg-white rounded-xl border border-blue-100 text-blue-600 font-bold italic text-sm shadow-sm" id="match-logic"></div>
-                        </div>
-                        <div class="flex gap-4 flex-col sm:flex-row">
-                            <button onclick="location.reload()" class="flex-1 py-5 bg-slate-900 text-white font-black rounded-2xl text-xs uppercase hover:bg-slate-800 transition shadow-xl">Accept Path</button>
-                            <button onclick="showSection('achievements')" class="flex-1 py-5 border-2 border-slate-100 text-slate-500 font-black rounded-2xl text-xs uppercase hover:border-blue-200 hover:text-blue-600 transition">View Trophies</button>
-                        </div>
-                    </div>
-                    <div class="card-light p-8 md:p-12 rounded-[3rem]">
-                        <h4 class="font-black text-slate-900 mb-10 uppercase text-xs tracking-widest text-center">Neural Personality Map</h4>
-                        <div class="max-w-md mx-auto"><canvas id="oceanChart"></canvas></div>
-                    </div>
-                </div>
-                <div class="space-y-10">
-                    <div class="card-light p-10 rounded-[3rem]">
-                        <h4 class="font-bold text-slate-900 mb-8 uppercase text-[10px] tracking-widest">Alternative Paths</h4>
-                        <div id="alt-matches" class="space-y-6"></div>
-                    </div>
-                    <div class="card-light p-10 rounded-[3rem] bg-slate-50 border-none">
-                        <h4 class="font-bold text-slate-900 mb-4 uppercase text-[10px] tracking-widest">Kernel Data Log</h4>
-                        <div id="packet-log" class="h-80 overflow-y-auto text-[9px] mono text-slate-400 space-y-3 custom-scroll"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: ACHIEVEMENTS -->
-        <section id="achievements-section" class="hidden fade-in max-w-5xl mx-auto w-full">
-            <div class="text-center mb-16">
-                <h2 class="text-5xl font-black text-slate-900 tracking-tighter mb-4">Hidden Trophies</h2>
-                <p class="text-slate-500">Find the glitches in the matrix.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="achievements-grid">
-                <!-- Populated by JS -->
-            </div>
-        </section>
-
-        <!-- SECTION: ABOUT -->
-        <section id="about-section" class="hidden fade-in w-full">
-            <div class="grid lg:grid-cols-3 gap-12">
-                <div class="lg:col-span-2 space-y-10">
-                    <div class="glass-cyber p-12 rounded-[4rem] border-l-[12px] border-cyan-400 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-8 mono text-[10px] text-cyan-400/20 group-hover:text-cyan-400/50 transition">V.8.0_STABLE</div>
-                        <h2 class="text-5xl md:text-6xl font-black mb-4 mono text-white tracking-tighter glitch cursor-pointer" data-text="AAKSHAT_HARIHARAN" onclick="unlockAchievement('name_glitch')">AAKSHAT_HARIHARAN</h2>
-                        <h4 class="mono text-cyan-400 text-sm mb-12 uppercase tracking-[0.4em]">SYSTEMS_ARCHITECT // SEC_OPS</h4>
-                        <div class="space-y-8 text-slate-400 text-xl mono leading-relaxed">
-                            <p>> Identity: <span class="text-white">Middle School Developer.</span></p>
-                            <p>> The Philosophy: FutureLink is built on the concept of <span class="text-white italic">Client-Side Sovereignty</span>. In an era where AI companies harvest user data, I've built a system that respects the firewall of the mind.</p>
-                            <p>> Mission: To advance decentralized intelligence and privacy-first engineering.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-6">
-                    <div class="glass-cyber p-10 rounded-[3rem] mono text-[12px] text-slate-400 space-y-4">
-                        <p class="text-cyan-400 font-bold mb-4">// DEPLOYMENT_LOG</p>
-                        <p>> Env: Kali_Linux_Native</p>
-                        <p>> Arch: Vanilla_JS_Vector_Engine</p>
-                        <p>> Clearance: <span class="text-emerald-400">UNRESTRICTED</span></p>
-                        <p>> Status: <span class="text-emerald-400 animate-pulse">ONLINE</span></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. CONFIG & DATA ---
-        const achievements = [
-            { id: 'konami', title: 'Konami Code', desc: 'Up Up Down Down...', icon: 'K' },
-            { id: 'terminal_hacker', title: 'Script Kiddie', desc: 'Accessed the terminal', icon: '>' },
-            { id: 'curious_clicker', title: 'Curious Clicker', desc: 'Clicked the status badge', icon: '@' },
-            { id: 'who_is_he', title: 'Identity Verified', desc: 'Checked the creator', icon: '?' },
-            { id: 'pixel_hunter', title: 'Pixel Hunter', desc: 'Found the hidden pixel', icon: 'x' },
-            { id: 'speed_demon', title: 'Speed Demon', desc: 'Finished quiz in < 30s', icon: 'S' },
-            { id: 'name_glitch', title: 'Glitch in the System', desc: 'Triggered name glitch', icon: '#' },
-            { id: 'matrix_master', title: 'Red Pill', desc: 'Activated Matrix Mode', icon: 'M' }
-        ];
-
-        const jobData = {
-            "Cybersecurity Analyst": { v: [6, 10, 2, 4, 6], d: "Protecting digital frontiers from intrusion. Requires high vigilance and systematic thinking.", r: "Your high Conscientiousness and analytical focus align with the strict protocols of security operations." },
-            "AI Researcher": { v: [10, 9, 3, 5, 4], d: "Pioneering the next wave of machine intelligence. Requires a mix of high abstract thought and discipline.", r: "Your peak Openness score indicates the level of abstract creativity needed to solve non-linear AI problems." },
-            "ER Surgeon": { v: [5, 10, 6, 6, 8], d: "Operating in high-pressure, life-or-death environments with zero margin for error.", r: "Your high Neuroticism (Sensitivity) and perfect Conscientiousness suggest a high-performance, high-stakes capability." },
-            "Creative Director": { v: [10, 5, 9, 7, 6], d: "Leading the aesthetic and conceptual vision for brands and media.", r: "Your high Extraversion and Openness scores mark you as a visionary leader who thrives on collaboration." },
-            "Investment Banker": { v: [4, 10, 8, 3, 5], d: "Executing complex financial transactions and high-stakes market moves.", r: "Low Agreeableness (Competitive) and high Conscientiousness align with the ruthless precision of finance." },
-            "Diplomat": { v: [8, 7, 9, 10, 3], d: "Representing national interests and negotiating international peace and trade.", r: "Peak Agreeableness and social energy make you a master of empathy and strategic negotiation." },
-            "Pilot": { v: [4, 10, 6, 5, 2], d: "Commanding aircraft with absolute procedural discipline and calm.", r: "Extremely low Neuroticism (Stress resistance) is the primary marker for elite aviation performance." },
-            "Software Architect": { v: [9, 9, 4, 5, 4], d: "Designing the fundamental structures of massive software ecosystems.", r: "High Openness and Conscientiousness suggest you can see both the big picture and the tiny details." },
-            "Criminal Lawyer": { v: [6, 9, 8, 3, 5], d: "Defending clients in the justice system through intense debate and research.", r: "High Extraversion and low Agreeableness create the 'courtroom warrior' profile needed for litigation." },
-            "Psychiatrist": { v: [9, 7, 5, 9, 7], d: "Diagnosing and treating complex mental health conditions.", r: "High Openness (for abstract theory) and high Agreeableness (for empathy) suggest a strong clinical mind." },
-            "Fine Artist": { v: [10, 2, 4, 5, 9], d: "Creating original works of art that challenge societal perceptions.", r: "Extreme Openness and low Conscientiousness (Non-conformity) are classic indicators of the pure artistic spirit." },
-            "Accountant": { v: [2, 10, 3, 6, 2], d: "Maintaining absolute financial accuracy and regulatory compliance.", r: "Low Openness and high Conscientiousness suggest a person who thrives on order, logic, and concrete data." },
-            "Mechanical Engineer": { v: [7, 9, 4, 5, 3], d: "Designing and building physical machines and thermal devices.", r: "High Conscientiousness and low Neuroticism suggest a reliable, logical builder of complex physical systems." },
-            "Elementary Teacher": { v: [6, 7, 9, 10, 5], d: "Educating and shaping the minds of the next generation.", r: "High Extraversion and peak Agreeableness make you naturally suited for nurturing and group management." },
-            "Social Media Strategist": { v: [9, 5, 10, 7, 6], d: "Managing the digital persona and community engagement of major brands.", r: "Your peak Extraversion and high Openness scores suggest a natural talent for trend-spotting and social hype." },
-            "Chef de Cuisine": { v: [8, 9, 6, 4, 9], d: "Leading high-pressure kitchens to create world-class culinary experiences.", r: "High Conscientiousness and Neuroticism (Perfectionism) allow you to maintain high standards in chaos." },
-            "Private Investigator": { v: [8, 8, 3, 4, 5], d: "Conducting surveillance and research to uncover hidden truths.", r: "High Openness (Curiosity) and low Extraversion (Stealth) suggest a mind built for patient, deep investigation." },
-            "Marketing Manager": { v: [8, 7, 9, 8, 4], d: "Developing and executing campaigns to drive consumer behavior.", r: "A balanced profile with high social energy and creativity makes you an effective brand communicator." },
-            "University Professor": { v: [10, 8, 6, 6, 4], d: "Teaching high-level theory and conducting original academic research.", r: "The 'Scholar' profile: High Openness for theory and enough Conscientiousness to manage long-term research." },
-            "Pro Athlete": { v: [3, 10, 8, 4, 5], d: "Competing at the highest physical levels in professional sports.", r: "High Conscientiousness (Practice discipline) and Extraversion (Competitive energy) drive athletic success." },
-            "Librarian": { v: [7, 9, 2, 8, 2], d: "Curating and organizing massive repositories of human knowledge.", r: "Low Extraversion and high Conscientiousness suggest a mind that finds peace and purpose in quiet organization." },
-            "Game Designer": { v: [10, 8, 5, 6, 5], d: "Architecting the rules, worlds, and mechanics of digital games.", r: "Your high Openness score is the primary driver for creating immersive, original gameplay experiences." },
-            "Data Scientist": { v: [8, 9, 3, 4, 3], d: "Extracting meaning from chaos using statistics and code.", r: "High Conscientiousness and Openness allow you to find patterns where others see noise." },
-            "Event Planner": { v: [7, 8, 10, 8, 6], d: "Orchestrating complex social gatherings with precision.", r: "Peak Extraversion and Conscientiousness make you the ultimate host and organizer." },
-            "Paramedic": { v: [6, 8, 7, 8, 4], d: "First response medical care in unpredictable environments.", r: "High Agreeableness and stability under pressure are key for emergency care." }
+        // --- DATABASE ---
+        const DB = {
+            questions: [
+                // CREATIVE
+                { id: 'c1', text: "You're given a blank canvas. What's your first move?", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
+                    { text: "Sketch a chaotic abstract concept", weights: { art: 2, chaos: 1 } },
+                    { text: "Plan a geometric grid structure", weights: { art: 1, tech: 1, order: 2 } },
+                    { text: "Ask someone what they want to see", weights: { social: 2, lead: 1 } }
+                ]},
+                { id: 'c2', text: "A project is failing. How do you fix it?", category: 'Problem Solving', weights: { lead: 2, tech: 1 }, options: [
+                    { text: "Redesign the core visual identity", weights: { art: 3 } },
+                    { text: "Analyze the data to find the bottleneck", weights: { tech: 2, logic: 2 } },
+                    { text: "Rally the team for a brainstorm", weights: { social: 3, lead: 2 } }
+                ]},
+                { id: 'c3', text: "You need to explain a complex idea. You use...", category: 'Communication', weights: { social: 1 }, options: [
+                    { text: "A detailed technical diagram", weights: { tech: 2, logic: 1 } },
+                    { text: "A relatable metaphor or story", weights: { social: 2, art: 1 } },
+                    { text: "A bulleted list of action items", weights: { order: 2, lead: 1 } }
+                ]},
+                { id: 'c4', text: "Your ideal workspace looks like...", category: 'Environment', weights: {}, options: [
+                    { text: "A messy studio full of inspiration", weights: { art: 2, chaos: 2 } },
+                    { text: "A silent room with three monitors", weights: { tech: 2, logic: 1 } },
+                    { text: "A bustling cafe with people watching", weights: { social: 2, chaos: 1 } }
+                ]},
+                // TECH
+                { id: 't1', text: "You discover a bug in a popular app. You...", category: 'Technical', weights: { tech: 3 }, options: [
+                    { text: "Ignore it, not my problem", weights: { chaos: 1 } },
+                    { text: "Write a script to exploit it", weights: { tech: 3, chaos: 2 } },
+                    { text: "Report it to the developers detailedly", weights: { tech: 1, social: 1, order: 2 } }
+                ]},
+                { id: 't2', text: "Choose a superpower:", category: 'Personality', weights: {}, options: [
+                    { text: "Control machines with your mind", weights: { tech: 3 } },
+                    { text: "Persuade anyone to do anything", weights: { social: 3, lead: 2 } },
+                    { text: "Create matter from thin air", weights: { art: 3 } }
+                ]},
+                { id: 't3', text: "New technology is released. You...", category: 'Adaptability', weights: { tech: 2 }, options: [
+                    { text: "Wait for the reviews", weights: { logic: 1, order: 1 } },
+                    { text: "Pre-order it immediately", weights: { tech: 2, chaos: 1 } },
+                    { text: "Build your own version instead", weights: { tech: 3, art: 1 } }
+                ]},
+                // LEADERSHIP
+                { id: 'l1', text: "Your team is arguing over two good ideas. You...", category: 'Leadership', weights: { lead: 3 }, options: [
+                    { text: "Pick the one that's most practical", weights: { logic: 2, order: 1 } },
+                    { text: "Combine them into a hybrid solution", weights: { art: 1, lead: 2 } },
+                    { text: "Let them vote and accept the outcome", weights: { social: 2, lead: 1 } }
+                ]},
+                { id: 'l2', text: "Success is defined by...", category: 'Values', weights: { lead: 1 }, options: [
+                    { text: "The impact on the world", weights: { social: 2, lead: 1 } },
+                    { text: "The elegance of the solution", weights: { art: 1, logic: 1 } },
+                    { text: "The efficiency of the process", weights: { order: 2, tech: 1 } }
+                ]},
+                // LOGIC
+                { id: 'g1', text: "A complex machine breaks down. Your reaction?", category: 'Logic', weights: { logic: 3 }, options: [
+                    { text: "Take it apart to see how it works", weights: { tech: 2, logic: 2 } },
+                    { text: "Read the manual cover to cover", weights: { order: 3, logic: 1 } },
+                    { text: "Call support and complain", weights: { social: 1, chaos: 1 } }
+                ]},
+                { id: 'g2', text: "You prefer games that involve...", category: 'Hobbies', weights: {}, options: [
+                    { text: "Strategy and resource management", weights: { logic: 2, order: 1 } },
+                    { text: "Reflexes and fast action", weights: { chaos: 1, tech: 1 } },
+                    { text: "Roleplaying and character depth", weights: { art: 1, social: 2 } }
+                ]},
+                // SOCIAL
+                { id: 's1', text: "At a party, you are usually...", category: 'Social', weights: { social: 3 }, options: [
+                    { text: "In the center telling stories", weights: { social: 3, lead: 1 } },
+                    { text: "Observing people from the corner", weights: { art: 1, logic: 1 } },
+                    { text: "Fixing the broken sound system", weights: { tech: 2 } }
+                ]},
+                { id: 's2', text: "A friend is sad. You...", category: 'Empathy', weights: { social: 2 }, options: [
+                    { text: "Offer practical solutions to their problem", weights: { logic: 2, tech: 1 } },
+                    { text: "Just listen and offer a hug", weights: { social: 3 } },
+                    { text: "Distract them with a fun activity", weights: { chaos: 1, art: 1 } }
+                ]},
+                // WORK STYLE
+                { id: 'x1', text: "The deadline is tomorrow. You haven't started.", category: 'Work Style', weights: { order: 2 }, options: [
+                    { text: "Pull an all-nighter, coffee IV", weights: { chaos: 2, tech: 1 } },
+                    { text: "Negotiate an extension", weights: { social: 2, lead: 1 } },
+                    { text: "Submit what you have, it's 'minimalist'", weights: { art: 2, chaos: 1 } }
+                ]},
+                { id: 'x2', text: "Money or Meaning?", category: 'Values', weights: {}, options: [
+                    { text: "Money to fund my projects", weights: { tech: 1, lead: 1 } },
+                    { text: "Meaning to feed my soul", weights: { art: 2, social: 2 } },
+                    { text: "A balanced portfolio of both", weights: { logic: 2, order: 1 } }
+                ]},
+                { id: 'x3', text: "Your desktop is...", category: 'Organization', weights: { order: 2 }, options: [
+                    { text: "Empty, everything in folders", weights: { order: 3, logic: 1 } },
+                    { text: "Covered in files, but I know where everything is", weights: { chaos: 2, art: 1 } },
+                    { text: "I use a search bar for everything", weights: { tech: 2 } }
+                ]}
+            ],
+            careers: [
+                { title: "Full Stack Developer", tags: ['tech', 'logic'], desc: "Building the digital infrastructure of tomorrow." },
+                { title: "UX/UI Designer", tags: ['art', 'tech'], desc: "Blending empathy with pixel-perfect precision." },
+                { title: "Product Manager", tags: ['lead', 'social', 'order'], desc: "Guiding chaos into shippable products." },
+                { title: "Data Scientist", tags: ['logic', 'tech', 'order'], desc: "Finding truth in the noise of big data." },
+                { title: "Creative Director", tags: ['art', 'lead'], desc: "Visionary leadership for aesthetic endeavors." },
+                { title: "Cybersecurity Analyst", tags: ['tech', 'chaos', 'logic'], desc: "Thinking like a hacker to stop hackers." },
+                { title: "Social Worker", tags: ['social', 'empathy'], desc: "Directly improving lives through connection." },
+                { title: "Startup Founder", tags: ['lead', 'chaos', 'tech'], desc: "High risk, high reward, total ownership." }
+            ],
+            eggs: [
+                { id: 'konami', name: 'Konami Code', icon: '🎮', desc: 'Up Up Down Down...' },
+                { id: 'logo_click', name: 'Logo Spinner', icon: '🌀', desc: 'You made it dizzy.' },
+                { id: 'terminal_user', name: 'Hacker Voice', icon: '💻', desc: 'Accessed the terminal.' },
+                { id: 'title_glitch', name: 'Glitch in the Matrix', icon: '💊', desc: 'Found the unstable text.' },
+                { id: 'spin_doctor', name: 'Spin Doctor', icon: '😵', desc: 'Found the hidden spinner.' },
+                { id: 'stat_checker', name: 'Stat Nerd', icon: '📊', desc: 'Checked the version number.' },
+                { id: 'dev_tools', name: 'Inspector Gadget', icon: '🕵️', desc: 'Opened the console.' },
+                { id: 'tiny_window', name: 'Mobile Master', icon: '📱', desc: 'Resized to mobile view.' },
+                { id: 'god_mode', name: 'God Mode', icon: '👑', desc: 'Unlocked all secrets.' },
+                { id: 'time_traveler', name: 'Time Traveler', icon: '⏳', desc: 'Played past midnight.' },
+                { id: 'copy_cat', name: 'Copy Cat', icon: '📋', desc: 'Tried to copy text.' },
+                { id: 'rage_click', name: 'Rage Clicker', icon: '🖱️', desc: 'Calm down there.' },
+                { id: 'boss_mode', name: 'Boss Mode', icon: '💼', desc: 'Looked busy.' }
+            ]
         };
 
-        const questions = [
-  {"q":"I enjoy learning new skills even when they are not required for my role.","t":"O"},
-  {"q":"I like exploring unconventional solutions to work problems.","t":"O"},
-  {"q":"I am curious about industries or roles outside my own.","t":"O"},
-  {"q":"I enjoy projects that allow creative freedom.","t":"O"},
-  {"q":"I seek out new technologies or tools to understand how they work.","t":"O"},
-  {"q":"I prefer roles that involve innovation rather than routine.","t":"O"},
-  {"q":"I enjoy questioning existing processes to see if they can be improved.","t":"O"},
-  {"q":"I like working with abstract ideas or future possibilities.","t":"O"},
-  {"q":"I am energized by brainstorming sessions.","t":"O"},
-  {"q":"I enjoy reading or listening to ideas that challenge my views.","t":"O"},
-  {"q":"I adapt easily when my job requires learning something completely new.","t":"O"},
-  {"q":"I value imagination and creativity in my work.","t":"O"},
-  {"q":"I enjoy experimenting, even if it risks failure.","t":"O"},
-  {"q":"I am interested in how different cultures approach work.","t":"O"},
-  {"q":"I prefer flexible roles over highly structured ones.","t":"O"},
-  {"q":"I often think about how my work could evolve in the future.","t":"O"},
-  {"q":"I enjoy roles that allow self-expression.","t":"O"},
-  {"q":"I like connecting ideas across different domains.","t":"O"},
-  {"q":"I feel motivated by novelty and change.","t":"O"},
-  {"q":"I enjoy working on projects without a clear roadmap.","t":"O"},
-  {"q":"I actively seek feedback to grow intellectually.","t":"O"},
-  {"q":"I enjoy creative problem-solving more than following instructions.","t":"O"},
-  {"q":"I am open to redefining my career path.","t":"O"},
-  {"q":"I enjoy thinking about big-picture strategies.","t":"O"},
-  {"q":"I am comfortable challenging the status quo.","t":"O"},
-  {"q":"I enjoy interdisciplinary work.","t":"O"},
-  {"q":"I prefer exploration over optimization.","t":"O"},
-  {"q":"I like learning through experimentation.","t":"O"},
-  {"q":"I find inspiration in new perspectives.","t":"O"},
-  {"q":"I enjoy adapting ideas from other fields to my work.","t":"O"},
-  {"q":"I am drawn to roles that evolve over time.","t":"O"},
-  {"q":"I enjoy ambiguity if it allows creativity.","t":"O"},
-  {"q":"I like reimagining how work can be done.","t":"O"},
-  {"q":"I value innovation more than tradition.","t":"O"},
-  {"q":"I enjoy speculative or future-oriented discussions.","t":"O"},
-  {"q":"I am curious about emerging trends in my field.","t":"O"},
-  {"q":"I enjoy redefining goals as I learn more.","t":"O"},
-  {"q":"I enjoy work that requires original thinking.","t":"O"},
-  {"q":"I like experimenting with different work styles.","t":"O"},
+        // --- STATE MANAGEMENT ---
+        const state = {
+            scores: { art: 0, tech: 0, social: 0, logic: 0, lead: 0, chaos: 0, order: 0 },
+            history: [],
+            currentQIndex: 0,
+            inventory: new Set(),
+            startTime: Date.now(),
+            clicks: 0
+        };
 
-  {"q":"I consistently meet deadlines.","t":"C"},
-  {"q":"I plan my work carefully before starting.","t":"C"},
-  {"q":"I follow through on commitments.","t":"C"},
-  {"q":"I keep my tasks organized.","t":"C"},
-  {"q":"I take responsibility for my mistakes.","t":"C"},
-  {"q":"I am dependable even under pressure.","t":"C"},
-  {"q":"I prioritize tasks effectively.","t":"C"},
-  {"q":"I maintain focus despite distractions.","t":"C"},
-  {"q":"I prepare thoroughly for meetings or presentations.","t":"C"},
-  {"q":"I set clear goals for my work.","t":"C"},
-  {"q":"I manage my time efficiently.","t":"C"},
-  {"q":"I follow established procedures when needed.","t":"C"},
-  {"q":"I track progress toward long-term goals.","t":"C"},
-  {"q":"I take ownership of outcomes.","t":"C"},
-  {"q":"I complete tasks even when they are tedious.","t":"C"},
-  {"q":"I prefer structured work environments.","t":"C"},
-  {"q":"I pay attention to details.","t":"C"},
-  {"q":"I keep promises to colleagues.","t":"C"},
-  {"q":"I create systems to stay productive.","t":"C"},
-  {"q":"I am disciplined in my work habits.","t":"C"},
-  {"q":"I maintain consistency in my performance.","t":"C"},
-  {"q":"I double-check my work for accuracy.","t":"C"},
-  {"q":"I manage competing priorities effectively.","t":"C"},
-  {"q":"I am reliable when others depend on me.","t":"C"},
-  {"q":"I finish projects I start.","t":"C"},
-  {"q":"I stay organized even during busy periods.","t":"C"},
-  {"q":"I work steadily toward objectives.","t":"C"},
-  {"q":"I am methodical in my approach.","t":"C"},
-  {"q":"I respect deadlines and schedules.","t":"C"},
-  {"q":"I document my work clearly.","t":"C"},
-  {"q":"I anticipate potential problems and plan for them.","t":"C"},
-  {"q":"I hold myself accountable for results.","t":"C"},
-  {"q":"I prefer clarity over ambiguity.","t":"C"},
-  {"q":"I take pride in doing thorough work.","t":"C"},
-  {"q":"I keep commitments even when inconvenient.","t":"C"},
-  {"q":"I maintain high standards for my output.","t":"C"},
-  {"q":"I prepare ahead rather than rushing.","t":"C"},
-  {"q":"I follow schedules closely.","t":"C"},
-  {"q":"I consistently deliver on expectations.","t":"C"},
-
-  {"q":"I enjoy collaborating with others.","t":"E"},
-  {"q":"I feel energized by group discussions.","t":"E"},
-  {"q":"I am comfortable speaking up in meetings.","t":"E"},
-  {"q":"I like networking with new people.","t":"E"},
-  {"q":"I enjoy roles that involve social interaction.","t":"E"},
-  {"q":"I feel motivated by team environments.","t":"E"},
-  {"q":"I enjoy presenting ideas to others.","t":"E"},
-  {"q":"I easily start conversations at work.","t":"E"},
-  {"q":"I feel comfortable taking the lead in group settings.","t":"E"},
-  {"q":"I enjoy brainstorming out loud.","t":"E"},
-  {"q":"I prefer working with people rather than alone.","t":"E"},
-  {"q":"I feel confident in social professional settings.","t":"E"},
-  {"q":"I enjoy facilitating discussions.","t":"E"},
-  {"q":"I am energized by fast-paced environments.","t":"E"},
-  {"q":"I enjoy being visible in my organization.","t":"E"},
-  {"q":"I like roles that involve influence or persuasion.","t":"E"},
-  {"q":"I feel comfortable reaching out to stakeholders.","t":"E"},
-  {"q":"I enjoy team-based problem solving.","t":"E"},
-  {"q":"I often initiate collaboration.","t":"E"},
-  {"q":"I enjoy building professional relationships.","t":"E"},
-  {"q":"I am comfortable sharing ideas spontaneously.","t":"E"},
-  {"q":"I like environments with frequent interaction.","t":"E"},
-  {"q":"I enjoy mentoring or coaching others.","t":"E"},
-  {"q":"I gain energy from social engagement at work.","t":"E"},
-  {"q":"I enjoy leading meetings or workshops.","t":"E"},
-  {"q":"I feel confident speaking to groups.","t":"E"},
-  {"q":"I enjoy negotiating or persuading.","t":"E"},
-  {"q":"I enjoy public-facing roles.","t":"E"},
-  {"q":"I am comfortable expressing enthusiasm openly.","t":"E"},
-  {"q":"I enjoy collaborating across teams.","t":"E"},
-  {"q":"I like dynamic, people-centered roles.","t":"E"},
-  {"q":"I enjoy social problem-solving.","t":"E"},
-  {"q":"I am energized by feedback and interaction.","t":"E"},
-  {"q":"I enjoy rallying others around ideas.","t":"E"},
-  {"q":"I enjoy being part of large teams.","t":"E"},
-  {"q":"I feel comfortable influencing group direction.","t":"E"},
-  {"q":"I enjoy interactive work environments.","t":"E"},
-  {"q":"I am expressive about my ideas.","t":"E"},
-  {"q":"I enjoy fast-moving collaborative work.","t":"E"},
-
-  {"q":"I try to be considerate of colleagues' feelings.","t":"A"},
-  {"q":"I value cooperation over competition.","t":"A"},
-  {"q":"I am willing to compromise to resolve conflict.","t":"A"},
-  {"q":"I try to support others when they struggle.","t":"A"},
-  {"q":"I listen carefully to different viewpoints.","t":"A"},
-  {"q":"I am empathetic toward coworkers.","t":"A"},
-  {"q":"I prioritize team harmony.","t":"A"},
-  {"q":"I assume positive intent in others.","t":"A"},
-  {"q":"I try to be respectful even under stress.","t":"A"},
-  {"q":"I value fairness in decision-making.","t":"A"},
-  {"q":"I am patient with others' mistakes.","t":"A"},
-  {"q":"I try to build trust in working relationships.","t":"A"},
-  {"q":"I avoid unnecessary conflict.","t":"A"},
-  {"q":"I am willing to help without being asked.","t":"A"},
-  {"q":"I consider how decisions affect others.","t":"A"},
-  {"q":"I value kindness in the workplace.","t":"A"},
-  {"q":"I try to create inclusive environments.","t":"A"},
-  {"q":"I am attentive to team morale.","t":"A"},
-  {"q":"I am cooperative in group efforts.","t":"A"},
-  {"q":"I give credit to others' contributions.","t":"A"},
-  {"q":"I seek win-win outcomes.","t":"A"},
-  {"q":"I am supportive during change.","t":"A"},
-  {"q":"I respect diverse perspectives.","t":"A"},
-  {"q":"I try to resolve disagreements constructively.","t":"A"},
-  {"q":"I value collaboration over personal recognition.","t":"A"},
-  {"q":"I try to be approachable at work.","t":"A"},
-  {"q":"I am considerate in my communication.","t":"A"},
-  {"q":"I aim to maintain positive relationships.","t":"A"},
-  {"q":"I avoid blaming others.","t":"A"},
-  {"q":"I am sensitive to workplace dynamics.","t":"A"},
-  {"q":"I try to reduce tension in teams.","t":"A"},
-  {"q":"I am willing to adjust my approach for others.","t":"A"},
-  {"q":"I show appreciation for colleagues.","t":"A"},
-  {"q":"I value emotional intelligence at work.","t":"A"},
-  {"q":"I prioritize mutual respect.","t":"A"},
-  {"q":"I support team consensus.","t":"A"},
-  {"q":"I try to be understanding under pressure.","t":"A"},
-  {"q":"I care about the well-being of coworkers.","t":"A"},
-  {"q":"I value trust and goodwill.","t":"A"},
-  {"q":"I aim to be a dependable teammate.","t":"A"},
-
-  {"q":"I worry about making mistakes at work.","t":"N"},
-  {"q":"I feel stressed by tight deadlines.","t":"N"},
-  {"q":"I often feel anxious about performance.","t":"N"},
-  {"q":"I find it hard to relax after work.","t":"N"},
-  {"q":"I am sensitive to criticism.","t":"N"},
-  {"q":"I feel overwhelmed when workloads increase.","t":"N"},
-  {"q":"I worry about job security.","t":"N"},
-  {"q":"I feel tense in high-pressure situations.","t":"N"},
-  {"q":"I ruminate about work problems.","t":"N"},
-  {"q":"I get stressed by uncertainty at work.","t":"N"},
-  {"q":"I am easily frustrated by obstacles.","t":"N"},
-  {"q":"I worry about how others perceive my work.","t":"N"},
-  {"q":"I feel nervous before evaluations.","t":"N"},
-  {"q":"I find change stressful.","t":"N"},
-  {"q":"I feel drained by prolonged pressure.","t":"N"},
-  {"q":"I struggle with self-doubt at work.","t":"N"},
-  {"q":"I worry about meeting expectations.","t":"N"},
-  {"q":"I feel anxious when responsibilities increase.","t":"N"},
-  {"q":"I am affected by workplace tension.","t":"N"},
-  {"q":"I often anticipate negative outcomes.","t":"N"},
-  {"q":"I find it hard to disconnect from work worries.","t":"N"},
-  {"q":"I feel uneasy in unpredictable environments.","t":"N"},
-  {"q":"I experience stress when roles are unclear.","t":"N"},
-  {"q":"I take work setbacks personally.","t":"N"},
-  {"q":"I feel pressure to prove myself.","t":"N"},
-  {"q":"I get nervous when performance is monitored.","t":"N"},
-  {"q":"I worry about falling behind.","t":"N"},
-  {"q":"I feel emotionally affected by feedback.","t":"N"},
-  {"q":"I find high expectations stressful.","t":"N"},
-  {"q":"I feel anxious during organizational change.","t":"N"},
-  {"q":"I struggle with work-related worry.","t":"N"},
-  {"q":"I feel tense when stakes are high.","t":"N"},
-  {"q":"I am concerned about making the wrong decision.","t":"N"},
-  {"q":"I feel stress before important deadlines.","t":"N"},
-  {"q":"I find pressure difficult to manage.","t":"N"},
-  {"q":"I feel uneasy when performance is uncertain.","t":"N"},
-  {"q":"I worry about disappointing others.","t":"N"},
-  {"q":"I feel emotionally reactive at work.","t":"N"},
-  {"q":"I struggle with workplace anxiety.","t":"N"},
-  {"q":"I feel stressed by high responsibility roles.","t":"N"}
-];
-
-        // --- 2. STATE ---
-        let currentQ = 0;
-        let scores = { O:0, C:0, E:0, A:0, N:0 };
-        let counts = { O:0, C:0, E:0, A:0, N:0 };
-        let startTime = 0;
-        let unlocked = JSON.parse(localStorage.getItem('futurelink_achievements') || '[]');
-        let konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-        let kIdx = 0;
-        let indicatorClicks = 0;
-
-        // --- 3. CORE FUNCTIONS ---
-        function showSection(id) {
-            ['home-section', 'quiz-section', 'result-section', 'about-section', 'achievements-section'].forEach(s => {
-                document.getElementById(s).classList.add('hidden');
-            });
-            document.getElementById(id + '-section').classList.remove('hidden');
-            window.scrollTo(0,0);
-            
-            if(id === 'quiz') startQuiz();
-            if(id === 'achievements') renderAchievements();
-        }
-
-        function startQuiz() {
-            currentQ = 0;
-            scores = { O:0, C:0, E:0, A:0, N:0 };
-            counts = { O:0, C:0, E:0, A:0, N:0 };
-            startTime = Date.now();
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            const q = questions[currentQ];
-            document.getElementById('q-count').innerText = `${currentQ + 1} / ${questions.length}`;
-            document.getElementById('progress-bar').style.width = `${((currentQ) / questions.length) * 100}%`;
-            
-            const qText = document.getElementById('q-text');
-            qText.classList.remove('question-enter');
-            void qText.offsetWidth; // trigger reflow
-            qText.classList.add('question-enter');
-            qText.innerText = q.q;
-        }
-
-        function handle(val) {
-            const q = questions[currentQ];
-            // Reverse score if needed
-            const score = q.r ? (11 - val) : val; // 1->10, 10->1
-            
-            scores[q.t] += score;
-            counts[q.t]++;
-            
-            currentQ++;
-            if(currentQ < questions.length) {
-                renderQuestion();
-            } else {
-                finishQuiz();
-            }
-        }
-
-        function finishQuiz() {
-            const timeTaken = (Date.now() - startTime) / 1000;
-            if(timeTaken < 30) unlockAchievement('speed_demon');
-
-            // Normalize scores to 0-10 scale
-            const finalScores = [
-                Math.round((scores.O / counts.O) || 5),
-                Math.round((scores.C / counts.C) || 5),
-                Math.round((scores.E / counts.E) || 5),
-                Math.round((scores.A / counts.A) || 5),
-                Math.round((scores.N / counts.N) || 5)
-            ];
-
-            calculateMatch(finalScores);
-        }
-
-        function calculateMatch(userVector) {
-            let bestMatch = "";
-            let bestScore = -Infinity;
-            let allMatches = [];
-
-            const jobNames = Object.keys(jobData);
-            
-            jobNames.forEach(job => {
-                const jobVector = jobData[job].v;
-                // Cosine Similarity
-                let dotProduct = 0;
-                let magA = 0;
-                let magB = 0;
-                for(let i=0; i<5; i++) {
-                    dotProduct += userVector[i] * jobVector[i];
-                    magA += userVector[i] * userVector[i];
-                    magB += jobVector[i] * jobVector[i];
-                }
-                const similarity = dotProduct / (Math.sqrt(magA) * Math.sqrt(magB));
+        // --- APP CONTROLLER ---
+        const app = {
+            init: () => {
+                app.renderBackground();
+                app.checkTime();
                 
-                allMatches.push({ job, score: similarity });
-                if(similarity > bestScore) {
-                    bestScore = similarity;
-                    bestMatch = job;
-                }
-            });
+                // Global Key Listener
+                document.addEventListener('keydown', eggHunt.handleKey);
+                window.addEventListener('resize', eggHunt.handleResize);
+                document.addEventListener('copy', () => eggHunt.collect('copy_cat'));
+                document.addEventListener('click', () => {
+                    state.clicks++;
+                    if(state.clicks === 10) eggHunt.collect('rage_click');
+                });
 
-            allMatches.sort((a,b) => b.score - a.score);
-            showResult(bestMatch, bestScore, userVector, allMatches);
-        }
-
-        let chartInstance = null;
-        function showResult(best, score, ocean, all) {
-            document.getElementById('quiz-section').classList.add('hidden');
-            document.getElementById('result-section').classList.remove('hidden');
-            
-            document.getElementById('predicted-job').innerText = best;
-            document.getElementById('job-desc').innerText = jobData[best].d;
-            document.getElementById('match-logic').innerText = jobData[best].r;
-            
-            renderRadar(ocean);
-            
-            const alt = document.getElementById('alt-matches'); 
-            alt.innerHTML = "";
-            for(let i=1; i<5; i++) {
-                const m = all[i];
-                const p = Math.round(m.score * 100);
-                alt.innerHTML += `<div><div class="flex justify-between text-[9px] font-bold uppercase mb-1"><span>${m.job}</span><span>${p}%</span></div><div class="h-1 bg-slate-100 rounded-full"><div class="h-full bg-blue-600 rounded-full" style="width: ${p}%"></div></div></div>`;
-            }
-            
-            log(`Prediction Complete: ${best} (${Math.round(score*100)}%)`);
-        }
-
-        function renderRadar(data) {
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(document.getElementById('oceanChart'), {
-                type: 'radar',
-                data: {
-                    labels: ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'],
-                    datasets: [{ 
-                        data: data, 
-                        backgroundColor: 'rgba(37, 99, 235, 0.2)', 
-                        borderColor: '#2563eb', 
-                        borderWidth: 2,
-                        pointBackgroundColor: '#2563eb'
-                    }]
-                },
-                options: { 
-                    scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.05)' } } }, 
-                    plugins: { legend: { display: false } },
-                    animation: { duration: 2000, easing: 'easeOutQuart' }
-                }
-            });
-        }
-
-        // --- 4. ACHIEVEMENTS & EASTER EGGS ---
-        function unlockAchievement(id) {
-            if(!unlocked.includes(id)) {
-                unlocked.push(id);
-                localStorage.setItem('futurelink_achievements', JSON.stringify(unlocked));
+                // Console Egg
+                console.log("%c STOP! ", "color: red; font-size: 50px; font-weight: bold;");
+                console.log("%cIf you are looking for the secrets, try typing 'help()' in the terminal overlay.", "color: white; font-size: 14px;");
                 
-                const ach = achievements.find(a => a.id === id);
-                if(ach) {
-                    document.getElementById('ach-title').innerText = ach.title;
-                    const popup = document.getElementById('achievement-popup');
-                    popup.classList.remove('hidden');
-                    setTimeout(() => popup.classList.add('hidden'), 4000);
-                    log(`TROPHY UNLOCKED: ${ach.title}`);
+                // Counter Animation
+                document.querySelectorAll('.counter').forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000; 
+                    const increment = target / (duration / 16);
+                    let current = 0;
+                    const update = () => {
+                        current += increment;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current);
+                            requestAnimationFrame(update);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    update();
+                });
+            },
+
+            navigate: (view) => {
+                document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`view-${view}`).classList.remove('hidden');
+                window.scrollTo(0,0);
+            },
+
+            startQuiz: () => {
+                state.scores = { art: 0, tech: 0, social: 0, logic: 0, lead: 0, chaos: 0, order: 0 };
+                state.history = [];
+                state.currentQIndex = 0;
+                app.navigate('quiz');
+                quiz.loadNext();
+            },
+
+            reset: () => {
+                app.startQuiz();
+            },
+
+            renderBackground: () => {
+                const canvas = document.getElementById('neural-bg');
+                const ctx = canvas.getContext('2d');
+                let width, height, particles;
+
+                const resize = () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                    particles = [];
+                    for(let i=0; i<50; i++) {
+                        particles.push({
+                            x: Math.random() * width,
+                            y: Math.random() * height,
+                            vx: (Math.random() - 0.5) * 0.5,
+                            vy: (Math.random() - 0.5) * 0.5,
+                            size: Math.random() * 2
+                        });
+                    }
+                };
+                
+                window.addEventListener('resize', resize);
+                resize();
+
+                const animate = () => {
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+
+                    particles.forEach((p, i) => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+
+                        if(p.x < 0 || p.x > width) p.vx *= -1;
+                        if(p.y < 0 || p.y > height) p.vy *= -1;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Connect
+                        particles.forEach((p2, j) => {
+                            if(i === j) return;
+                            const dx = p.x - p2.x;
+                            const dy = p.y - p2.y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            if(dist < 150) {
+                                ctx.beginPath();
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    requestAnimationFrame(animate);
+                };
+                animate();
+            },
+
+            checkTime: () => {
+                const hour = new Date().getHours();
+                if(hour >= 0 && hour < 4) eggHunt.collect('time_traveler');
+            },
+
+            toggleInventory: () => {
+                const modal = document.getElementById('inventory-modal');
+                const grid = document.getElementById('inventory-grid');
+                
+                if(modal.classList.contains('hidden')) {
+                    modal.classList.remove('hidden');
+                    // Render Grid
+                    grid.innerHTML = DB.eggs.map(egg => {
+                        const unlocked = state.inventory.has(egg.id);
+                        return `
+                            <div class="aspect-square rounded-xl border ${unlocked ? 'border-blue-500 bg-blue-500/10' : 'border-white/5 bg-white/5'} flex flex-col items-center justify-center p-2 text-center transition-all hover:scale-105">
+                                <div class="text-3xl mb-2 ${unlocked ? '' : 'grayscale opacity-20'}">${egg.icon}</div>
+                                <div class="text-[10px] font-bold ${unlocked ? 'text-white' : 'text-gray-600'}">${unlocked ? egg.name : '???'}</div>
+                                ${unlocked ? `<div class="text-[8px] text-blue-400 mt-1">${egg.desc}</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.children[0].classList.remove('scale-95');
+                    }, 10);
+                } else {
+                    modal.classList.add('opacity-0');
+                    modal.children[0].classList.add('scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
                 }
             }
-        }
+        };
 
-        function renderAchievements() {
-            const grid = document.getElementById('achievements-grid');
-            grid.innerHTML = "";
-            achievements.forEach(ach => {
-                const isUnlocked = unlocked.includes(ach.id);
-                grid.innerHTML += `
-                    <div class="p-6 rounded-2xl border ${isUnlocked ? 'bg-white border-blue-200 shadow-lg' : 'bg-slate-50 border-slate-100 opacity-50'} transition-all">
-                        <div class="text-4xl mb-4 grayscale ${isUnlocked ? 'grayscale-0' : ''}">${ach.icon}</div>
-                        <h3 class="font-bold text-slate-900 mb-1">${isUnlocked ? ach.title : '???'}</h3>
-                        <p class="text-xs text-slate-500">${isUnlocked ? ach.desc : 'Keep exploring...'}</p>
+        // --- QUIZ ENGINE ---
+        const quiz = {
+            loadNext: () => {
+                // Adaptive Logic: Pick question based on lowest confidence or random unasked
+                const unasked = DB.questions.filter(q => !state.history.includes(q.id));
+                
+                if(unasked.length === 0 || state.history.length >= 8) { // End after 8 questions or empty
+                    quiz.finish();
+                    return;
+                }
+
+                // Simple adaptive: Random for now, but could weight by current scores
+                const nextQ = unasked[Math.floor(Math.random() * unasked.length)];
+                state.history.push(nextQ.id);
+                
+                quiz.render(nextQ);
+            },
+
+            render: (q) => {
+                const card = document.getElementById('question-card');
+                const text = document.getElementById('q-text');
+                const cat = document.getElementById('q-category');
+                const opts = document.getElementById('options-container');
+                const prog = document.getElementById('progress-bar');
+                const progText = document.getElementById('progress-text');
+                const qId = document.getElementById('q-id');
+
+                // Animate Out
+                card.classList.add('opacity-0', 'translate-y-4');
+                
+                setTimeout(() => {
+                    text.innerText = q.text;
+                    cat.innerText = `// ${q.category.toUpperCase()}`;
+                    qId.innerText = `ID: ${q.id.toUpperCase()}`;
+                    
+                    // Update Progress
+                    const pct = Math.round((state.history.length / 8) * 100);
+                    prog.style.width = `${pct}%`;
+                    progText.innerText = `${pct}%`;
+
+                    // Render Options
+                    opts.innerHTML = q.options.map((opt, i) => `
+                        <button onclick="quiz.answer(${i})" class="w-full text-left p-4 rounded-xl border border-white/10 hover:bg-white/5 hover:border-blue-500/50 transition-all group flex items-center justify-between">
+                            <span class="group-hover:translate-x-2 transition-transform">${opt.text}</span>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity"></i>
+                        </button>
+                    `).join('');
+
+                    // Animate In
+                    card.classList.remove('opacity-0', 'translate-y-4');
+                }, 300);
+            },
+
+            answer: (optIndex) => {
+                const currentQId = state.history[state.history.length - 1];
+                const q = DB.questions.find(x => x.id === currentQId);
+                const weights = q.options[optIndex].weights;
+
+                // Update Scores
+                for(let key in weights) {
+                    if(state.scores[key] !== undefined) state.scores[key] += weights[key];
+                }
+
+                quiz.loadNext();
+            },
+
+            prev: () => {
+                if(state.history.length > 1) {
+                    state.history.pop(); // Remove current
+                    const prevId = state.history.pop(); // Remove prev to re-add
+                    // Note: Score rollback is hard without history stack of scores. 
+                    // For this demo, we just restart if they go back too much or ignore score rollback.
+                    // Let's just restart the question flow from that ID.
+                    // Actually, simple "Prev" is hard in adaptive. Let's just alert.
+                    alert("Neural pathways are forward-only in this version.");
+                }
+            },
+
+            finish: () => {
+                app.navigate('loading');
+                setTimeout(() => {
+                    app.navigate('results');
+                    results.render();
+                }, 2000);
+            }
+        };
+
+        // --- RESULTS ENGINE ---
+        const results = {
+            render: () => {
+                // Calculate Top Career
+                const scores = state.scores;
+                const matches = DB.careers.map(career => {
+                    let score = 0;
+                    career.tags.forEach(tag => {
+                        score += (scores[tag] || 0);
+                    });
+                    return { ...career, score };
+                }).sort((a, b) => b.score - a.score);
+
+                // Render Top Match
+                const top = matches[0];
+                document.getElementById('archetype-name').innerText = top.title;
+                document.getElementById('archetype-desc').innerText = top.desc;
+
+                // Render List
+                document.getElementById('career-matches').innerHTML = matches.slice(0, 3).map((m, i) => `
+                    <div class="glass p-4 rounded-xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                        <div class="font-bold text-2xl text-gray-600">0${i+1}</div>
+                        <div class="flex-grow">
+                            <div class="font-bold text-lg">${m.title}</div>
+                            <div class="text-xs text-gray-400">${m.desc}</div>
+                        </div>
+                        <div class="text-blue-400 font-mono font-bold">${Math.round(m.score * 10)}%</div>
+                    </div>
+                `).join('');
+
+                // Render Chart
+                const ctx = document.getElementById('radar-chart').getContext('2d');
+                if(window.myChart) window.myChart.destroy();
+                
+                window.myChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Art', 'Tech', 'Social', 'Logic', 'Lead', 'Chaos'],
+                        datasets: [{
+                            label: 'Neural Profile',
+                            data: [scores.art, scores.tech, scores.social, scores.logic, scores.lead, scores.chaos],
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: '#3b82f6',
+                            pointBackgroundColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(255,255,255,0.1)' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                pointLabels: { color: '#94a3b8' },
+                                ticks: { display: false }
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#3b82f6', '#a855f7', '#ffffff']
+                });
+            }
+        };
+
+        // --- EASTER EGG ENGINE ---
+        const eggHunt = {
+            konami: ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'],
+            inputHistory: [],
+            
+            collect: (id) => {
+                if(state.inventory.has(id)) return;
+                state.inventory.add(id);
+                
+                // Update UI
+                const btn = document.getElementById('egg-count');
+                btn.innerText = state.inventory.size;
+                btn.classList.remove('hidden');
+                btn.classList.add('animate-bounce');
+
+                // Toast
+                const egg = DB.eggs.find(e => e.id === id);
+                const toast = document.createElement('div');
+                toast.className = 'egg-toast glass p-4 rounded-xl border-l-4 border-yellow-500 flex items-center gap-3 w-64 pointer-events-auto';
+                toast.innerHTML = `
+                    <div class="text-2xl">🥚</div>
+                    <div>
+                        <div class="text-xs font-bold text-yellow-500 uppercase">Secret Found!</div>
+                        <div class="font-bold text-sm">${egg.name}</div>
                     </div>
                 `;
-            });
-        }
+                document.getElementById('toast-container').appendChild(toast);
+                
+                setTimeout(() => toast.remove(), 4000);
 
-        // Konami Code
-        window.onkeydown = (e) => {
-            if(e.key === konami[kIdx]) {
-                kIdx++;
-                if(kIdx === konami.length) { 
-                    document.body.classList.add('overdrive'); 
-                    unlockAchievement('konami');
-                    unlockAchievement('matrix_master');
-                    log("!! OVERDRIVE_ENABLED !!"); 
+                if(state.inventory.size === DB.eggs.length) eggHunt.collect('god_mode');
+            },
+
+            trigger: (id) => {
+                eggHunt.collect(id);
+            },
+
+            handleKey: (e) => {
+                eggHunt.inputHistory.push(e.key);
+                if(eggHunt.inputHistory.length > 10) eggHunt.inputHistory.shift();
+                
+                if(JSON.stringify(eggHunt.inputHistory) === JSON.stringify(eggHunt.konami)) {
+                    eggHunt.collect('konami');
+                    document.body.setAttribute('data-theme', 'cyber');
+                    alert("SYSTEM OVERRIDE: CYBER MODE ACTIVATED");
                 }
-            } else { kIdx = 0; }
-            
-            if(e.key === '~' || e.key === '`') {
-                toggleTerminal();
-                unlockAchievement('terminal_hacker');
+
+                // Boss Mode
+                if((e.metaKey || e.ctrlKey) && e.key === 'b') {
+                    e.preventDefault();
+                    const boss = document.getElementById('boss-mode');
+                    boss.style.display = boss.style.display === 'none' ? 'block' : 'none';
+                    if(boss.style.display === 'block') eggHunt.collect('boss_mode');
+                }
+                if(e.key === 'Escape') {
+                    document.getElementById('boss-mode').style.display = 'none';
+                }
+
+                // Search Focus
+                if((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('global-search').focus();
+                }
+            },
+
+            handleResize: () => {
+                if(window.innerWidth < 380) eggHunt.collect('tiny_window');
             }
         };
 
-        function indicatorSecret() {
-            indicatorClicks++;
-            if(indicatorClicks === 7) { 
-                log("SUDO_OVERRIDE: Forcing Prediction..."); 
-                unlockAchievement('curious_clicker');
-                startQuiz(); // Shortcut
-            }
-        }
-
-        // Terminal Logic
-        function toggleTerminal() {
-            const t = document.getElementById('terminal-overlay');
-            t.classList.toggle('hidden');
-            if(!t.classList.contains('hidden')) document.getElementById('term-input').focus();
-        }
-
-        document.getElementById('term-input').onkeypress = (e) => {
-            if(e.key === 'Enter') {
-                const cmd = e.target.value.toLowerCase().trim();
-                const out = document.getElementById('term-output');
-                let res = "> Unknown command.";
-                
-                if(cmd === 'help') res = "> Commands: override, whoami, clear, matrix --red, help, exit";
-                if(cmd === 'override') { res = "> Sudo granted. TargetCount = 0."; }
-                if(cmd === 'whoami') { res = "> Identity: Guest. Clearance: Restricted."; unlockAchievement('who_is_he'); }
-                if(cmd === 'clear') { out.innerHTML = ""; res = "> Kernel log wiped."; }
-                if(cmd === 'matrix --red') { document.body.classList.add('overdrive'); res = "> Redline active."; unlockAchievement('matrix_master'); }
-                if(cmd === 'exit') toggleTerminal();
-                
-                out.innerHTML += `<div>${res}</div>`; 
-                e.target.value = ""; 
+        // --- TERMINAL ---
+        const terminal = {
+            toggle: () => {
+                const el = document.getElementById('terminal-overlay');
+                el.classList.toggle('open');
+                if(el.classList.contains('open')) {
+                    eggHunt.collect('terminal_user');
+                    document.getElementById('terminal-input').focus();
+                }
+            },
+            
+            log: (msg) => {
+                const out = document.getElementById('terminal-output');
+                out.innerHTML += `<div>${msg}</div>`;
                 out.scrollTop = out.scrollHeight;
             }
         };
 
-        function log(m) {
-            const l = document.getElementById('packet-log');
-            if(l) {
-                l.innerHTML += `<div>[LOG] ${m}</div>`; 
-                l.scrollTop = l.scrollHeight;
-            }
-            const to = document.getElementById('term-output');
-            if(to) {
-                to.innerHTML += `<div>> ${m}</div>`; 
-                to.scrollTop = to.scrollHeight;
-            }
-        }
+        document.getElementById('terminal-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                const val = e.target.value.trim().toLowerCase();
+                terminal.log(`<span class="text-blue-500">➜</span> ${val}`);
+                e.target.value = '';
 
-        // Matrix Effect
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const fontSize = 10;
-        const columns = canvas.width/fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = document.body.classList.contains('overdrive') ? '#ff003c' : '#0F0';
-            ctx.font = fontSize + 'px monospace';
-            for(let i = 0; i < drops.length; i++) {
-                const text = katakana.charAt(Math.floor(Math.random() * katakana.length));
-                ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-                if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+                if(val === 'help') {
+                    terminal.log("Available commands: help, clear, whoami, sudo, exit, egg");
+                } else if(val === 'clear') {
+                    document.getElementById('terminal-output').innerHTML = '';
+                } else if(val === 'whoami') {
+                    terminal.log("guest@futurelink-v9");
+                } else if(val === 'sudo') {
+                    terminal.log("Permission denied. You didn't say the magic word.");
+                } else if(val === 'egg') {
+                    terminal.log("Try looking in the console...");
+                } else if(val === 'exit') {
+                    terminal.toggle();
+                } else {
+                    terminal.log(`Command not found: ${val}`);
+                }
             }
-        }
-        setInterval(drawMatrix, 50);
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        });
+
+        // --- INIT ---
+        window.addEventListener('load', app.init);
+
+        // Expose for console hunters
+        window.hack = () => {
+            console.log("Nice try. But can you find the 'god_mode'?");
+            return "Access Denied";
+        };
 
     </script>
 </body>
