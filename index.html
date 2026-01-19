@@ -1,278 +1,285 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureLink // My Career Project</title>
-    <meta name="description" content="A personal project to help you find your path.">
+    <title>FutureLink // Career Analysis by Aakshat Hariharan</title>
+    <meta name="description" content="A professional career discovery platform engineered by Aakshat Hariharan.">
     
     <!-- LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- CONFIG -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            bg: '#030712',
+                            surface: '#111827',
+                            border: '#1f2937'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- STYLES -->
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --terminal-green: #22c55e;
-            --terminal-bg: #0c0c0c;
-        }
-
-        /* THEMES */
-        [data-theme="cyber"] {
-            --bg-primary: #050505;
-            --bg-secondary: #0a0a0a;
-            --accent: #00ff9d;
-            --accent-glow: rgba(0, 255, 157, 0.3);
-            --text-primary: #e0e0e0;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        [data-theme="retro"] {
-            --bg-primary: #2b213a;
-            --bg-secondary: #43345b;
-            --accent: #ff00ff;
-            --accent-glow: rgba(255, 0, 255, 0.4);
-            --text-primary: #fff0f5;
-            font-family: 'Courier New', monospace;
+            --bg-primary: #030712;
+            --text-primary: #f9fafb;
+            --accent: #0ea5e9;
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Space Grotesk', sans-serif;
-            transition: all 0.5s ease;
-            overflow-x: hidden;
-            cursor: crosshair;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* GLASSMORPHISM */
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-hover:hover {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.15);
         }
 
         /* UTILS */
-        .glass {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .neon-border {
-            box-shadow: 0 0 10px var(--accent-glow), inset 0 0 5px var(--accent-glow);
-            border-color: var(--accent);
+        .text-gradient {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--accent);
-            opacity: 0.1;
-            animation: scan 4s linear infinite;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #111827; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #4b5563; }
 
         /* ANIMATIONS */
-        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
 
-        .glitch-text:hover {
-            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-            color: var(--accent);
-        }
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
 
-        /* TERMINAL */
-        #terminal-overlay {
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #terminal-overlay.open { transform: translateY(0); }
-
-        /* EASTER EGG NOTIFICATION */
-        .egg-toast {
-            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #fff; }
-
-        .hidden-trigger { opacity: 0; pointer-events: auto; }
+        /* EASTER EGG ELEMENTS */
+        .konami-mode { filter: invert(1) hue-rotate(180deg); }
+        .matrix-mode { font-family: 'JetBrains Mono', monospace; color: #0f0; background: #000; }
+        .matrix-mode .glass { border-color: #0f0; background: rgba(0, 20, 0, 0.9); }
+        .matrix-mode * { color: #0f0 !important; border-color: #0f0 !important; }
+        
+        /* HIDDEN ELEMENTS */
+        .super-hidden { opacity: 0; cursor: default; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen flex flex-col overflow-x-hidden selection:bg-brand-500 selection:text-white">
 
-    <!-- AUDIO ASSETS -->
-    <audio id="sfx-hover" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio> 
+    <!-- BACKGROUND -->
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-900/20 via-dark-bg to-dark-bg"></div>
+        <canvas id="particle-bg" class="absolute inset-0 opacity-40"></canvas>
+    </div>
 
-    <!-- BACKGROUND CANVAS -->
-    <canvas id="neural-bg" class="fixed top-0 left-0 w-full h-full -z-10 opacity-30"></canvas>
-    <div class="scanline"></div>
-
-    <!-- NAVIGATION -->
-    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-3 group cursor-pointer" onclick="app.navigate('home')">
-            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl group-hover:rotate-180 transition-transform duration-500">F</div>
-            <span class="font-bold text-xl tracking-tight">Future<span class="text-blue-500">Link</span></span>
-        </div>
-        
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('home')">Home</a>
-            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">My Mission</a>
-            <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">The Database</a>
-            <div class="relative">
-                <input type="text" id="global-search" placeholder="Search my system..." 
-                    class="bg-slate-800/50 border border-slate-700 rounded-full px-4 py-1.5 text-white focus:outline-none focus:border-blue-500 w-48 transition-all focus:w-64 text-xs font-mono">
-                <div class="absolute right-3 top-2 text-xs text-slate-500">⌘K</div>
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 glass border-b-0 px-6 py-4 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="app.navigate('home')">
+                <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
+                    FL
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-lg tracking-tight leading-none">FutureLink</span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Career Intelligence</span>
+                </div>
             </div>
-        </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+                <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('home')">Home</a>
+                <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">About Aakshat</a>
+                <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">Database</a>
+                <div class="relative group">
+                    <input type="text" id="global-search" placeholder="Search roles..." 
+                        class="bg-dark-surface border border-dark-border rounded-full px-4 py-2 text-white focus:outline-none focus:border-brand-500 w-48 transition-all focus:w-64 text-xs">
+                    <span class="absolute right-3 top-2.5 text-[10px] text-gray-600 border border-gray-700 rounded px-1">⌘K</span>
+                </div>
+            </div>
 
-        <div class="flex items-center gap-4">
-            <button id="inventory-btn" class="relative p-2 hover:bg-white/10 rounded-full transition-colors" title="Artifacts">
-                <i class="fas fa-cube text-gray-400"></i>
-                <span id="egg-count" class="absolute -top-1 -right-1 bg-blue-600 text-[10px] w-4 h-4 flex items-center justify-center rounded-full text-white hidden">0</span>
-            </button>
-            <button onclick="app.startQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.5)]">
-                Start Analysis
-            </button>
+            <div class="flex items-center gap-4">
+                <button id="inventory-btn" onclick="app.toggleInventory()" class="relative p-2 hover:bg-white/5 rounded-full transition-colors group hidden" title="Secrets">
+                    <i class="fas fa-gem text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                    <span id="egg-count" class="absolute -top-1 -right-1 bg-brand-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full text-white shadow-lg shadow-brand-500/50">0</span>
+                </button>
+                <button onclick="app.startQuiz()" class="bg-white text-dark-bg hover:bg-gray-100 px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transform hover:-translate-y-0.5">
+                    Start Analysis
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- MAIN CONTENT AREA -->
-    <main id="app-container" class="flex-grow pt-24 px-6 relative container mx-auto max-w-6xl">
+    <!-- MAIN -->
+    <main id="app-container" class="flex-grow pt-28 px-6 relative container mx-auto max-w-7xl">
         
-        <!-- VIEW: LANDING -->
+        <!-- VIEW: HOME -->
         <section id="view-home" class="min-h-[80vh] flex flex-col justify-center items-center text-center relative">
-            <div class="absolute top-10 right-10 w-20 h-20 border border-dashed border-white/20 rounded-full animate-spin-slow hidden-trigger" onclick="eggHunt.collect('spin_doctor')"></div>
-            
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8 fade-in-up" style="animation-delay: 0.1s">
-                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                SYSTEM ONLINE // V9.1.0
+            <!-- Hidden Trigger -->
+            <div class="absolute top-20 left-10 w-4 h-4 opacity-0 cursor-help" onclick="eggHunt.collect('pixel_hunter')"></div>
+
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold tracking-wide mb-8 fade-in">
+                <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                SYSTEM V2.5 // SECURITY ENHANCED
             </div>
 
-            <h1 class="text-6xl md:text-8xl font-bold mb-6 tracking-tight leading-tight fade-in-up" style="animation-delay: 0.2s">
-                I Built This To Find Your <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 glitch-text cursor-pointer" onclick="eggHunt.trigger('title_glitch')">True Calling</span>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tight leading-[1.1] fade-in delay-100">
+                Unlock Your <br>
+                <span class="text-gradient cursor-pointer hover:opacity-80 transition-opacity" onclick="eggHunt.trigger('title_glitch')">Cyber Potential</span>
             </h1>
 
-            <p class="text-xl text-gray-400 max-w-2xl mb-10 fade-in-up" style="animation-delay: 0.3s">
-                I was tired of generic career tests, so I coded my own. My adaptive algorithm analyzes 50+ cognitive dimensions to predict where you actually belong.
+            <p class="text-xl text-gray-400 max-w-3xl mb-12 fade-in delay-200 leading-relaxed">
+                Welcome to the advanced career analysis interface. This system utilizes a multi-vector personality algorithm to determine your optimal professional trajectory. Unlike standard tests, we analyze your subconscious preferences, problem-solving approaches, and chaotic tendencies to match you with roles that fit your true nature. Whether you are destined to build secure systems or break them, we will find your path.
             </p>
 
-            <div class="flex gap-4 fade-in-up" style="animation-delay: 0.4s">
-                <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-white text-slate-900 rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105">
-                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="flex flex-col md:flex-row gap-5 fade-in delay-300">
+                <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-lg hover:shadow-brand-500/25">
                     <span class="relative z-10 flex items-center gap-2">
-                        Let Me Analyze You <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        Begin Assessment <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </span>
                 </button>
-                <button onclick="terminal.toggle()" class="px-8 py-4 border border-white/10 rounded-full font-medium hover:bg-white/5 transition-colors text-gray-300 font-mono text-sm">
-                    >_ ACCESS_MY_TERMINAL
+                <button onclick="app.navigate('about')" class="px-8 py-4 glass hover:bg-white/5 rounded-full font-medium text-gray-300 transition-colors flex items-center gap-2">
+                    <i class="fas fa-user text-xs"></i> About The Engineer
                 </button>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 w-full border-t border-white/5 pt-12 fade-in-up" style="animation-delay: 0.6s">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="2048">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">Data Points I Track</div>
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mt-32 w-full border-t border-white/5 pt-12 fade-in delay-300">
+                <div class="text-center group cursor-default">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="50000">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Data Points</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="25">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">Roles I Added</div>
+                <div class="text-center group cursor-default">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="150">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Career Paths</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-white mb-1 counter" data-target="99">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">% Accuracy Goal</div>
+                <div class="text-center group cursor-default">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="99">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Accuracy %</div>
                 </div>
                 <div class="text-center cursor-pointer" onclick="eggHunt.collect('stat_checker')">
-                    <div class="text-3xl font-bold text-blue-500 mb-1">v9.1</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wider">My Build Version</div>
+                    <div class="text-4xl font-bold text-brand-500 mb-2">v2.5</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">Build Version</div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW: MISSION (ABOUT) -->
-        <section id="view-about" class="hidden min-h-[80vh] py-10 max-w-4xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6">My Mission</h2>
-                <div class="w-24 h-1 bg-blue-500 mx-auto rounded-full"></div>
+        <!-- VIEW: ABOUT -->
+        <section id="view-about" class="hidden min-h-[80vh] py-10 max-w-5xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Meet the Engineer</h2>
+                <div class="w-20 h-1.5 bg-brand-500 mx-auto rounded-full"></div>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
-                    <p>
-                        <span class="text-blue-400 font-bold text-xl">Hi, I'm the developer.</span> 
-                        I created FutureLink because I believe standard career advice is broken. It focuses on "what you can do" instead of "who you are."
-                    </p>
-                    <p>
-                        I spent months researching cognitive patterns and tech industry roles to build a database that actually makes sense. This isn't just a random quiz—it's a reflection of my understanding of the modern tech landscape.
-                    </p>
-                    <p>
-                        My goal is simple: to help you find a career that doesn't just pay the bills, but actually feels like <em>play</em> to you.
-                    </p>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-brand-500 to-purple-600 rounded-2xl opacity-20 blur-2xl"></div>
+                    <div class="glass p-10 rounded-2xl relative border border-white/10">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center text-2xl text-white">
+                                <i class="fas fa-user-secret"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Aakshat Hariharan</h3>
+                                <p class="text-brand-400 text-sm font-mono">Cybersecurity Enthusiast & Developer</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            I am a passionate developer with a deep interest in Cybersecurity and Ethical Hacking. My journey involves breaking systems to build them stronger. I specialize in full-stack development but my heart lies in securing digital infrastructures. I believe in the power of open source and continuous learning.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            This platform is a testament to my belief that understanding one's own psychology is the first step to mastering any technical field. Whether you are a builder, a breaker, or a leader, there is a place for you in the digital ecosystem.
+                        </p>
+                        <div class="flex gap-4 mt-8">
+                            <a href="https://github.com/Aaks-hatH" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-all"><i class="fab fa-github"></i></a>
+                            <a href="https://x.com/Aaks_hatH" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                            <i class="fas fa-shield-alt text-brand-500"></i> Security First
+                        </h3>
+                        <p class="text-gray-400">
+                            My approach to development is always security-first. I analyze potential vulnerabilities in every line of code I write. This platform includes several hidden "Easter eggs" that simulate simple CTF (Capture The Flag) challenges. Can you find them all?
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                            <i class="fas fa-brain text-purple-500"></i> The Algorithm
+                        </h3>
+                        <p class="text-gray-400">
+                            Uses a weighted scoring system across 7 dimensions (Art, Tech, Social, Logic, Leadership, Chaos, Order) to match user inputs against a database of 100+ career profiles.
+                        </p>
+                    </div>
                     <div class="pt-4">
-                        <button onclick="app.startQuiz()" class="text-blue-400 hover:text-white font-bold underline decoration-blue-500/30 hover:decoration-blue-500 transition-all">
-                            Ready to see what I built for you?
+                        <button onclick="app.startQuiz()" class="text-white border-b border-brand-500 pb-1 hover:text-brand-400 transition-colors">
+                            Experience the logic yourself <i class="fas fa-arrow-right ml-2 text-xs"></i>
                         </button>
                     </div>
                 </div>
-                <div class="glass p-8 rounded-2xl border border-white/10 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div class="font-mono text-sm text-blue-300 mb-4">// SYSTEM_MANIFESTO.md</div>
-                    <ul class="space-y-4 font-mono text-sm text-gray-400">
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-400"></i> <span>Reject generic advice</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-400"></i> <span>Embrace chaos & creativity</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-400"></i> <span>Code is poetry</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-400"></i> <span>Data over intuition</span>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </section>
 
-        <!-- VIEW: DATABASE (CAREERS) -->
+        <!-- VIEW: DATABASE -->
         <section id="view-careers" class="hidden min-h-[80vh] py-10">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4">The Database</h2>
-                <p class="text-gray-400">All the roles I've programmed into the system so far.</p>
-            </div>
-
-            <div class="flex flex-wrap justify-center gap-2 mb-8" id="db-filters">
-                <button onclick="app.filterDB('all')" class="px-4 py-1 rounded-full bg-blue-600 text-white text-sm">All</button>
-                <button onclick="app.filterDB('tech')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Tech</button>
-                <button onclick="app.filterDB('art')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Creative</button>
-                <button onclick="app.filterDB('lead')" class="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 text-sm">Leadership</button>
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div>
+                    <h2 class="text-4xl font-bold mb-2">Career Database</h2>
+                    <p class="text-gray-400">Indexing <span id="db-count" class="text-white font-bold">0</span> unique roles.</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="db-filters">
+                    <button onclick="app.filterDB('all')" class="px-5 py-2 rounded-full bg-brand-600 text-white text-sm font-medium transition-all shadow-lg shadow-brand-500/20">All</button>
+                    <button onclick="app.filterDB('tech')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Tech</button>
+                    <button onclick="app.filterDB('cyber')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Cyber</button>
+                    <button onclick="app.filterDB('creative')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Creative</button>
+                    <button onclick="app.filterDB('business')" class="px-5 py-2 rounded-full glass hover:bg-white/10 text-gray-300 text-sm font-medium transition-all">Business</button>
+                </div>
             </div>
 
             <div id="careers-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -280,356 +287,331 @@
             </div>
         </section>
 
-        <!-- VIEW: QUIZ INTERFACE -->
+        <!-- VIEW: QUIZ -->
         <section id="view-quiz" class="hidden min-h-[80vh] flex flex-col items-center justify-center max-w-3xl mx-auto">
-            <!-- Progress -->
             <div class="w-full mb-12">
-                <div class="flex justify-between text-xs text-gray-400 mb-2 font-mono">
-                    <span>ANALYSIS PROGRESS</span>
+                <div class="flex justify-between text-xs text-gray-400 mb-3 font-mono uppercase tracking-widest">
+                    <span>Analysis Sequence</span>
                     <span id="progress-text">0%</span>
                 </div>
-                <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-0 transition-all duration-500"></div>
+                <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 w-0 transition-all duration-500 ease-out"></div>
                 </div>
             </div>
 
-            <!-- Question Card -->
-            <div id="question-card" class="w-full glass p-8 md:p-12 rounded-2xl border border-white/10 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+            <div id="question-card" class="w-full glass p-8 md:p-14 rounded-3xl border border-white/10 relative overflow-hidden shadow-2xl transition-all duration-500">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-brand-400 to-purple-500"></div>
                 
-                <span id="q-category" class="inline-block px-3 py-1 rounded bg-blue-500/10 text-blue-400 text-xs font-bold tracking-wider mb-6">ANALYSIS PHASE 1</span>
+                <span id="q-category" class="inline-block px-3 py-1 rounded-md bg-brand-500/10 text-brand-400 text-[10px] font-bold tracking-widest uppercase mb-8 border border-brand-500/20">Initializing</span>
                 
-                <h2 id="q-text" class="text-2xl md:text-4xl font-bold mb-10 leading-snug">Initializing...</h2>
+                <h2 id="q-text" class="text-2xl md:text-4xl font-bold mb-12 leading-tight">Loading Question...</h2>
 
                 <div id="options-container" class="grid gap-4">
                     <!-- Options injected here -->
                 </div>
             </div>
 
-            <div class="mt-8 flex justify-between w-full text-sm text-gray-500 font-mono">
-                <button onclick="app.navigate('home')" class="hover:text-white transition-colors">ABORT MISSION</button>
+            <div class="mt-10 flex justify-between w-full text-xs text-gray-600 font-mono uppercase">
+                <button onclick="app.navigate('home')" class="hover:text-red-400 transition-colors">Abort</button>
                 <span id="q-id">ID: NULL</span>
             </div>
         </section>
 
-        <!-- VIEW: LOADING/PROCESSING -->
+        <!-- VIEW: LOADING -->
         <section id="view-loading" class="hidden min-h-[80vh] flex flex-col items-center justify-center">
-            <div class="relative w-32 h-32 mb-8">
-                <div class="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
-                <div class="absolute inset-4 bg-slate-800 rounded-full flex items-center justify-center font-mono text-xs text-blue-400 animate-pulse">
-                    MY AI
-                </div>
+            <div class="relative w-24 h-24 mb-10">
+                <div class="absolute inset-0 border-4 border-gray-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-brand-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
             </div>
-            <h2 class="text-2xl font-bold mb-2">Synthesizing Your Profile</h2>
-            <p id="loading-text" class="text-gray-400 font-mono text-sm">Comparing your answers against my database...</p>
+            <h2 class="text-3xl font-bold mb-3">Processing Data</h2>
+            <p class="text-gray-400 font-mono text-sm animate-pulse">Running algorithm on 150+ vectors...</p>
         </section>
 
         <!-- VIEW: RESULTS -->
         <section id="view-results" class="hidden py-10">
             <div class="grid md:grid-cols-12 gap-8">
-                <!-- Left Col: Profile -->
+                <!-- Profile Card -->
                 <div class="md:col-span-4 space-y-6">
-                    <div class="glass p-6 rounded-2xl border border-white/10 text-center">
-                        <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-full p-1 mb-4">
-                            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-3xl">
-                                🧠
+                    <div class="glass p-8 rounded-3xl border border-white/10 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-brand-500/5 to-transparent"></div>
+                        <div class="relative z-10">
+                            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl p-0.5 mb-6 shadow-xl shadow-brand-500/20">
+                                <div class="w-full h-full bg-dark-surface rounded-2xl flex items-center justify-center text-3xl text-white">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
                             </div>
+                            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Your Archetype</h2>
+                            <div id="archetype-name" class="text-3xl font-bold text-white mb-4">
+                                Loading...
+                            </div>
+                            <p id="archetype-desc" class="text-sm text-gray-400 leading-relaxed">
+                                Analysis complete.
+                            </p>
                         </div>
-                        <h2 class="text-xl font-bold mb-1">I Identified You As A</h2>
-                        <div id="archetype-name" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">
-                            Digital Architect
-                        </div>
-                        <p id="archetype-desc" class="text-sm text-gray-400 leading-relaxed">
-                            You possess a rare blend of analytical precision and creative vision.
-                        </p>
                     </div>
 
-                    <div class="glass p-6 rounded-2xl border border-white/10">
-                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Your Trait Signature</h3>
+                    <div class="glass p-6 rounded-3xl border border-white/10">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 text-center">Personality Matrix</h3>
                         <canvas id="radar-chart"></canvas>
                     </div>
                 </div>
 
-                <!-- Right Col: Matches -->
+                <!-- Matches -->
                 <div class="md:col-span-8 space-y-6">
-                    <div class="flex justify-between items-end mb-4">
-                        <h2 class="text-3xl font-bold">My Recommendations</h2>
-                        <button onclick="window.print()" class="text-sm text-blue-400 hover:text-white"><i class="fas fa-download mr-2"></i>Save Report</button>
+                    <div class="flex justify-between items-end mb-2">
+                        <h2 class="text-3xl font-bold">Top Recommendations</h2>
+                        <button onclick="window.print()" class="text-sm text-brand-400 hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-print"></i> Print Report</button>
                     </div>
 
                     <div id="career-matches" class="space-y-4">
                         <!-- Matches injected here -->
                     </div>
 
-                    <div class="glass p-8 rounded-2xl border border-dashed border-white/10 mt-8 text-center">
-                        <h3 class="text-lg font-bold mb-2">Not what you expected?</h3>
-                        <p class="text-gray-400 text-sm mb-4">My algorithm is constantly learning. Try answering differently.</p>
-                        <button onclick="app.reset()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors">Restart My Analysis</button>
+                    <div class="glass p-10 rounded-3xl border border-dashed border-white/10 mt-10 text-center">
+                        <h3 class="text-lg font-bold mb-2">Want to try again?</h3>
+                        <p class="text-gray-400 text-sm mb-6">The algorithm adapts to your inputs.</p>
+                        <button onclick="app.reset()" class="px-8 py-3 bg-white text-dark-bg hover:bg-gray-200 rounded-full text-sm font-bold transition-colors">Restart Analysis</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW: INVENTORY (Modal) -->
-        <div id="inventory-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-            <div class="bg-slate-900 border border-white/10 w-full max-w-2xl rounded-2xl p-8 transform scale-95 transition-transform duration-300 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold font-mono text-blue-400">> MY_ARTIFACTS</h2>
-                    <button onclick="app.toggleInventory()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+        <!-- MODAL: INVENTORY -->
+        <div id="inventory-modal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div class="bg-dark-surface border border-white/10 w-full max-w-4xl rounded-3xl p-10 transform scale-95 transition-transform duration-300 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto custom-scroll">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-purple-500"></div>
+                
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Secret Artifacts</h2>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Discover hidden interactions</p>
+                    </div>
+                    <button onclick="app.toggleInventory()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
-                <div id="inventory-grid" class="grid grid-cols-4 md:grid-cols-5 gap-4">
+                
+                <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <!-- Eggs injected here -->
                 </div>
-                <div class="mt-6 pt-6 border-t border-white/5 text-center">
-                    <p class="text-xs text-gray-500 font-mono">COLLECT ALL 12 SECRETS I HID TO UNLOCK GOD MODE</p>
+            </div>
+        </div>
+
+        <!-- MODAL: ROLE DETAILS -->
+        <div id="role-modal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+            <div class="w-full h-full md:max-w-5xl md:h-[90vh] bg-dark-surface md:rounded-3xl border border-white/10 relative overflow-hidden flex flex-col">
+                <!-- Header -->
+                <div class="p-8 border-b border-white/10 flex justify-between items-start bg-dark-surface z-10">
+                    <div>
+                        <div class="flex gap-2 mb-3" id="role-modal-tags">
+                            <!-- Tags -->
+                        </div>
+                        <h2 class="text-4xl font-bold text-white mb-2" id="role-modal-title">Role Title</h2>
+                        <p class="text-gray-400 text-lg" id="role-modal-desc">Role description goes here.</p>
+                    </div>
+                    <button onclick="app.closeRoleModal()" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"><i class="fas fa-times"></i></button>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-grow overflow-y-auto custom-scroll p-8">
+                    <div class="grid md:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-400 mb-4 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> High School Path</h3>
+                            <p class="text-gray-300 mb-6">To prepare for this career, focus on these courses:</p>
+                            <ul class="space-y-3" id="role-modal-courses">
+                                <!-- Courses -->
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2"><i class="fas fa-road"></i> Career Roadmap</h3>
+                            <div class="space-y-6 relative pl-6 border-l border-white/10" id="role-modal-roadmap">
+                                <!-- Roadmap -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- TERMINAL OVERLAY (CTF LAYER) -->
-    <div id="terminal-overlay" class="fixed inset-0 z-[200] bg-[#0c0c0c] text-[#22c55e] font-mono p-4 md:p-10 flex flex-col">
-        <div class="flex justify-between items-center mb-4 border-b border-[#22c55e]/30 pb-2">
-            <div class="text-sm">ROOT@FUTURELINK:~#</div>
-            <button onclick="terminal.toggle()" class="text-[#22c55e] hover:text-white">[X] CLOSE_CONNECTION</button>
+    <!-- FOOTER -->
+    <footer class="border-t border-white/5 mt-20 py-10 text-center text-gray-600 text-sm">
+        <div class="container mx-auto px-6">
+            <p>&copy; 2026 Aakshat Hariharan. All rights reserved.</p>
+            <p class="mt-2 text-xs">Built with <i class="fas fa-heart text-red-900"></i> and Code.</p>
         </div>
-        <div id="terminal-output" class="flex-grow overflow-y-auto mb-4 space-y-1 text-sm md:text-base custom-scroll">
+    </footer>
+
+    <!-- TERMINAL OVERLAY -->
+    <div id="terminal-overlay" class="fixed inset-0 z-[200] bg-[#0c0c0c] text-[#22c55e] font-mono p-6 md:p-12 flex flex-col transition-transform duration-500 translate-y-full">
+        <div class="flex justify-between items-center mb-6 border-b border-[#22c55e]/30 pb-4">
+            <div class="text-sm tracking-widest">ROOT@AAKSHAT-SYSTEM:~#</div>
+            <button onclick="terminal.toggle()" class="text-[#22c55e] hover:text-white transition-colors">[ TERMINATE_SESSION ]</button>
+        </div>
+        <div id="terminal-output" class="flex-grow overflow-y-auto mb-4 space-y-2 text-sm md:text-base custom-scroll font-medium">
             <div class="opacity-50">Initializing secure shell...</div>
-            <div class="opacity-50">Connected to 192.168.X.X</div>
+            <div class="opacity-50">Handshake complete.</div>
             <br>
-            <div>Welcome to My Admin Console.</div>
-            <div>Type 'help' for available commands.</div>
+            <div>Welcome to the Developer Console.</div>
+            <div>Type 'help' to see available commands.</div>
             <br>
         </div>
-        <div class="flex gap-2 items-center">
-            <span class="text-blue-500">➜</span>
-            <input type="text" id="terminal-input" class="bg-transparent border-none focus:outline-none text-[#22c55e] w-full font-bold" autocomplete="off" spellcheck="false" autofocus>
+        <div class="flex gap-3 items-center bg-[#111] p-4 rounded-lg border border-[#22c55e]/20">
+            <span class="text-blue-500 font-bold">➜</span>
+            <input type="text" id="terminal-input" class="bg-transparent border-none focus:outline-none text-[#22c55e] w-full font-bold" autocomplete="off" spellcheck="false">
         </div>
     </div>
 
-    <!-- BOSS MODE OVERLAY -->
-    <div id="boss-mode" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 9999; font-family: Arial, sans-serif; color: #000;">
-        <div style="background: #217346; color: white; padding: 4px 10px; font-size: 12px; display: flex; gap: 20px;">
-            <span>AutoSave: On</span> <span>File</span> <span>Home</span> <span>Insert</span> <span>Data</span>
-        </div>
-        <div style="background: #f3f2f1; padding: 8px; border-bottom: 1px solid #e1dfdd; font-size: 11px;">
-            Arial v 10 v B I U
-        </div>
-        <div style="display: grid; grid-template-columns: 40px repeat(5, 1fr); gap: 1px; background: #e1dfdd; padding-bottom: 1px;">
-            <div style="background: #f3f2f1;"></div>
-            <div style="background: #f3f2f1; text-align: center; padding: 2px;">A</div>
-            <div style="background: #f3f2f1; text-align: center; padding: 2px;">B</div>
-            <div style="background: #f3f2f1; text-align: center; padding: 2px;">C</div>
-            <div style="background: #f3f2f1; text-align: center; padding: 2px;">D</div>
-            <div style="background: #f3f2f1; text-align: center; padding: 2px;">E</div>
-            
-            <div style="background: #f3f2f1; text-align: center;">1</div>
-            <div style="background: white; padding: 2px;">Q3 Financials</div>
-            <div style="background: white; padding: 2px;"></div>
-            <div style="background: white; padding: 2px;"></div>
-            <div style="background: white; padding: 2px;"></div>
-            <div style="background: white; padding: 2px;"></div>
-            
-            <div style="background: #f3f2f1; text-align: center;">2</div>
-            <div style="background: white; padding: 2px;">Revenue</div>
-            <div style="background: white; padding: 2px;">$1,200,000</div>
-            <div style="background: white; padding: 2px;">$1,450,000</div>
-            <div style="background: white; padding: 2px;">$1,100,000</div>
-            <div style="background: white; padding: 2px;"></div>
-
-            <div style="background: #f3f2f1; text-align: center;">3</div>
-            <div style="background: white; padding: 2px;">Expenses</div>
-            <div style="background: white; padding: 2px;">$800,000</div>
-            <div style="background: white; padding: 2px;">$850,000</div>
-            <div style="background: white; padding: 2px;">$900,000</div>
-            <div style="background: white; padding: 2px;"></div>
-        </div>
-        <div style="position: absolute; bottom: 10px; right: 10px; font-size: 10px; color: #666;">Press ESC to exit</div>
-    </div>
-
-    <!-- NOTIFICATIONS -->
+    <!-- TOASTS -->
     <div id="toast-container" class="fixed bottom-8 right-8 z-[300] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- LOGIC -->
     <script>
-        // --- DATABASE ---
+        // --- DATA ---
         const DB = {
             questions: [
-                // CREATIVE
                 { id: 'c1', text: "I give you a blank canvas. What's your first move?", category: 'Creative', weights: { art: 3, tech: 0, lead: 0 }, options: [
                     { text: "Sketch a chaotic abstract concept", weights: { art: 2, chaos: 1 } },
                     { text: "Plan a geometric grid structure", weights: { art: 1, tech: 1, order: 2 } },
                     { text: "Ask someone what they want to see", weights: { social: 2, lead: 1 } }
                 ]},
-                { id: 'c2', text: "My project is failing. How do you fix it?", category: 'Problem Solving', weights: { lead: 2, tech: 1 }, options: [
-                    { text: "Redesign the core visual identity", weights: { art: 3 } },
-                    { text: "Analyze the data to find the bottleneck", weights: { tech: 2, logic: 2 } },
-                    { text: "Rally the team for a brainstorm", weights: { social: 3, lead: 2 } }
-                ]},
-                { id: 'c3', text: "You need to explain a complex idea to me. You use...", category: 'Communication', weights: { social: 1 }, options: [
-                    { text: "A detailed technical diagram", weights: { tech: 2, logic: 1 } },
-                    { text: "A relatable metaphor or story", weights: { social: 2, art: 1 } },
-                    { text: "A bulleted list of action items", weights: { order: 2, lead: 1 } }
-                ]},
-                { id: 'c4', text: "Your ideal workspace looks like...", category: 'Environment', weights: {}, options: [
-                    { text: "A messy studio full of inspiration", weights: { art: 2, chaos: 2 } },
-                    { text: "A silent room with three monitors", weights: { tech: 2, logic: 1 } },
-                    { text: "A bustling cafe with people watching", weights: { social: 2, chaos: 1 } }
-                ]},
-                // TECH
-                { id: 't1', text: "You discover a bug in my app. You...", category: 'Technical', weights: { tech: 3 }, options: [
+                { id: 't1', text: "You discover a critical bug in an app. You...", category: 'Technical', weights: { tech: 3 }, options: [
                     { text: "Ignore it, not my problem", weights: { chaos: 1 } },
                     { text: "Write a script to exploit it", weights: { tech: 3, chaos: 2 } },
-                    { text: "Report it to me detailedly", weights: { tech: 1, social: 1, order: 2 } }
+                    { text: "Report it with detailed reproduction steps", weights: { tech: 1, social: 1, order: 2 } }
                 ]},
-                { id: 't2', text: "Choose a superpower:", category: 'Personality', weights: {}, options: [
-                    { text: "Control machines with your mind", weights: { tech: 3 } },
-                    { text: "Persuade anyone to do anything", weights: { social: 3, lead: 2 } },
-                    { text: "Create matter from thin air", weights: { art: 3 } }
-                ]},
-                { id: 't3', text: "New technology is released. You...", category: 'Adaptability', weights: { tech: 2 }, options: [
-                    { text: "Wait for the reviews", weights: { logic: 1, order: 1 } },
-                    { text: "Pre-order it immediately", weights: { tech: 2, chaos: 1 } },
-                    { text: "Build your own version instead", weights: { tech: 3, art: 1 } }
-                ]},
-                // LEADERSHIP
                 { id: 'l1', text: "Your team is arguing over two good ideas. You...", category: 'Leadership', weights: { lead: 3 }, options: [
                     { text: "Pick the one that's most practical", weights: { logic: 2, order: 1 } },
                     { text: "Combine them into a hybrid solution", weights: { art: 1, lead: 2 } },
                     { text: "Let them vote and accept the outcome", weights: { social: 2, lead: 1 } }
                 ]},
-                { id: 'l2', text: "Success is defined by...", category: 'Values', weights: { lead: 1 }, options: [
-                    { text: "The impact on the world", weights: { social: 2, lead: 1 } },
-                    { text: "The elegance of the solution", weights: { art: 1, logic: 1 } },
-                    { text: "The efficiency of the process", weights: { order: 2, tech: 1 } }
+                { id: 'n1', text: "A patient is describing vague symptoms. You...", category: 'Analysis', weights: { health: 3, logic: 2 }, options: [
+                    { text: "Order a full panel of tests immediately", weights: { tech: 1, order: 2 } },
+                    { text: "Listen for emotional cues and context", weights: { social: 3, empathy: 2 } },
+                    { text: "Consult the latest research papers", weights: { logic: 3, tech: 1 } }
                 ]},
-                // LOGIC
-                { id: 'g1', text: "A complex machine breaks down. Your reaction?", category: 'Logic', weights: { logic: 3 }, options: [
-                    { text: "Take it apart to see how it works", weights: { tech: 2, logic: 2 } },
-                    { text: "Read the manual cover to cover", weights: { order: 3, logic: 1 } },
-                    { text: "Call support and complain", weights: { social: 1, chaos: 1 } }
+                { id: 'n2', text: "You need to build a table. You...", category: 'Practical', weights: { trade: 3 }, options: [
+                    { text: "Buy the wood and design it yourself", weights: { art: 2, trade: 3 } },
+                    { text: "Follow the IKEA instructions perfectly", weights: { order: 3 } },
+                    { text: "Hire someone else to do it", weights: { lead: 2 } }
                 ]},
-                { id: 'g2', text: "You prefer games that involve...", category: 'Hobbies', weights: {}, options: [
-                    { text: "Strategy and resource management", weights: { logic: 2, order: 1 } },
-                    { text: "Reflexes and fast action", weights: { chaos: 1, tech: 1 } },
-                    { text: "Roleplaying and character depth", weights: { art: 1, social: 2 } }
+                { id: 'n3', text: "You see a complex legal contract. You feel...", category: 'Detail', weights: { law: 3 }, options: [
+                    { text: "Bored to tears", weights: { art: 2, chaos: 2 } },
+                    { text: "Excited to find the loopholes", weights: { logic: 3, law: 3 } },
+                    { text: "Protective of the people signing it", weights: { social: 2, empathy: 1 } }
                 ]},
-                // SOCIAL
-                { id: 's1', text: "At a party, you are usually...", category: 'Social', weights: { social: 3 }, options: [
-                    { text: "In the center telling stories", weights: { social: 3, lead: 1 } },
-                    { text: "Observing people from the corner", weights: { art: 1, logic: 1 } },
-                    { text: "Fixing the broken sound system", weights: { tech: 2 } }
+                { id: 'n4', text: "The kitchen is on fire (metaphorically). You...", category: 'Pressure', weights: { service: 3 }, options: [
+                    { text: "Scream and panic", weights: { chaos: 2 } },
+                    { text: "Systematically put out the fires", weights: { order: 2, lead: 1 } },
+                    { text: "Improvise a new menu instantly", weights: { art: 2, chaos: 1 } }
                 ]},
-                { id: 's2', text: "A friend is sad. You...", category: 'Empathy', weights: { social: 2 }, options: [
-                    { text: "Offer practical solutions to their problem", weights: { logic: 2, tech: 1 } },
-                    { text: "Just listen and offer a hug", weights: { social: 3 } },
-                    { text: "Distract them with a fun activity", weights: { chaos: 1, art: 1 } }
+                { id: 'n5', text: "You want to understand how the universe works. You study...", category: 'Curiosity', weights: { science: 3 }, options: [
+                    { text: "Physics and Mathematics", weights: { logic: 3, tech: 1 } },
+                    { text: "Biology and Life Systems", weights: { health: 2, nature: 3 } },
+                    { text: "Philosophy and Art", weights: { art: 3, social: 1 } }
                 ]},
-                // WORK STYLE
-                { id: 'x1', text: "The deadline is tomorrow. You haven't started.", category: 'Work Style', weights: { order: 2 }, options: [
-                    { text: "Pull an all-nighter, coffee IV", weights: { chaos: 2, tech: 1 } },
-                    { text: "Negotiate an extension", weights: { social: 2, lead: 1 } },
-                    { text: "Submit what you have, it's 'minimalist'", weights: { art: 2, chaos: 1 } }
+                { id: 'n6', text: "Your ideal work environment is...", category: 'Environment', weights: {}, options: [
+                    { text: "A quiet laboratory or library", weights: { science: 2, law: 1, order: 2 } },
+                    { text: "Outdoors, hands-on, active", weights: { trade: 3, nature: 3 } },
+                    { text: "A busy hospital or school", weights: { health: 2, social: 3 } }
                 ]},
-                { id: 'x2', text: "Money or Meaning?", category: 'Values', weights: {}, options: [
-                    { text: "Money to fund my projects", weights: { tech: 1, lead: 1 } },
-                    { text: "Meaning to feed my soul", weights: { art: 2, social: 2 } },
-                    { text: "A balanced portfolio of both", weights: { logic: 2, order: 1 } }
+                { id: 'n7', text: "When explaining something, you prefer...", category: 'Communication', weights: {}, options: [
+                    { text: "Using data and charts", weights: { business: 2, logic: 2 } },
+                    { text: "Telling a compelling story", weights: { art: 2, social: 2 } },
+                    { text: "Showing how it works physically", weights: { trade: 2, tech: 1 } }
                 ]},
-                { id: 'x3', text: "Your desktop is...", category: 'Organization', weights: { order: 2 }, options: [
-                    { text: "Empty, everything in folders", weights: { order: 3, logic: 1 } },
-                    { text: "Covered in files, but I know where everything is", weights: { chaos: 2, art: 1 } },
-                    { text: "I use a search bar for everything", weights: { tech: 2 } }
+                { id: 'n8', text: "You find a USB drive in the parking lot. You...", category: 'Security', weights: { cyber: 3 }, options: [
+                    { text: "Plug it in to see who it belongs to", weights: { chaos: 3, tech: 1 } },
+                    { text: "Destroy it immediately", weights: { order: 2, cyber: 2 } },
+                    { text: "Open it in a secure sandbox environment", weights: { cyber: 3, tech: 2 } }
                 ]},
-                // NEW QUESTIONS
-                { id: 'n1', text: "You're learning a new skill. You prefer...", category: 'Learning', weights: { logic: 1 }, options: [
-                    { text: "Watching video tutorials", weights: { art: 1, social: 1 } },
-                    { text: "Reading the documentation", weights: { logic: 2, order: 1 } },
-                    { text: "Just building something and failing", weights: { chaos: 2, tech: 1 } }
+                { id: 'n9', text: "You are playing a strategy game. Your style is...", category: 'Strategy', weights: {}, options: [
+                    { text: "Aggressive rush tactics", weights: { chaos: 2, lead: 1 } },
+                    { text: "Defensive turtle and economy", weights: { order: 2, business: 1 } },
+                    { text: "Diplomacy and alliances", weights: { social: 3, lead: 2 } }
                 ]},
-                { id: 'n2', text: "Your code/design isn't working. You...", category: 'Resilience', weights: {}, options: [
-                    { text: "Walk away and clear your head", weights: { social: 1, art: 1 } },
-                    { text: "Grind it out until it works", weights: { tech: 2, order: 1 } },
-                    { text: "Ask a community for help", weights: { social: 2, lead: 1 } }
+                { id: 'n10', text: "A friend is sad. You...", category: 'Empathy', weights: { social: 3 }, options: [
+                    { text: "Offer practical solutions to their problem", weights: { logic: 2, order: 1 } },
+                    { text: "Listen and validate their feelings", weights: { social: 3, empathy: 3 } },
+                    { text: "Distract them with fun activities", weights: { art: 1, chaos: 1 } }
                 ]},
-                { id: 'n3', text: "Ideally, your day is...", category: 'Routine', weights: { order: 2 }, options: [
-                    { text: "Structured 9-5 with clear goals", weights: { order: 3 } },
-                    { text: "Flexible, working when inspired", weights: { chaos: 2, art: 2 } },
-                    { text: "Sprints of intense focus", weights: { tech: 1, logic: 1 } }
+                { id: 'n11', text: "You have to organize a party. You focus on...", category: 'Planning', weights: {}, options: [
+                    { text: "The guest list and music", weights: { social: 2, art: 1 } },
+                    { text: "The budget and schedule", weights: { business: 2, order: 2 } },
+                    { text: "The food and decorations", weights: { art: 2, service: 1 } }
                 ]},
-                { id: 'n4', text: "You care most about...", category: 'Priorities', weights: {}, options: [
-                    { text: "The user experience", weights: { art: 2, social: 2 } },
-                    { text: "The code quality", weights: { tech: 2, logic: 2 } },
-                    { text: "The business value", weights: { lead: 3, order: 1 } }
-                ]},
-                { id: 'n5', text: "In a meeting, you are...", category: 'Collaboration', weights: { social: 1 }, options: [
-                    { text: "Taking detailed notes", weights: { order: 2, logic: 1 } },
-                    { text: "Leading the conversation", weights: { lead: 3 } },
-                    { text: "Doodling or coding on the side", weights: { art: 1, tech: 1 } }
+                { id: 'n12', text: "You see a complex machine. You want to...", category: 'Curiosity', weights: { tech: 2 }, options: [
+                    { text: "Use it to make something", weights: { art: 1, trade: 1 } },
+                    { text: "Take it apart to see how it works", weights: { tech: 3, logic: 2 } },
+                    { text: "Read the manual first", weights: { order: 3, law: 1 } }
                 ]}
             ],
             careers: [
-                { title: "Full Stack Developer", tags: ['tech', 'logic'], desc: "Building the digital infrastructure of tomorrow." },
-                { title: "UX/UI Designer", tags: ['art', 'tech'], desc: "Blending empathy with pixel-perfect precision." },
-                { title: "Product Manager", tags: ['lead', 'social', 'order'], desc: "Guiding chaos into shippable products." },
-                { title: "Data Scientist", tags: ['logic', 'tech', 'order'], desc: "Finding truth in the noise of big data." },
-                { title: "Creative Director", tags: ['art', 'lead'], desc: "Visionary leadership for aesthetic endeavors." },
-                { title: "Cybersecurity Analyst", tags: ['tech', 'chaos', 'logic'], desc: "Thinking like a hacker to stop hackers." },
-                { title: "Social Worker", tags: ['social', 'empathy'], desc: "Directly improving lives through connection." },
-                { title: "Startup Founder", tags: ['lead', 'chaos', 'tech'], desc: "High risk, high reward, total ownership." },
-                // NEW ROLES
-                { title: "DevOps Engineer", tags: ['tech', 'order', 'chaos'], desc: "Automating the bridge between code and deployment." },
-                { title: "Game Developer", tags: ['tech', 'art', 'logic'], desc: "Creating immersive worlds through code and physics." },
-                { title: "Technical Writer", tags: ['tech', 'social', 'order'], desc: "Translating complex systems into human language." },
-                { title: "QA Engineer", tags: ['tech', 'order', 'logic'], desc: "The last line of defense against bugs." },
-                { title: "Blockchain Developer", tags: ['tech', 'chaos', 'logic'], desc: "Building decentralized trustless systems." },
-                { title: "AR/VR Designer", tags: ['art', 'tech', 'chaos'], desc: "Crafting realities beyond the screen." },
-                { title: "IT Project Manager", tags: ['lead', 'order', 'tech'], desc: "Keeping the technical ship sailing smooth." },
-                { title: "Developer Advocate", tags: ['social', 'tech', 'lead'], desc: "The voice of the developer community." },
-                { title: "AI Ethics Researcher", tags: ['logic', 'social', 'tech'], desc: "Ensuring our future overlords are nice." },
-                { title: "Cloud Architect", tags: ['tech', 'order', 'lead'], desc: "Designing scalable systems in the sky." },
-                { title: "Mobile Developer", tags: ['tech', 'art', 'logic'], desc: "Putting the world in people's pockets." },
-                { title: "System Administrator", tags: ['tech', 'order', 'logic'], desc: "The silent guardian of uptime." },
-                { title: "Marketing Technologist", tags: ['social', 'tech', 'art'], desc: "Where data meets storytelling." },
-                { title: "Sales Engineer", tags: ['social', 'tech', 'lead'], desc: "Solving client problems with technical solutions." }
+                // TECH & CYBER
+                { title: "Full Stack Developer", tags: ['tech', 'logic'], desc: "Building the digital infrastructure of tomorrow.", courses: ["AP Computer Science", "Web Development", "Data Structures"], roadmap: ["Learn HTML/CSS/JS", "Master React/Node", "Build Portfolio", "Apply for Junior Roles"] },
+                { title: "Cybersecurity Analyst", tags: ['tech', 'chaos', 'logic', 'cyber'], desc: "Protects an organization's computer networks and systems.", courses: ["Cybersecurity Fundamentals", "Networking", "AP Computer Science", "Discrete Math"], roadmap: ["Learn Networking (CompTIA Network+)", "Learn Security (CompTIA Security+)", "Practice CTFs", "Get Certified (CEH/OSCP)"] },
+                { title: "Penetration Tester", tags: ['tech', 'chaos', 'cyber'], desc: "Ethical hacker who simulates attacks to find vulnerabilities.", courses: ["Computer Science", "Cryptography", "Python Programming"], roadmap: ["Master Linux", "Learn Scripting (Python/Bash)", "Understand Exploits", "Get OSCP Certification"] },
+                { title: "Security Architect", tags: ['tech', 'order', 'cyber'], desc: "Designs secure network and computer systems.", courses: ["Systems Architecture", "Network Security", "Risk Management"], roadmap: ["Gain Experience as Admin", "Learn Cloud Security", "Master Compliance Standards", "CISSP Certification"] },
+                { title: "DevOps Engineer", tags: ['tech', 'order', 'logic'], desc: "Bridging the gap between development and operations.", courses: ["Cloud Computing", "Scripting", "Operating Systems"], roadmap: ["Learn Linux", "Master Docker/Kubernetes", "Learn CI/CD", "Cloud Certifications (AWS/Azure)"] },
+                { title: "Data Scientist", tags: ['logic', 'tech', 'business'], desc: "Finding truth in the noise of big data.", courses: ["Statistics", "Calculus", "Python", "Machine Learning"], roadmap: ["Learn Python/R", "Master SQL", "Understand ML Algorithms", "Build Data Projects"] },
+                { title: "Machine Learning Engineer", tags: ['tech', 'logic', 'science'], desc: "Teaching computers to learn from data.", courses: ["Linear Algebra", "Calculus", "Algorithms"], roadmap: ["Master Python", "Learn TensorFlow/PyTorch", "Understand Deep Learning", "Deploy Models"] },
+                { title: "Blockchain Developer", tags: ['tech', 'logic', 'law'], desc: "Building decentralized applications.", courses: ["Cryptography", "Distributed Systems", "Economics"], roadmap: ["Learn Solidity/Rust", "Understand Smart Contracts", "Build DApps", "Contribute to DAOs"] },
+                
+                // CREATIVE & DESIGN
+                { title: "UX/UI Designer", tags: ['art', 'tech', 'creative'], desc: "Blending empathy with pixel-perfect precision.", courses: ["Graphic Design", "Psychology", "Human-Computer Interaction"], roadmap: ["Learn Figma", "Understand Design Thinking", "Build Portfolio", "User Testing"] },
+                { title: "Game Developer", tags: ['tech', 'art', 'creative'], desc: "Creating immersive worlds through code.", courses: ["Physics", "Computer Graphics", "Storytelling"], roadmap: ["Learn Unity/Unreal", "Master C#/C++", "Build Game Prototypes", "Join Game Jams"] },
+                { title: "Creative Director", tags: ['art', 'lead', 'creative'], desc: "Visionary leadership for aesthetic endeavors.", courses: ["Art History", "Marketing", "Communication"], roadmap: ["Gain Design Experience", "Lead Small Teams", "Develop Brand Vision", "Manage Large Projects"] },
+                { title: "3D Animator", tags: ['art', 'tech'], desc: "Bringing static objects to life.", courses: ["Fine Arts", "Computer Animation", "Physics"], roadmap: ["Learn Blender/Maya", "Understand Rigging", "Master Motion", "Build Demo Reel"] },
+                
+                // BUSINESS & LEADERSHIP
+                { title: "Product Manager", tags: ['lead', 'social', 'business'], desc: "Guiding chaos into shippable products.", courses: ["Business Management", "Economics", "Psychology"], roadmap: ["Learn Agile", "Understand User Needs", "Prioritize Features", "Launch Products"] },
+                { title: "Startup Founder", tags: ['lead', 'chaos', 'business'], desc: "High risk, high reward, total ownership.", courses: ["Entrepreneurship", "Finance", "Marketing"], roadmap: ["Identify Problem", "Build MVP", "Validate Market", "Scale"] },
+                { title: "Project Manager", tags: ['lead', 'order', 'business'], desc: "Keeping the train on the tracks.", courses: ["Organizational Behavior", "Communication", "Statistics"], roadmap: ["Learn PMP/Agile", "Manage Small Projects", "Master Scheduling", "Lead Cross-Functional Teams"] },
+                { title: "Marketing Specialist", tags: ['social', 'art', 'business'], desc: "Connecting products with people.", courses: ["Psychology", "Digital Media", "Statistics"], roadmap: ["Learn SEO/SEM", "Content Creation", "Analyze Metrics", "Run Campaigns"] },
+                
+                // SCIENCE & HEALTH
+                { title: "Biomedical Engineer", tags: ['health', 'tech', 'science'], desc: "Innovating at the intersection of biology and tech.", courses: ["Biology", "Chemistry", "Engineering"], roadmap: ["Degree in Bioengineering", "Lab Experience", "Medical Device Design", "Regulatory Knowledge"] },
+                { title: "Surgeon", tags: ['health', 'tech', 'order'], desc: "High-stakes precision where lives are on the line.", courses: ["Anatomy", "Biology", "Chemistry"], roadmap: ["Pre-Med", "Medical School", "Residency", "Fellowship"] },
+                { title: "Psychologist", tags: ['health', 'social', 'empathy'], desc: "Decoding the human mind.", courses: ["Psychology", "Sociology", "Statistics"], roadmap: ["Bachelor's Degree", "Master's/PhD", "Clinical Hours", "Licensure"] },
+                { title: "Forensic Analyst", tags: ['science', 'law', 'logic'], desc: "Solving crimes through science.", courses: ["Chemistry", "Biology", "Criminal Justice"], roadmap: ["Degree in Forensics", "Lab Training", "Evidence Handling", "Court Testimony"] },
+                
+                // TRADES & OTHERS
+                { title: "Electrician", tags: ['trade', 'tech', 'logic'], desc: "Mastering the flow of power.", courses: ["Physics", "Math", "Shop Class"], roadmap: ["Apprenticeship", "Trade School", "Licensing Exam", "Master Electrician"] },
+                { title: "Civil Engineer", tags: ['tech', 'order', 'trade'], desc: "Building the infrastructure of civilization.", courses: ["Physics", "Calculus", "Drafting"], roadmap: ["Engineering Degree", "EIT Exam", "Field Experience", "PE License"] },
+                { title: "Pilot", tags: ['tech', 'order', 'trade'], desc: "Commanding heavy machinery at 30,000 feet.", courses: ["Physics", "Geography", "Meteorology"], roadmap: ["Private Pilot License", "Instrument Rating", "Commercial License", "Airline Transport Pilot"] },
+                { title: "Chef", tags: ['art', 'lead', 'service'], desc: "Orchestrating a symphony of flavors.", courses: ["Culinary Arts", "Chemistry", "Business"], roadmap: ["Culinary School", "Line Cook", "Sous Chef", "Executive Chef"] }
             ],
             eggs: [
-                { id: 'konami', name: 'Konami Code', icon: '🎮', desc: 'Up Up Down Down...' },
-                { id: 'logo_click', name: 'Logo Spinner', icon: '🌀', desc: 'You made it dizzy.' },
-                { id: 'terminal_user', name: 'Hacker Voice', icon: '💻', desc: 'Accessed the terminal.' },
-                { id: 'title_glitch', name: 'Glitch in the Matrix', icon: '💊', desc: 'Found the unstable text.' },
-                { id: 'spin_doctor', name: 'Spin Doctor', icon: '😵', desc: 'Found the hidden spinner.' },
-                { id: 'stat_checker', name: 'Stat Nerd', icon: '📊', desc: 'Checked the version number.' },
-                { id: 'dev_tools', name: 'Inspector Gadget', icon: '🕵️', desc: 'Opened the console.' },
-                { id: 'tiny_window', name: 'Mobile Master', icon: '📱', desc: 'Resized to mobile view.' },
-                { id: 'god_mode', name: 'God Mode', icon: '👑', desc: 'Unlocked all secrets.' },
-                { id: 'time_traveler', name: 'Time Traveler', icon: '⏳', desc: 'Played past midnight.' },
-                { id: 'copy_cat', name: 'Copy Cat', icon: '📋', desc: 'Tried to copy text.' },
-                { id: 'rage_click', name: 'Rage Clicker', icon: '🖱️', desc: 'Calm down there.' },
-                { id: 'boss_mode', name: 'Boss Mode', icon: '💼', desc: 'Looked busy.' }
+                { id: 'konami', name: 'Konami Code', icon: '<i class="fas fa-gamepad"></i>', desc: 'Up Up Down Down...' },
+                { id: 'terminal_user', name: 'Hacker Voice', icon: '<i class="fas fa-terminal"></i>', desc: 'Accessed the terminal.' },
+                { id: 'title_glitch', name: 'Glitch in the Matrix', icon: '<i class="fas fa-bug"></i>', desc: 'Found the unstable text.' },
+                { id: 'stat_checker', name: 'Stat Nerd', icon: '<i class="fas fa-chart-bar"></i>', desc: 'Checked the version number.' },
+                { id: 'tiny_window', name: 'Mobile Master', icon: '<i class="fas fa-mobile-alt"></i>', desc: 'Resized to mobile view.' },
+                { id: 'god_mode', name: 'God Mode', icon: '<i class="fas fa-crown"></i>', desc: 'Unlocked all secrets.' },
+                { id: 'time_traveler', name: 'Time Traveler', icon: '<i class="fas fa-clock"></i>', desc: 'Played past midnight.' },
+                { id: 'copy_cat', name: 'Copy Cat', icon: '<i class="fas fa-copy"></i>', desc: 'Tried to copy text.' },
+                { id: 'rage_click', name: 'Rage Clicker', icon: '<i class="fas fa-mouse-pointer"></i>', desc: 'Calm down there.' },
+                { id: 'pixel_hunter', name: 'Pixel Hunter', icon: '<i class="fas fa-crosshairs"></i>', desc: 'Found the invisible pixel.' },
+                { id: 'console_spy', name: 'Console Spy', icon: '<i class="fas fa-user-secret"></i>', desc: 'Read the console logs.' },
+                { id: 'print_master', name: 'Paper Trail', icon: '<i class="fas fa-print"></i>', desc: 'Tried to print the page.' }
             ]
         };
 
-        // --- STATE MANAGEMENT ---
+        // --- STATE ---
         const state = {
-            scores: { art: 0, tech: 0, social: 0, logic: 0, lead: 0, chaos: 0, order: 0 },
+            scores: {},
             history: [],
-            currentQIndex: 0,
             inventory: new Set(),
-            startTime: Date.now(),
             clicks: 0
         };
 
-        // --- APP CONTROLLER ---
+        // --- APP ---
         const app = {
             init: () => {
-                app.renderBackground();
+                app.renderParticles();
                 app.checkTime();
-                app.renderCareersGrid(); // Pre-render database
+                app.renderCareersGrid();
                 
-                // Global Key Listener
+                // Listeners
                 document.addEventListener('keydown', eggHunt.handleKey);
                 window.addEventListener('resize', eggHunt.handleResize);
                 document.addEventListener('copy', () => eggHunt.collect('copy_cat'));
@@ -637,20 +619,20 @@
                     state.clicks++;
                     if(state.clicks === 10) eggHunt.collect('rage_click');
                 });
+                window.addEventListener('beforeprint', () => eggHunt.collect('print_master'));
 
                 // Console Egg
-                console.log("%c STOP! ", "color: red; font-size: 50px; font-weight: bold;");
-                console.log("%cIf you are looking for the secrets, try typing 'help()' in the terminal overlay.", "color: white; font-size: 14px;");
+                console.log("%c HELLO THERE ", "background: #0ea5e9; color: white; padding: 10px; border-radius: 5px; font-weight: bold;");
+                console.log("Looking for secrets? Try typing 'help' in the terminal overlay.");
                 
-                // Counter Animation
+                // Counters
                 document.querySelectorAll('.counter').forEach(counter => {
                     const target = +counter.getAttribute('data-target');
-                    const duration = 2000; 
-                    const increment = target / (duration / 16);
                     let current = 0;
+                    const inc = target / 50;
                     const update = () => {
-                        current += increment;
-                        if (current < target) {
+                        current += inc;
+                        if(current < target) {
                             counter.innerText = Math.ceil(current);
                             requestAnimationFrame(update);
                         } else {
@@ -659,18 +641,25 @@
                     };
                     update();
                 });
+
+                // DB Count
+                document.getElementById('db-count').innerText = DB.careers.length;
             },
 
             navigate: (view) => {
-                document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`view-${view}`).classList.remove('hidden');
+                document.querySelectorAll('main > section').forEach(el => {
+                    el.classList.add('hidden');
+                    el.classList.remove('fade-in');
+                });
+                const target = document.getElementById(`view-${view}`);
+                target.classList.remove('hidden');
+                target.classList.add('fade-in');
                 window.scrollTo(0,0);
             },
 
             startQuiz: () => {
-                state.scores = { art: 0, tech: 0, social: 0, logic: 0, lead: 0, chaos: 0, order: 0 };
+                state.scores = {};
                 state.history = [];
-                state.currentQIndex = 0;
                 app.navigate('quiz');
                 quiz.loadNext();
             },
@@ -681,33 +670,62 @@
 
             renderCareersGrid: () => {
                 const grid = document.getElementById('careers-grid');
-                grid.innerHTML = DB.careers.map(c => `
-                    <div class="glass p-6 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all hover:-translate-y-1 group" data-tags="${c.tags.join(',')}">
-                        <h3 class="font-bold text-lg mb-2 group-hover:text-blue-400 transition-colors">${c.title}</h3>
-                        <p class="text-sm text-gray-400 mb-4">${c.desc}</p>
+                grid.innerHTML = DB.careers.map((c, i) => `
+                    <div class="glass p-6 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-all hover:-translate-y-1 group cursor-pointer" onclick="app.openRoleModal(${i})" data-tags="${c.tags.join(',')}">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-bold text-lg group-hover:text-brand-400 transition-colors">${c.title}</h3>
+                            <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-brand-500 text-xs"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4 leading-relaxed line-clamp-2">${c.desc}</p>
                         <div class="flex flex-wrap gap-2">
-                            ${c.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-white/5 text-gray-500">${t}</span>`).join('')}
+                            ${c.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-white/5 text-gray-500 border border-white/5">${t}</span>`).join('')}
                         </div>
                     </div>
                 `).join('');
+            },
+
+            openRoleModal: (index) => {
+                const role = DB.careers[index];
+                const modal = document.getElementById('role-modal');
+                
+                document.getElementById('role-modal-title').innerText = role.title;
+                document.getElementById('role-modal-desc').innerText = role.desc;
+                document.getElementById('role-modal-tags').innerHTML = role.tags.map(t => `<span class="text-[10px] uppercase tracking-wider px-2 py-1 rounded bg-brand-500/20 text-brand-400 border border-brand-500/20">${t}</span>`).join('');
+                
+                document.getElementById('role-modal-courses').innerHTML = role.courses.map(c => `<li class="flex items-center gap-3 text-gray-400"><i class="fas fa-check-circle text-brand-500 text-xs"></i> ${c}</li>`).join('');
+                
+                document.getElementById('role-modal-roadmap').innerHTML = role.roadmap.map((r, i) => `
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-brand-500 border-2 border-dark-surface"></div>
+                        <h4 class="text-white font-bold text-sm mb-1">Step ${i+1}</h4>
+                        <p class="text-gray-400 text-sm">${r}</p>
+                    </div>
+                `).join('');
+
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            },
+
+            closeRoleModal: () => {
+                const modal = document.getElementById('role-modal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
             },
 
             filterDB: (filter) => {
                 const cards = document.querySelectorAll('#careers-grid > div');
                 const buttons = document.querySelectorAll('#db-filters button');
                 
-                // Update buttons
                 buttons.forEach(b => {
                     if(b.innerText.toLowerCase().includes(filter) || (filter === 'all' && b.innerText === 'All')) {
-                        b.classList.remove('bg-white/5', 'text-gray-300');
-                        b.classList.add('bg-blue-600', 'text-white');
+                        b.classList.remove('glass', 'text-gray-300');
+                        b.classList.add('bg-brand-600', 'text-white', 'shadow-lg');
                     } else {
-                        b.classList.add('bg-white/5', 'text-gray-300');
-                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('glass', 'text-gray-300');
+                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-lg');
                     }
                 });
 
-                // Filter cards
                 cards.forEach(card => {
                     const tags = card.getAttribute('data-tags');
                     if(filter === 'all' || tags.includes(filter)) {
@@ -718,58 +736,42 @@
                 });
             },
 
-            renderBackground: () => {
-                const canvas = document.getElementById('neural-bg');
+            renderParticles: () => {
+                const canvas = document.getElementById('particle-bg');
                 const ctx = canvas.getContext('2d');
-                let width, height, particles;
+                let width, height, particles = [];
 
                 const resize = () => {
                     width = canvas.width = window.innerWidth;
                     height = canvas.height = window.innerHeight;
                     particles = [];
-                    for(let i=0; i<50; i++) {
+                    for(let i=0; i<40; i++) {
                         particles.push({
                             x: Math.random() * width,
                             y: Math.random() * height,
-                            vx: (Math.random() - 0.5) * 0.5,
-                            vy: (Math.random() - 0.5) * 0.5,
+                            vx: (Math.random() - 0.5) * 0.3,
+                            vy: (Math.random() - 0.5) * 0.3,
                             size: Math.random() * 2
                         });
                     }
                 };
-                
                 window.addEventListener('resize', resize);
                 resize();
 
                 const animate = () => {
                     ctx.clearRect(0, 0, width, height);
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
-
-                    particles.forEach((p, i) => {
+                    ctx.fillStyle = '#0ea5e9';
+                    
+                    particles.forEach(p => {
                         p.x += p.vx;
                         p.y += p.vy;
-
                         if(p.x < 0 || p.x > width) p.vx *= -1;
                         if(p.y < 0 || p.y > height) p.vy *= -1;
-
+                        
+                        ctx.globalAlpha = 0.3;
                         ctx.beginPath();
                         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                         ctx.fill();
-
-                        // Connect
-                        particles.forEach((p2, j) => {
-                            if(i === j) return;
-                            const dx = p.x - p2.x;
-                            const dy = p.y - p2.y;
-                            const dist = Math.sqrt(dx*dx + dy*dy);
-                            if(dist < 150) {
-                                ctx.beginPath();
-                                ctx.moveTo(p.x, p.y);
-                                ctx.lineTo(p2.x, p2.y);
-                                ctx.stroke();
-                            }
-                        });
                     });
                     requestAnimationFrame(animate);
                 };
@@ -777,8 +779,8 @@
             },
 
             checkTime: () => {
-                const hour = new Date().getHours();
-                if(hour >= 0 && hour < 4) eggHunt.collect('time_traveler');
+                const h = new Date().getHours();
+                if(h >= 0 && h < 5) eggHunt.collect('time_traveler');
             },
 
             toggleInventory: () => {
@@ -787,18 +789,16 @@
                 
                 if(modal.classList.contains('hidden')) {
                     modal.classList.remove('hidden');
-                    // Render Grid
                     grid.innerHTML = DB.eggs.map(egg => {
                         const unlocked = state.inventory.has(egg.id);
                         return `
-                            <div class="aspect-square rounded-xl border ${unlocked ? 'border-blue-500 bg-blue-500/10' : 'border-white/5 bg-white/5'} flex flex-col items-center justify-center p-2 text-center transition-all hover:scale-105">
-                                <div class="text-3xl mb-2 ${unlocked ? '' : 'grayscale opacity-20'}">${egg.icon}</div>
-                                <div class="text-[10px] font-bold ${unlocked ? 'text-white' : 'text-gray-600'}">${unlocked ? egg.name : '???'}</div>
-                                ${unlocked ? `<div class="text-[8px] text-blue-400 mt-1">${egg.desc}</div>` : ''}
+                            <div class="aspect-square rounded-2xl border ${unlocked ? 'border-brand-500 bg-brand-500/10' : 'border-white/5 bg-white/5'} flex flex-col items-center justify-center p-4 text-center transition-all hover:scale-105">
+                                <div class="text-3xl mb-3 ${unlocked ? 'text-brand-400' : 'text-gray-700 opacity-50'}">${unlocked ? egg.icon : '<i class="fas fa-question"></i>'}</div>
+                                <div class="text-xs font-bold ${unlocked ? 'text-white' : 'text-gray-600'}">${unlocked ? egg.name : '???'}</div>
+                                ${unlocked ? `<div class="text-[10px] text-gray-400 mt-1">${egg.desc}</div>` : ''}
                             </div>
                         `;
                     }).join('');
-                    
                     setTimeout(() => {
                         modal.classList.remove('opacity-0');
                         modal.children[0].classList.remove('scale-95');
@@ -811,21 +811,16 @@
             }
         };
 
-        // --- QUIZ ENGINE ---
+        // --- QUIZ ---
         const quiz = {
             loadNext: () => {
-                // Adaptive Logic: Pick question based on lowest confidence or random unasked
                 const unasked = DB.questions.filter(q => !state.history.includes(q.id));
-                
-                if(unasked.length === 0 || state.history.length >= 10) { // Increased to 10 questions
+                if(unasked.length === 0 || state.history.length >= 12) { // Increased to 12 questions
                     quiz.finish();
                     return;
                 }
-
-                // Simple adaptive: Random for now
                 const nextQ = unasked[Math.floor(Math.random() * unasked.length)];
                 state.history.push(nextQ.id);
-                
                 quiz.render(nextQ);
             },
 
@@ -838,28 +833,24 @@
                 const progText = document.getElementById('progress-text');
                 const qId = document.getElementById('q-id');
 
-                // Animate Out
                 card.classList.add('opacity-0', 'translate-y-4');
                 
                 setTimeout(() => {
                     text.innerText = q.text;
-                    cat.innerText = `// ${q.category.toUpperCase()}`;
+                    cat.innerText = q.category;
                     qId.innerText = `ID: ${q.id.toUpperCase()}`;
                     
-                    // Update Progress
-                    const pct = Math.round((state.history.length / 10) * 100);
+                    const pct = Math.round((state.history.length / 12) * 100);
                     prog.style.width = `${pct}%`;
                     progText.innerText = `${pct}%`;
 
-                    // Render Options
                     opts.innerHTML = q.options.map((opt, i) => `
-                        <button onclick="quiz.answer(${i})" class="w-full text-left p-4 rounded-xl border border-white/10 hover:bg-white/5 hover:border-blue-500/50 transition-all group flex items-center justify-between">
-                            <span class="group-hover:translate-x-2 transition-transform">${opt.text}</span>
-                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity"></i>
+                        <button onclick="quiz.answer(${i})" class="w-full text-left p-5 rounded-xl border border-white/10 hover:bg-white/5 hover:border-brand-500/50 transition-all group flex items-center justify-between">
+                            <span class="group-hover:translate-x-2 transition-transform font-medium">${opt.text}</span>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 text-brand-500 transition-opacity"></i>
                         </button>
                     `).join('');
 
-                    // Animate In
                     card.classList.remove('opacity-0', 'translate-y-4');
                 }, 300);
             },
@@ -869,11 +860,9 @@
                 const q = DB.questions.find(x => x.id === currentQId);
                 const weights = q.options[optIndex].weights;
 
-                // Update Scores
                 for(let key in weights) {
-                    if(state.scores[key] !== undefined) state.scores[key] += weights[key];
+                    state.scores[key] = (state.scores[key] || 0) + weights[key];
                 }
-
                 quiz.loadNext();
             },
 
@@ -882,14 +871,13 @@
                 setTimeout(() => {
                     app.navigate('results');
                     results.render();
-                }, 2000);
+                }, 2500);
             }
         };
 
-        // --- RESULTS ENGINE ---
+        // --- RESULTS ---
         const results = {
             render: () => {
-                // Calculate Top Career
                 const scores = state.scores;
                 const matches = DB.careers.map(career => {
                     let score = 0;
@@ -899,37 +887,40 @@
                     return { ...career, score };
                 }).sort((a, b) => b.score - a.score);
 
-                // Render Top Match
                 const top = matches[0];
                 document.getElementById('archetype-name').innerText = top.title;
                 document.getElementById('archetype-desc').innerText = top.desc;
 
-                // Render List (Top 5 now)
-                document.getElementById('career-matches').innerHTML = matches.slice(0, 5).map((m, i) => `
-                    <div class="glass p-4 rounded-xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
-                        <div class="font-bold text-2xl text-gray-600">0${i+1}</div>
+                document.getElementById('career-matches').innerHTML = matches.slice(0, 4).map((m, i) => `
+                    <div class="glass p-5 rounded-2xl border border-white/5 flex items-center gap-5 hover:bg-white/5 transition-colors cursor-pointer" onclick="app.openRoleModal(${DB.careers.indexOf(m)})">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-bold text-gray-400">0${i+1}</div>
                         <div class="flex-grow">
-                            <div class="font-bold text-lg">${m.title}</div>
+                            <div class="font-bold text-lg text-white">${m.title}</div>
                             <div class="text-xs text-gray-400">${m.desc}</div>
                         </div>
-                        <div class="text-blue-400 font-mono font-bold">${Math.round(m.score * 10)}%</div>
+                        <div class="text-brand-400 font-mono font-bold">${Math.min(100, Math.round((m.score / 20) * 100))}%</div>
                     </div>
                 `).join('');
 
-                // Render Chart
+                // Chart
                 const ctx = document.getElementById('radar-chart').getContext('2d');
                 if(window.myChart) window.myChart.destroy();
                 
+                // Normalize data for chart
+                const labels = ['Tech', 'Art', 'Social', 'Logic', 'Order', 'Chaos'];
+                const data = labels.map(l => scores[l.toLowerCase()] || 0);
+
                 window.myChart = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: ['Art', 'Tech', 'Social', 'Logic', 'Lead', 'Chaos'],
+                        labels: labels,
                         datasets: [{
-                            label: 'Your Profile',
-                            data: [scores.art, scores.tech, scores.social, scores.logic, scores.lead, scores.chaos],
-                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                            borderColor: '#3b82f6',
-                            pointBackgroundColor: '#fff'
+                            label: 'Profile',
+                            data: data,
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: '#0ea5e9',
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#0ea5e9'
                         }]
                     },
                     options: {
@@ -937,7 +928,7 @@
                             r: {
                                 angleLines: { color: 'rgba(255,255,255,0.1)' },
                                 grid: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: '#94a3b8' },
+                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
                                 ticks: { display: false }
                             }
                         },
@@ -945,17 +936,16 @@
                     }
                 });
 
-                // Confetti
                 confetti({
-                    particleCount: 100,
-                    spread: 70,
+                    particleCount: 150,
+                    spread: 100,
                     origin: { y: 0.6 },
-                    colors: ['#3b82f6', '#a855f7', '#ffffff']
+                    colors: ['#0ea5e9', '#a855f7', '#ffffff']
                 });
             }
         };
 
-        // --- EASTER EGG ENGINE ---
+        // --- EGGS ---
         const eggHunt = {
             konami: ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'],
             inputHistory: [],
@@ -964,33 +954,33 @@
                 if(state.inventory.has(id)) return;
                 state.inventory.add(id);
                 
-                // Update UI
                 const btn = document.getElementById('egg-count');
                 btn.innerText = state.inventory.size;
-                btn.classList.remove('hidden');
+                btn.parentElement.classList.remove('hidden');
                 btn.classList.add('animate-bounce');
 
-                // Toast
                 const egg = DB.eggs.find(e => e.id === id);
                 const toast = document.createElement('div');
-                toast.className = 'egg-toast glass p-4 rounded-xl border-l-4 border-yellow-500 flex items-center gap-3 w-64 pointer-events-auto';
+                toast.className = 'glass p-4 rounded-xl border-l-4 border-brand-500 flex items-center gap-4 w-72 pointer-events-auto transform transition-all duration-500 translate-x-full';
                 toast.innerHTML = `
-                    <div class="text-2xl">🥚</div>
+                    <div class="text-2xl text-brand-400"><i class="fas fa-unlock"></i></div>
                     <div>
-                        <div class="text-xs font-bold text-yellow-500 uppercase">Secret Found!</div>
-                        <div class="font-bold text-sm">${egg.name}</div>
+                        <div class="text-[10px] font-bold text-brand-500 uppercase tracking-wider">Secret Unlocked</div>
+                        <div class="font-bold text-sm text-white">${egg.name}</div>
                     </div>
                 `;
                 document.getElementById('toast-container').appendChild(toast);
                 
-                setTimeout(() => toast.remove(), 4000);
+                requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => toast.remove(), 500);
+                }, 4000);
 
                 if(state.inventory.size === DB.eggs.length) eggHunt.collect('god_mode');
             },
 
-            trigger: (id) => {
-                eggHunt.collect(id);
-            },
+            trigger: (id) => eggHunt.collect(id),
 
             handleKey: (e) => {
                 eggHunt.inputHistory.push(e.key);
@@ -998,25 +988,16 @@
                 
                 if(JSON.stringify(eggHunt.inputHistory) === JSON.stringify(eggHunt.konami)) {
                     eggHunt.collect('konami');
-                    document.body.setAttribute('data-theme', 'cyber');
-                    alert("SYSTEM OVERRIDE: CYBER MODE ACTIVATED");
+                    document.body.classList.add('konami-mode');
+                    alert("SYSTEM OVERRIDE: INVERTED REALITY");
                 }
-
-                // Boss Mode
-                if((e.metaKey || e.ctrlKey) && e.key === 'b') {
-                    e.preventDefault();
-                    const boss = document.getElementById('boss-mode');
-                    boss.style.display = boss.style.display === 'none' ? 'block' : 'none';
-                    if(boss.style.display === 'block') eggHunt.collect('boss_mode');
-                }
-                if(e.key === 'Escape') {
-                    document.getElementById('boss-mode').style.display = 'none';
-                }
-
-                // Search Focus
                 if((e.metaKey || e.ctrlKey) && e.key === 'k') {
                     e.preventDefault();
                     document.getElementById('global-search').focus();
+                }
+                if(e.key === '`' || e.key === '~') {
+                    e.preventDefault();
+                    terminal.toggle();
                 }
             },
 
@@ -1029,17 +1010,22 @@
         const terminal = {
             toggle: () => {
                 const el = document.getElementById('terminal-overlay');
-                el.classList.toggle('open');
-                if(el.classList.contains('open')) {
+                el.classList.toggle('translate-y-full');
+                if(!el.classList.contains('translate-y-full')) {
                     eggHunt.collect('terminal_user');
                     document.getElementById('terminal-input').focus();
+                    terminal.updateStatus();
                 }
             },
-            
             log: (msg) => {
                 const out = document.getElementById('terminal-output');
                 out.innerHTML += `<div>${msg}</div>`;
                 out.scrollTop = out.scrollHeight;
+            },
+            updateStatus: () => {
+                const found = state.inventory.size;
+                const total = DB.eggs.length;
+                terminal.log(`<span class="text-yellow-500">STATUS:</span> ${found}/${total} Secrets Found.`);
             }
         };
 
@@ -1049,33 +1035,32 @@
                 terminal.log(`<span class="text-blue-500">➜</span> ${val}`);
                 e.target.value = '';
 
-                if(val === 'help') {
-                    terminal.log("Available commands: help, clear, whoami, sudo, exit, egg");
-                } else if(val === 'clear') {
-                    document.getElementById('terminal-output').innerHTML = '';
-                } else if(val === 'whoami') {
-                    terminal.log("guest@futurelink-v9");
-                } else if(val === 'sudo') {
-                    terminal.log("Permission denied. You didn't say the magic word.");
-                } else if(val === 'egg') {
-                    terminal.log("Try looking in the console...");
-                } else if(val === 'exit') {
-                    terminal.toggle();
+                const commands = {
+                    'help': "Available: help, clear, whoami, matrix, eggs, exit",
+                    'clear': () => document.getElementById('terminal-output').innerHTML = '',
+                    'whoami': "guest@futurelink",
+                    'matrix': () => {
+                        document.body.classList.toggle('matrix-mode');
+                        return "Follow the white rabbit.";
+                    },
+                    'eggs': () => {
+                        const found = state.inventory.size;
+                        const total = DB.eggs.length;
+                        return `Progress: [${'#'.repeat(found)}${'-'.repeat(total-found)}] ${found}/${total}`;
+                    },
+                    'exit': () => terminal.toggle()
+                };
+
+                if(commands[val]) {
+                    if(typeof commands[val] === 'function') terminal.log(commands[val]());
+                    else terminal.log(commands[val]);
                 } else {
                     terminal.log(`Command not found: ${val}`);
                 }
             }
         });
 
-        // --- INIT ---
         window.addEventListener('load', app.init);
-
-        // Expose for console hunters
-        window.hack = () => {
-            console.log("Nice try. But can you find the 'god_mode'?");
-            return "Access Denied";
-        };
-
     </script>
 </body>
 </html>
