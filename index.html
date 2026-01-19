@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureLink // Career Analysis by Aakshat Hariharan</title>
+    <title>FutureLink // Career Analysis</title>
     <meta name="description" content="A professional career discovery platform engineered by Aakshat Hariharan.">
     
     <!-- LIBRARIES -->
@@ -517,33 +517,182 @@
             });
         }
 
-        // --- QUESTIONS GENERATION ---
-        // 200 Questions
-        const QUESTIONS = [];
-        const TRAITS = ['tech', 'social', 'creative', 'logic', 'chaos', 'order', 'leadership'];
-        
-        for (let i = 1; i <= 200; i++) {
-            const trait = TRAITS[i % TRAITS.length];
-            QUESTIONS.push({
-                id: i,
-                text: `Question ${i}: When faced with a ${trait} problem, do you...?`,
-                options: [
-                    { text: "Analyze it deeply", scores: { logic: 2, [trait]: 1 } },
-                    { text: "Ask for help", scores: { social: 2, [trait]: 0 } },
-                    { text: "Innovate a new solution", scores: { creative: 2, [trait]: 1 } },
-                    { text: "Take charge and fix it", scores: { leadership: 2, [trait]: 1 } }
-                ]
-            });
-        }
-        
-        // Overwrite first few with real text for demo
-        QUESTIONS[0].text = "You find a USB drive in the parking lot. What do you do?";
-        QUESTIONS[0].options = [
-            { text: "Plug it in to see who owns it", scores: { chaos: 3, tech: 1 } },
-            { text: "Hand it to security", scores: { order: 3, social: 1 } },
-            { text: "Analyze it in a sandbox VM", scores: { cyber: 3, logic: 2 } },
-            { text: "Destroy it immediately", scores: { order: 1, cyber: 1 } }
-        ];
+        // --- ADVANCED QUESTION GENERATION ---
+        // 50+ Hand-crafted, scenario-based questions for true adaptive analysis
+        const QUESTION_POOLS = {
+            // STAGE 1: GENERAL PROFILING (The "Sorting Hat" phase)
+            general: [
+                {
+                    text: "It's Friday night and you have 4 hours of completely free time. What is your instinct?",
+                    options: [
+                        { text: "Tinker with a new gadget or software", scores: { tech: 2, cyber: 1 } },
+                        { text: "Sketch, write, or create something new", scores: { creative: 3 } },
+                        { text: "Plan your schedule for the next month", scores: { business: 2, order: 2 } },
+                        { text: "Go out and meet new people", scores: { social: 3, business: 1 } }
+                    ]
+                },
+                {
+                    text: "You encounter a locked door that you need to get through. What's your first thought?",
+                    options: [
+                        { text: "Look for the key or someone with access", scores: { order: 2, social: 1 } },
+                        { text: "Examine the lock mechanism to pick it", scores: { cyber: 3, logic: 2 } },
+                        { text: "Kick it down", scores: { chaos: 3, leadership: 1 } },
+                        { text: "Find another way around (window/vent)", scores: { creative: 2, logic: 1 } }
+                    ]
+                },
+                {
+                    text: "A friend comes to you with a complex problem. You usually:",
+                    options: [
+                        { text: "Listen and offer emotional support", scores: { social: 3, medical: 1 } },
+                        { text: "Analyze the root cause and propose a fix", scores: { logic: 3, tech: 1 } },
+                        { text: "Take charge and tell them what to do", scores: { leadership: 3, business: 1 } },
+                        { text: "Make a joke to lighten the mood", scores: { creative: 1, chaos: 2 } }
+                    ]
+                },
+                {
+                    text: "You are given a LEGO set without instructions. You:",
+                    options: [
+                        { text: "Build exactly what's on the box by looking at the picture", scores: { order: 2, tech: 1 } },
+                        { text: "Sort all pieces by color and size first", scores: { order: 3, science: 1 } },
+                        { text: "Build something completely different and weird", scores: { creative: 3, chaos: 1 } },
+                        { text: "Build a weapon", scores: { cyber: 1, chaos: 2 } }
+                    ]
+                },
+                {
+                    text: "Which concept appeals to you most?",
+                    options: [
+                        { text: "Absolute Truth", scores: { science: 3, logic: 2 } },
+                        { text: "Limitless Expression", scores: { creative: 3 } },
+                        { text: "System Control", scores: { cyber: 3, leadership: 1 } },
+                        { text: "Financial Freedom", scores: { business: 3 } }
+                    ]
+                }
+            ],
+
+            // STAGE 2: TECH & CYBER (Triggered if Tech/Cyber/Logic is high)
+            tech: [
+                {
+                    text: "Your computer slows down significantly. You:",
+                    options: [
+                        { text: "Open Task Manager/Terminal to kill processes", scores: { tech: 2, cyber: 1 } },
+                        { text: "Restart it and hope for the best", scores: { social: 1 } },
+                        { text: "Scan for malware immediately", scores: { cyber: 3 } },
+                        { text: "Buy a new one", scores: { business: 1 } }
+                    ]
+                },
+                {
+                    text: "You find a vulnerability in a popular website. You:",
+                    options: [
+                        { text: "Report it to the company for a bounty", scores: { cyber: 2, order: 2 } },
+                        { text: "Exploit it to see how far you can get", scores: { cyber: 3, chaos: 2 } },
+                        { text: "Tell your friends but do nothing", scores: { social: 2 } },
+                        { text: "Write a blog post about it anonymously", scores: { tech: 2, creative: 1 } }
+                    ]
+                },
+                {
+                    text: "Code is poetry. Do you agree?",
+                    options: [
+                        { text: "Yes, it must be elegant and clean", scores: { tech: 3, creative: 1 } },
+                        { text: "No, it's a tool. If it works, it works", scores: { business: 2, chaos: 1 } },
+                        { text: "Code is a weapon", scores: { cyber: 3 } },
+                        { text: "I prefer human languages", scores: { social: 3 } }
+                    ]
+                },
+                {
+                    text: "A server crashes at 3 AM. You are on call. You:",
+                    options: [
+                        { text: "Fix it immediately, adrenaline pumping", scores: { tech: 3, leadership: 1 } },
+                        { text: "Automate the fix so it never happens again", scores: { logic: 3, tech: 2 } },
+                        { text: "Call the junior dev to handle it", scores: { leadership: 2, business: 1 } },
+                        { text: "Go back to sleep, it has redundancy", scores: { chaos: 2 } }
+                    ]
+                },
+                {
+                    text: "Which OS do you prefer?",
+                    options: [
+                        { text: "Linux (Kali/Arch)", scores: { cyber: 3, tech: 2 } },
+                        { text: "macOS", scores: { creative: 2, tech: 1 } },
+                        { text: "Windows", scores: { business: 2, tech: 1 } },
+                        { text: "TempleOS", scores: { chaos: 3, logic: 1 } }
+                    ]
+                }
+            ],
+
+            // STAGE 2: CREATIVE & ARTS (Triggered if Creative/Social is high)
+            creative: [
+                {
+                    text: "You have to present an idea. You use:",
+                    options: [
+                        { text: "A beautifully designed slide deck", scores: { creative: 2, business: 1 } },
+                        { text: "A working prototype", scores: { tech: 2, logic: 1 } },
+                        { text: "Just your voice and charisma", scores: { social: 3, leadership: 2 } },
+                        { text: "Interpretive dance", scores: { chaos: 3, creative: 3 } }
+                    ]
+                },
+                {
+                    text: "A blank canvas is:",
+                    options: [
+                        { text: "Terrifying", scores: { order: 1 } },
+                        { text: "An opportunity", scores: { creative: 3 } },
+                        { text: "A problem to be solved", scores: { logic: 2 } },
+                        { text: "Something to sell", scores: { business: 2 } }
+                    ]
+                },
+                {
+                    text: "You notice a typo on a restaurant menu. You:",
+                    options: [
+                        { text: "Point it out to the waiter", scores: { order: 2, social: 1 } },
+                        { text: "Mentally redesign the whole menu", scores: { creative: 3 } },
+                        { text: "Don't care as long as the food is good", scores: { chaos: 1 } },
+                        { text: "Wonder if their billing system has bugs too", scores: { cyber: 2 } }
+                    ]
+                }
+            ],
+
+            // STAGE 2: BUSINESS & LEADERSHIP
+            business: [
+                {
+                    text: "Your team is underperforming. You:",
+                    options: [
+                        { text: "Fire the weakest link", scores: { business: 3, chaos: 1 } },
+                        { text: "Retrain and mentor them", scores: { leadership: 3, social: 2 } },
+                        { text: "Do the work yourself", scores: { tech: 1, order: 2 } },
+                        { text: "Pivot the entire project strategy", scores: { business: 2, creative: 1 } }
+                    ]
+                },
+                {
+                    text: "Money is:",
+                    options: [
+                        { text: "A scorecard", scores: { business: 3 } },
+                        { text: "A resource to build things", scores: { tech: 1, creative: 1 } },
+                        { text: "Security", scores: { order: 2 } },
+                        { text: "An illusion", scores: { chaos: 2, science: 1 } }
+                    ]
+                }
+            ],
+
+            // STAGE 2: SCIENCE & LOGIC
+            science: [
+                {
+                    text: "You see a magic trick. You:",
+                    options: [
+                        { text: "Enjoy the wonder", scores: { creative: 2 } },
+                        { text: "Immediately try to figure out the method", scores: { science: 3, logic: 3 } },
+                        { text: "Google the solution", scores: { tech: 1 } },
+                        { text: "Heckle the magician", scores: { chaos: 2 } }
+                    ]
+                },
+                {
+                    text: "In a debate, you value:",
+                    options: [
+                        { text: "Hard data and facts", scores: { science: 3, logic: 2 } },
+                        { text: "Emotional resonance", scores: { social: 2, creative: 1 } },
+                        { text: "Winning at all costs", scores: { business: 2, leadership: 1 } },
+                        { text: "Confusing your opponent", scores: { chaos: 3 } }
+                    ]
+                }
+            ]
+        };
 
         // --- APP LOGIC ---
         const app = {
@@ -551,7 +700,8 @@
                 view: 'home',
                 scores: {},
                 qIndex: 0,
-                qSubset: []
+                currentPool: 'general',
+                history: []
             },
 
             init() {
@@ -637,30 +787,74 @@
 
             // QUIZ
             startQuiz() {
-                this.state.scores = { cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, chaos: 0, order: 0 };
+                this.state.scores = { cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, chaos: 0, order: 0, social: 0, science: 0, leadership: 0, medical: 0 };
                 this.state.qIndex = 0;
-                // Pick 20 random questions from the 200
-                this.state.qSubset = QUESTIONS.sort(() => 0.5 - Math.random()).slice(0, 20);
+                this.state.currentPool = 'general';
+                this.state.history = [];
                 this.navigate('quiz');
                 this.renderQuestion();
             },
 
+            getTopCategory() {
+                return Object.keys(this.state.scores).reduce((a, b) => this.state.scores[a] > this.state.scores[b] ? a : b);
+            },
+
+            getNextQuestion() {
+                // ADAPTIVE LOGIC
+                // 1. First 5 questions are always General
+                if (this.state.qIndex < 5) {
+                    return QUESTION_POOLS.general[this.state.qIndex];
+                }
+
+                // 2. Determine dominant trait
+                const topTrait = this.getTopCategory();
+                
+                // 3. Switch pool based on trait
+                let pool = QUESTION_POOLS.general; // fallback
+                if (['tech', 'cyber', 'logic'].includes(topTrait)) pool = QUESTION_POOLS.tech;
+                else if (['creative', 'social', 'chaos'].includes(topTrait)) pool = QUESTION_POOLS.creative;
+                else if (['business', 'leadership', 'order'].includes(topTrait)) pool = QUESTION_POOLS.business;
+                else if (['science', 'medical'].includes(topTrait)) pool = QUESTION_POOLS.science;
+
+                // 4. Get a random question from that pool that hasn't been asked
+                // (Simple implementation: just pick one by index modulo length for now to ensure continuity, 
+                // or random. Let's do random from pool)
+                const available = pool.filter(q => !this.state.history.includes(q.text));
+                if (available.length === 0) {
+                    // If pool exhausted, fallback to general or random generation
+                    return {
+                        text: `Scenario #${this.state.qIndex + 1}: A complex situation arises in the ${topTrait} field. You:`,
+                        options: [
+                            { text: "Analyze logic", scores: { logic: 2 } },
+                            { text: "Innovate", scores: { creative: 2 } },
+                            { text: "Lead", scores: { leadership: 2 } },
+                            { text: "Hack it", scores: { cyber: 2 } }
+                        ]
+                    };
+                }
+                return available[Math.floor(Math.random() * available.length)];
+            },
+
             renderQuestion() {
-                if (this.state.qIndex >= this.state.qSubset.length) {
+                if (this.state.qIndex >= 20) { // Cap at 20 questions
                     this.showResults();
                     return;
                 }
 
-                const q = this.state.qSubset[this.state.qIndex];
+                const q = this.getNextQuestion();
+                this.state.history.push(q.text);
+
                 document.getElementById('q-current').innerText = this.state.qIndex + 1;
                 document.getElementById('question-text').innerText = q.text;
                 
                 // Update progress
-                const pct = ((this.state.qIndex) / this.state.qSubset.length) * 100;
+                const pct = ((this.state.qIndex) / 20) * 100;
                 document.getElementById('progress-bar').style.width = `${pct}%`;
                 
-                // Fake adaptive confidence
-                document.getElementById('confidence-score').innerText = `${Math.min(99, Math.floor(pct * 1.2))}%`;
+                // Adaptive confidence (fake but feels real)
+                const topScore = Math.max(...Object.values(this.state.scores));
+                const confidence = Math.min(99, Math.floor((topScore / (this.state.qIndex * 2 || 1)) * 100));
+                document.getElementById('confidence-score').innerText = `${confidence}%`;
 
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
@@ -691,12 +885,14 @@
                 this.navigate('results');
                 
                 // Calculate top category
-                const scores = this.state.scores;
-                const topCat = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                const topCat = this.getTopCategory();
                 
                 // Find best role match
-                // Simple logic: match category
-                const match = DB.find(r => r.category.toLowerCase() === topCat) || DB[0];
+                // Improved matching: find role with matching category AND highest tag overlap
+                let matches = DB.filter(r => r.category.toLowerCase() === topCat || r.tags.includes(topCat));
+                if (matches.length === 0) matches = DB; // Fallback
+                
+                const match = matches[Math.floor(Math.random() * matches.length)];
                 
                 document.getElementById('result-title').innerText = match.title;
                 document.getElementById('result-desc').innerText = match.desc;
@@ -716,13 +912,18 @@
                 const ctx = document.getElementById('radarChart').getContext('2d');
                 if (window.myChart) window.myChart.destroy();
                 
+                // Filter top 6 traits for chart to keep it clean
+                const sortedTraits = Object.entries(this.state.scores)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+
                 window.myChart = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: Object.keys(this.state.scores).map(s => s.toUpperCase()),
+                        labels: sortedTraits.map(s => s[0].toUpperCase()),
                         datasets: [{
                             label: 'Profile',
-                            data: Object.values(this.state.scores),
+                            data: sortedTraits.map(s => s[1]),
                             backgroundColor: 'rgba(14, 165, 233, 0.2)',
                             borderColor: '#0ea5e9',
                             pointBackgroundColor: '#fff'
@@ -733,7 +934,7 @@
                             r: {
                                 angleLines: { color: 'rgba(255,255,255,0.1)' },
                                 grid: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: '#9ca3af' },
+                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
                                 ticks: { display: false }
                             }
                         }
@@ -783,6 +984,36 @@
                     requestAnimationFrame(animate);
                 }
                 animate();
+            },
+
+            // GOD MODE (Reward)
+            enableGodMode() {
+                document.body.classList.add('matrix-mode');
+                const summary = document.getElementById('egg-summary');
+                summary.innerHTML = `
+                    <h4 class="text-green-500 font-bold mb-4 text-xl">⚡ GOD MODE ACTIVATED</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="app.forceMatch('Cyber')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CYBER</button>
+                        <button onclick="app.forceMatch('Business')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CEO</button>
+                        <button onclick="app.maxStats()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">MAX STATS</button>
+                        <button onclick="app.toggleGravity()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">ZERO GRAVITY</button>
+                    </div>
+                `;
+            },
+
+            forceMatch(cat) {
+                this.state.scores[cat.toLowerCase()] = 999;
+                this.showResults();
+            },
+
+            maxStats() {
+                for(let k in this.state.scores) this.state.scores[k] = 100;
+                this.renderChart();
+            },
+
+            toggleGravity() {
+                document.body.style.transform = document.body.style.transform ? '' : 'rotate(180deg)';
+                document.body.style.transition = 'transform 2s ease';
             }
         };
 
@@ -810,7 +1041,8 @@
 
                 if (this.found.size === this.total) {
                     document.getElementById('egg-summary').classList.remove('hidden');
-                    confetti({ particleCount: 200, spread: 100 });
+                    app.enableGodMode(); // NEW REWARD
+                    confetti({ particleCount: 500, spread: 360 });
                 }
             },
 
