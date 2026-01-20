@@ -11,6 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- TENSORFLOW.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- CONFIG -->
@@ -205,7 +208,7 @@
                     <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Career Paths</div>
                 </div>
                 <div class="text-center group cursor-default">
-                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="99">0</div>
+                    <div class="text-4xl font-bold text-white mb-2 counter" id="accuracy-counter" data-target="99">0</div>
                     <div class="text-xs text-gray-500 uppercase tracking-widest font-bold group-hover:text-brand-400 transition-colors">Accuracy %</div>
                 </div>
                 <div class="text-center cursor-pointer" onclick="eggHunt.collect('stat_checker')">
@@ -377,7 +380,7 @@
                     <div class="p-8 md:p-12 relative z-10">
                         <div class="flex flex-col md:flex-row gap-8 items-start">
                             <div class="flex-1">
-                                <span class="text-brand-400 font-bold tracking-widest text-xs uppercase mb-2 block">Top Match (99% Compatibility)</span>
+                                <span class="text-brand-400 font-bold tracking-widest text-xs uppercase mb-2 block">Top Match (<span id="match-percentage">99</span>% Compatibility)</span>
                                 <h3 class="text-4xl font-bold mb-4" id="result-title">Loading...</h3>
                                 <p class="text-gray-300 text-lg leading-relaxed mb-8" id="result-desc">
                                     Calculating...
@@ -402,6 +405,10 @@
                                     <div>
                                         <h4 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-book text-brand-500"></i> Recommended Courses</h4>
                                         <div class="flex flex-wrap gap-2" id="result-courses"></div>
+                                    </div>
+                                    <!-- EXPANDED DETAILS -->
+                                    <div id="result-expanded" class="pt-6 border-t border-white/10 space-y-6">
+                                        <!-- Injected by JS -->
                                     </div>
                                 </div>
                             </div>
@@ -447,730 +454,951 @@
 
     <!-- LOGIC -->
     <script>
-        // --- DATA GENERATION ---
-        // Generating 150 roles programmatically to ensure detail and volume
-        const CATEGORIES = ['Cyber', 'Tech', 'Creative', 'Business', 'Science', 'Medical', 'Engineering', 'Law', 'Education', 'Trades'];
-        const ROLES_BASE = [
-            { t: 'Penetration Tester', c: 'Cyber', s: '$100k-$180k', d: 'Simulates cyberattacks to find vulnerabilities.' },
-            { t: 'SOC Analyst', c: 'Cyber', s: '$70k-$120k', d: 'Monitors networks for security breaches.' },
-            { t: 'CISO', c: 'Cyber', s: '$150k-$300k', d: 'Chief Information Security Officer managing org security.' },
-            { t: 'Cryptographer', c: 'Cyber', s: '$110k-$190k', d: 'Develops algorithms to encrypt sensitive data.' },
-            { t: 'Malware Analyst', c: 'Cyber', s: '$90k-$160k', d: 'Reverse engineers malicious software.' },
-            { t: 'Frontend Developer', c: 'Tech', s: '$80k-$150k', d: 'Builds user interfaces for web applications.' },
-            { t: 'Backend Developer', c: 'Tech', s: '$90k-$160k', d: 'Builds server-side logic and databases.' },
-            { t: 'DevOps Engineer', c: 'Tech', s: '$110k-$180k', d: 'Manages deployment pipelines and infrastructure.' },
-            { t: 'Data Scientist', c: 'Tech', s: '$120k-$200k', d: 'Analyzes complex data to find patterns.' },
-            { t: 'AI Engineer', c: 'Tech', s: '$130k-$220k', d: 'Builds artificial intelligence models.' },
-            { t: 'UX Designer', c: 'Creative', s: '$85k-$140k', d: 'Designs user experiences and flows.' },
-            { t: 'Game Designer', c: 'Creative', s: '$70k-$130k', d: 'Designs gameplay mechanics and stories.' },
-            { t: '3D Animator', c: 'Creative', s: '$60k-$120k', d: 'Creates 3D animations for movies/games.' },
-            { t: 'Product Manager', c: 'Business', s: '$110k-$190k', d: 'Oversees product development and strategy.' },
-            { t: 'Scrum Master', c: 'Business', s: '$90k-$150k', d: 'Facilitates agile development teams.' },
-            { t: 'Bioinformatician', c: 'Science', s: '$90k-$160k', d: 'Uses code to analyze biological data.' },
-            { t: 'Robotics Engineer', c: 'Engineering', s: '$100k-$170k', d: 'Designs and builds robots.' },
-            { t: 'Civil Engineer', c: 'Engineering', s: '$70k-$130k', d: 'Designs infrastructure like bridges/roads.' },
-            { t: 'Surgeon', c: 'Medical', s: '$300k+', d: 'Performs surgical operations.' },
-            { t: 'Nurse Practitioner', c: 'Medical', s: '$100k-$150k', d: 'Provides advanced nursing care.' },
-            { t: 'Corporate Lawyer', c: 'Law', s: '$120k-$250k', d: 'Advises corporations on legal matters.' },
-            { t: 'Teacher', c: 'Education', s: '$50k-$90k', d: 'Educates students in schools.' },
-            { t: 'Electrician', c: 'Trades', s: '$60k-$100k', d: 'Installs and maintains electrical systems.' },
-            { t: 'Plumber', c: 'Trades', s: '$60k-$100k', d: 'Installs and repairs piping systems.' },
-            { t: 'Chef', c: 'Creative', s: '$40k-$90k', d: 'Leads kitchen staff and creates menus.' }
+        // --- 1. CONFIG & CONSTANTS ---
+        const TRAITS = ['cyber', 'tech', 'creative', 'business', 'logic', 'chaos', 'order', 'social', 'science', 'leadership', 'medical'];
+        
+        // --- 2. ROLE DATABASE GENERATOR ---
+        // Generates 150+ distinct roles with 17 fields each
+        class RoleDatabase {
+            static generate() {
+                const roles = [];
+                let id = 1;
+
+                const categories = {
+                    'Cyber': {
+                        titles: ['Penetration Tester', 'SOC Analyst', 'CISO', 'Cryptographer', 'Malware Analyst', 'Security Architect', 'Incident Responder', 'Forensic Analyst', 'Security Consultant', 'Cloud Security Engineer'],
+                        traits: { cyber: 5, tech: 4, logic: 4 },
+                        base: {
+                            category: 'Cyber',
+                            cognitive: ['Pattern Recognition', 'Abstract Reasoning', 'Risk Analysis'],
+                            hs: ['Computer Science', 'Advanced Math', 'Physics'],
+                            extra: ['CTF Competitions', 'Coding Club', 'Hackathons'],
+                            college: ['Cybersecurity', 'Computer Science', 'Information Systems'],
+                            entry: 'Junior Analyst',
+                            mid: 'Senior Engineer',
+                            adv: 'Principal Architect',
+                            skills: ['Network Security', 'Python', 'Linux', 'Ethical Hacking'],
+                            tools: ['Wireshark', 'Metasploit', 'Burp Suite'],
+                            env: 'High-pressure, dynamic, often remote or SOC environment.',
+                            salary: { entry: '$80k-$110k', mid: '$120k-$160k', senior: '$170k+' },
+                            outlook: 'Extremely high growth due to increasing global cyber threats.',
+                            why: 'Requires a unique blend of logical structure and chaotic problem solving.',
+                            struggle: 'Those who prefer rigid routine or dislike constant learning often burn out.'
+                        }
+                    },
+                    'Tech': {
+                        titles: ['Frontend Dev', 'Backend Dev', 'Full Stack Dev', 'DevOps Engineer', 'Data Scientist', 'AI Engineer', 'Mobile Dev', 'Game Dev', 'QA Engineer', 'System Admin'],
+                        traits: { tech: 5, logic: 4, creative: 3 },
+                        base: {
+                            category: 'Tech',
+                            cognitive: ['Algorithmic Thinking', 'System Design', 'Logical Flow'],
+                            hs: ['Calculus', 'Computer Science', 'Graphic Design'],
+                            extra: ['Robotics Club', 'Open Source Contrib', 'App Dev'],
+                            college: ['Computer Science', 'Software Engineering', 'Data Science'],
+                            entry: 'Junior Developer',
+                            mid: 'Senior Developer',
+                            adv: 'Staff Engineer / CTO',
+                            skills: ['JavaScript', 'Python', 'SQL', 'Cloud Computing'],
+                            tools: ['VS Code', 'Git', 'Docker', 'AWS'],
+                            env: 'Collaborative, office or remote, deadline-driven.',
+                            salary: { entry: '$70k-$100k', mid: '$110k-$150k', senior: '$160k+' },
+                            outlook: 'Steady growth, evolving with AI integration.',
+                            why: 'Perfect for builders who enjoy solving logic puzzles.',
+                            struggle: 'People who struggle with abstraction or sitting for long periods.'
+                        }
+                    },
+                    'Creative': {
+                        titles: ['UX Designer', 'UI Designer', 'Art Director', '3D Animator', 'Video Editor', 'Copywriter', 'Brand Strategist', 'Industrial Designer', 'Fashion Designer', 'Sound Engineer'],
+                        traits: { creative: 5, tech: 2, social: 3 },
+                        base: {
+                            category: 'Creative',
+                            cognitive: ['Visual Spatial', 'Empathy', 'Divergent Thinking'],
+                            hs: ['Art', 'Psychology', 'Design Tech'],
+                            extra: ['Art Club', 'Yearbook', 'Theater'],
+                            college: ['Fine Arts', 'Graphic Design', 'Communications'],
+                            entry: 'Junior Designer',
+                            mid: 'Senior Designer',
+                            adv: 'Creative Director',
+                            skills: ['Adobe Suite', 'Figma', 'Storytelling', 'Color Theory'],
+                            tools: ['Photoshop', 'Illustrator', 'Premiere'],
+                            env: 'Studio, agency, or freelance. Fast-paced and visual.',
+                            salary: { entry: '$50k-$80k', mid: '$85k-$120k', senior: '$130k+' },
+                            outlook: 'High demand for digital product design.',
+                            why: 'Allows for expression within constraints.',
+                            struggle: 'Those who need absolute objective answers may find subjectivity frustrating.'
+                        }
+                    },
+                    'Business': {
+                        titles: ['Product Manager', 'Project Manager', 'Business Analyst', 'Marketing Manager', 'Sales Director', 'HR Manager', 'Operations Lead', 'Consultant', 'Entrepreneur', 'Finance Manager'],
+                        traits: { business: 5, leadership: 4, social: 4 },
+                        base: {
+                            category: 'Business',
+                            cognitive: ['Strategic Planning', 'Social Intelligence', 'Decision Making'],
+                            hs: ['Economics', 'Business', 'Speech/Debate'],
+                            extra: ['Student Council', 'DECA', 'FBLA'],
+                            college: ['Business Admin', 'Economics', 'Marketing'],
+                            entry: 'Associate / Analyst',
+                            mid: 'Manager',
+                            adv: 'VP / C-Level',
+                            skills: ['Leadership', 'Communication', 'Data Analysis', 'Negotiation'],
+                            tools: ['Excel', 'Jira', 'Salesforce', 'PowerPoint'],
+                            env: 'Corporate, meeting-heavy, team-focused.',
+                            salary: { entry: '$60k-$90k', mid: '$100k-$150k', senior: '$180k+' },
+                            outlook: 'Stable, but shifting towards data-driven roles.',
+                            why: 'For those who enjoy systems of people and value.',
+                            struggle: 'Introverts who dislike conflict or negotiation.'
+                        }
+                    },
+                    'Science': {
+                        titles: ['Biologist', 'Chemist', 'Physicist', 'Astronomer', 'Geologist', 'Neuroscientist', 'Geneticist', 'Ecologist', 'Lab Technician', 'Research Scientist'],
+                        traits: { science: 5, logic: 5, order: 4 },
+                        base: {
+                            category: 'Science',
+                            cognitive: ['Inductive Reasoning', 'Observation', 'Critical Thinking'],
+                            hs: ['AP Biology', 'AP Chemistry', 'Calculus'],
+                            extra: ['Science Fair', 'Olympiad', 'Research Club'],
+                            college: ['Biology', 'Chemistry', 'Physics'],
+                            entry: 'Research Assistant',
+                            mid: 'Lead Researcher',
+                            adv: 'Principal Investigator',
+                            skills: ['Data Analysis', 'Lab Safety', 'Technical Writing'],
+                            tools: ['Microscopes', 'Spectrometers', 'R/Python'],
+                            env: 'Lab, field work, or academic setting.',
+                            salary: { entry: '$50k-$80k', mid: '$85k-$120k', senior: '$140k+' },
+                            outlook: 'Steady, dependent on funding and industry.',
+                            why: 'Driven by curiosity and the search for objective truth.',
+                            struggle: 'Those who need immediate results or dislike ambiguity.'
+                        }
+                    },
+                    'Medical': {
+                        titles: ['Surgeon', 'Nurse Practitioner', 'Anesthesiologist', 'Pediatrician', 'Psychiatrist', 'Radiologist', 'Physical Therapist', 'Pharmacist', 'Dentist', 'ER Doctor'],
+                        traits: { medical: 5, science: 4, social: 4 },
+                        base: {
+                            category: 'Medical',
+                            cognitive: ['Memorization', 'Crisis Management', 'Empathy'],
+                            hs: ['Anatomy', 'Biology', 'Health Science'],
+                            extra: ['HOSA', 'Volunteer EMS', 'Shadowing'],
+                            college: ['Pre-Med', 'Nursing', 'Biology'],
+                            entry: 'Resident / Intern',
+                            mid: 'Attending / Specialist',
+                            adv: 'Chief of Dept',
+                            skills: ['Patient Care', 'Diagnosis', 'Steady Hands'],
+                            tools: ['EMR Systems', 'Medical Devices'],
+                            env: 'Hospital, clinic, high-stress, long hours.',
+                            salary: { entry: '$60k-$200k', mid: '$100k-$300k', senior: '$250k-$500k+' },
+                            outlook: 'Always essential, high demand.',
+                            why: 'The ultimate application of science to human well-being.',
+                            struggle: 'Those with low stress tolerance or squeamishness.'
+                        }
+                    },
+                    'Engineering': {
+                        titles: ['Civil Engineer', 'Mechanical Engineer', 'Electrical Engineer', 'Aerospace Engineer', 'Chemical Engineer', 'Robotics Engineer', 'Structural Engineer', 'Environmental Engineer', 'Industrial Engineer', 'Nuclear Engineer'],
+                        traits: { logic: 5, tech: 4, order: 4 },
+                        base: {
+                            category: 'Engineering',
+                            cognitive: ['Spatial Reasoning', 'Physics', 'Math'],
+                            hs: ['Physics', 'Calculus', 'CAD'],
+                            extra: ['Robotics', 'Engineering Club', 'Maker Space'],
+                            college: ['Engineering (Mech/Civil/Elec)'],
+                            entry: 'Junior Engineer',
+                            mid: 'Project Engineer',
+                            adv: 'Chief Engineer',
+                            skills: ['CAD', 'Math', 'Project Management'],
+                            tools: ['AutoCAD', 'SolidWorks', 'Matlab'],
+                            env: 'Office, site visits, manufacturing plants.',
+                            salary: { entry: '$70k-$90k', mid: '$100k-$140k', senior: '$160k+' },
+                            outlook: 'Strong, especially in renewable and tech sectors.',
+                            why: 'Building the physical infrastructure of the world.',
+                            struggle: 'Those who dislike math or precise constraints.'
+                        }
+                    },
+                    'Law': {
+                        titles: ['Corporate Lawyer', 'Criminal Defense', 'Prosecutor', 'Judge', 'Paralegal', 'Patent Attorney', 'Family Law', 'Human Rights Lawyer', 'Compliance Officer', 'Legal Consultant'],
+                        traits: { logic: 5, social: 3, business: 4 },
+                        base: {
+                            category: 'Law',
+                            cognitive: ['Verbal Reasoning', 'Argumentation', 'Detail Oriented'],
+                            hs: ['History', 'English', 'Debate'],
+                            extra: ['Mock Trial', 'Debate Team', 'Student Gov'],
+                            college: ['Political Science', 'History', 'Pre-Law'],
+                            entry: 'Associate',
+                            mid: 'Partner',
+                            adv: 'Senior Partner / Judge',
+                            skills: ['Writing', 'Public Speaking', 'Research'],
+                            tools: ['LexisNexis', 'Case Management'],
+                            env: 'Office, court, high pressure.',
+                            salary: { entry: '$70k-$160k', mid: '$120k-$250k', senior: '$300k+' },
+                            outlook: 'Competitive but stable.',
+                            why: 'Structuring society through rules and logic.',
+                            struggle: 'Those who dislike reading or conflict.'
+                        }
+                    },
+                    'Education': {
+                        titles: ['K-12 Teacher', 'University Professor', 'Special Ed Teacher', 'School Counselor', 'Principal', 'Curriculum Developer', 'EdTech Specialist', 'Tutor', 'Librarian', 'Coach'],
+                        traits: { social: 5, leadership: 3, creative: 3 },
+                        base: {
+                            category: 'Education',
+                            cognitive: ['Patience', 'Communication', 'Organization'],
+                            hs: ['English', 'Psychology', 'Peer Tutoring'],
+                            extra: ['Tutoring', 'Camp Counselor', 'Mentoring'],
+                            college: ['Education', 'Specific Subject Major'],
+                            entry: 'Teacher / Instructor',
+                            mid: 'Dept Head',
+                            adv: 'Administrator',
+                            skills: ['Instruction', 'Classroom Mgmt', 'Empathy'],
+                            tools: ['LMS', 'Smartboards'],
+                            env: 'School, university, community center.',
+                            salary: { entry: '$40k-$60k', mid: '$60k-$90k', senior: '$100k+' },
+                            outlook: 'Always needed, but varies by region.',
+                            why: 'Shaping the next generation.',
+                            struggle: 'Those with low patience or dislike of public speaking.'
+                        }
+                    },
+                    'Trades': {
+                        titles: ['Electrician', 'Plumber', 'Carpenter', 'Welder', 'HVAC Tech', 'Mechanic', 'Machinist', 'Construction Manager', 'Landscaper', 'Elevator Tech'],
+                        traits: { tech: 3, order: 4, chaos: 2 },
+                        base: {
+                            category: 'Trades',
+                            cognitive: ['Spatial Reasoning', 'Practical Problem Solving', 'Physicality'],
+                            hs: ['Shop Class', 'Math', 'Physics'],
+                            extra: ['Robotics', 'Woodworking', 'Auto Shop'],
+                            college: ['Trade School', 'Apprenticeship'],
+                            entry: 'Apprentice',
+                            mid: 'Journeyman',
+                            adv: 'Master / Business Owner',
+                            skills: ['Manual Dexterity', 'Blueprint Reading', 'Safety'],
+                            tools: ['Power Tools', 'Hand Tools', 'Diagnostic Gear'],
+                            env: 'Field work, construction sites, homes.',
+                            salary: { entry: '$40k-$60k', mid: '$70k-$100k', senior: '$120k+' },
+                            outlook: 'High demand, skills gap exists.',
+                            why: 'Tangible results and essential services.',
+                            struggle: 'Those who dislike physical labor or getting dirty.'
+                        }
+                    },
+                    'Finance': {
+                        titles: ['Investment Banker', 'Financial Analyst', 'Accountant', 'Auditor', 'Actuary', 'Trader', 'Wealth Manager', 'Tax Specialist', 'Risk Manager', 'CFO'],
+                        traits: { business: 5, logic: 5, order: 5 },
+                        base: {
+                            category: 'Finance',
+                            cognitive: ['Numerical Analysis', 'Risk Assessment', 'Attention to Detail'],
+                            hs: ['Calculus', 'Economics', 'Accounting'],
+                            extra: ['Investment Club', 'Math Team', 'FBLA'],
+                            college: ['Finance', 'Accounting', 'Economics'],
+                            entry: 'Analyst',
+                            mid: 'Associate / VP',
+                            adv: 'Managing Director',
+                            skills: ['Financial Modeling', 'Excel', 'Regulation'],
+                            tools: ['Bloomberg Terminal', 'Excel', 'ERP'],
+                            env: 'Office, high pressure, long hours.',
+                            salary: { entry: '$70k-$100k', mid: '$120k-$200k', senior: '$250k+' },
+                            outlook: 'Stable, automation changing lower levels.',
+                            why: 'Managing the flow of value in the economy.',
+                            struggle: 'Those who dislike numbers or high pressure.'
+                        }
+                    },
+                    'Media': {
+                        titles: ['Journalist', 'Editor', 'Public Relations', 'Social Media Manager', 'Producer', 'Director', 'Screenwriter', 'Broadcaster', 'Content Creator', 'Publisher'],
+                        traits: { creative: 4, social: 5, tech: 2 },
+                        base: {
+                            category: 'Media',
+                            cognitive: ['Verbal Intelligence', 'Storytelling', 'Curiosity'],
+                            hs: ['English', 'Journalism', 'Media Arts'],
+                            extra: ['School Paper', 'Yearbook', 'AV Club'],
+                            college: ['Journalism', 'Communications', 'Film'],
+                            entry: 'Assistant / Junior',
+                            mid: 'Editor / Manager',
+                            adv: 'Director / Exec',
+                            skills: ['Writing', 'Editing', 'Networking'],
+                            tools: ['CMS', 'Editing Software', 'Social Platforms'],
+                            env: 'Office, studio, on location.',
+                            salary: { entry: '$40k-$60k', mid: '$70k-$100k', senior: '$120k+' },
+                            outlook: 'Competitive, shifting to digital.',
+                            why: 'Informing and entertaining the public.',
+                            struggle: 'Those who need stability or dislike scrutiny.'
+                        }
+                    },
+                    'Service': {
+                        titles: ['Chef', 'Event Planner', 'Hotel Manager', 'Flight Attendant', 'Travel Agent', 'Sommelier', 'Restaurant Manager', 'Concierge', 'Customer Success', 'Real Estate Agent'],
+                        traits: { social: 5, chaos: 3, business: 3 },
+                        base: {
+                            category: 'Service',
+                            cognitive: ['Multitasking', 'Social Intelligence', 'Memory'],
+                            hs: ['Culinary', 'Hospitality', 'Languages'],
+                            extra: ['Service Club', 'Cooking', 'Event Org'],
+                            college: ['Hospitality Mgmt', 'Culinary School'],
+                            entry: 'Associate / Line Cook',
+                            mid: 'Manager / Sous Chef',
+                            adv: 'Owner / Director',
+                            skills: ['Service', 'Logistics', 'Communication'],
+                            tools: ['POS', 'Reservation Systems'],
+                            env: 'Dynamic, customer-facing, irregular hours.',
+                            salary: { entry: '$30k-$50k', mid: '$50k-$80k', senior: '$90k+' },
+                            outlook: 'Dependent on economy, but human touch essential.',
+                            why: 'Creating experiences for others.',
+                            struggle: 'Introverts or those with low energy.'
+                        }
+                    },
+                    'Research': {
+                        titles: ['Historian', 'Sociologist', 'Anthropologist', 'Economist', 'Political Scientist', 'Archivist', 'Linguist', 'Philosopher', 'Policy Analyst', 'Think Tank Researcher'],
+                        traits: { science: 4, logic: 4, social: 3 },
+                        base: {
+                            category: 'Research',
+                            cognitive: ['Critical Analysis', 'Writing', 'Synthesis'],
+                            hs: ['History', 'Social Studies', 'Languages'],
+                            extra: ['Debate', 'Model UN', 'Research'],
+                            college: ['Liberal Arts', 'Social Sciences'],
+                            entry: 'Research Assistant',
+                            mid: 'Fellow / Analyst',
+                            adv: 'Professor / Senior Fellow',
+                            skills: ['Research', 'Writing', 'Analysis'],
+                            tools: ['Libraries', 'Databases', 'Stats Software'],
+                            env: 'Academic, library, office.',
+                            salary: { entry: '$40k-$60k', mid: '$70k-$100k', senior: '$120k+' },
+                            outlook: 'Niche, competitive academic market.',
+                            why: 'Understanding the human condition.',
+                            struggle: 'Those who need practical, immediate application.'
+                        }
+                    },
+                    'Defense': {
+                        titles: ['Intelligence Officer', 'Military Officer', 'Emergency Manager', 'Firefighter', 'Police Officer', 'Detective', 'Paramedic', 'Security Specialist', 'Disaster Response', 'Border Patrol'],
+                        traits: { leadership: 4, order: 5, chaos: 3 },
+                        base: {
+                            category: 'Defense',
+                            cognitive: ['Situational Awareness', 'Crisis Mgmt', 'Discipline'],
+                            hs: ['ROTC', 'Civics', 'PE'],
+                            extra: ['Sports', 'Scouts', 'Cadets'],
+                            college: ['Criminal Justice', 'Emergency Mgmt', 'Academy'],
+                            entry: 'Officer / Recruit',
+                            mid: 'Sergeant / Captain',
+                            adv: 'Chief / Commander',
+                            skills: ['Tactics', 'Leadership', 'Emergency Response'],
+                            tools: ['Comms', 'Specialized Gear'],
+                            env: 'Field, station, high risk.',
+                            salary: { entry: '$40k-$60k', mid: '$70k-$100k', senior: '$110k+' },
+                            outlook: 'Always essential.',
+                            why: 'Protecting and serving the community.',
+                            struggle: 'Those who question authority or dislike hierarchy.'
+                        }
+                    }
+                };
+
+                // Generate full objects
+                for (const [catName, data] of Object.entries(categories)) {
+                    data.titles.forEach(title => {
+                        // Add some variation to traits per role
+                        const roleTraits = { ...data.traits };
+                        // Random slight variations
+                        TRAITS.forEach(t => {
+                            if (!roleTraits[t]) roleTraits[t] = Math.random() * 2; // Base noise
+                            roleTraits[t] += Math.random(); // Variation
+                        });
+
+                        roles.push({
+                            id: id++,
+                            title: title,
+                            category: catName,
+                            desc: `${title} in the ${catName} field.`, // Placeholder for UI list
+                            ...data.base,
+                            traits: roleTraits
+                        });
+                    });
+                }
+                return roles;
+            }
+        }
+        const DB = RoleDatabase.generate();
+
+        // --- 3. QUESTION POOL (50+ Questions) ---
+        const QUESTIONS = [
+            // General / Personality
+            { text: "It's Friday night. You have 4 hours free. You:", options: [{ text: "Tinker with code/gadgets", scores: { tech: 3, cyber: 1 } }, { text: "Create art/music", scores: { creative: 3 } }, { text: "Plan your week", scores: { order: 3, business: 1 } }, { text: "Go out with friends", scores: { social: 3 } }] },
+            { text: "A complex problem arises. You:", options: [{ text: "Analyze data first", scores: { logic: 3, science: 1 } }, { text: "Trust your gut", scores: { chaos: 2, creative: 1 } }, { text: "Ask for advice", scores: { social: 2 } }, { text: "Take charge immediately", scores: { leadership: 3 } }] },
+            { text: "You prefer working:", options: [{ text: "Alone in quiet", scores: { tech: 1, science: 1 } }, { text: "In a bustling team", scores: { social: 3, business: 1 } }, { text: "Outdoors/Active", scores: { chaos: 1, medical: 1 } }, { text: "In a structured office", scores: { order: 2, business: 1 } }] },
+            { text: "Success to you is:", options: [{ text: "Discovery", scores: { science: 3, cyber: 1 } }, { text: "Wealth", scores: { business: 3 } }, { text: "Helping others", scores: { medical: 3, social: 2 } }, { text: "Creation", scores: { creative: 3, tech: 1 } }] },
+            { text: "When learning, you prefer:", options: [{ text: "Hands-on practice", scores: { tech: 2, creative: 1 } }, { text: "Reading theory", scores: { science: 2, logic: 2 } }, { text: "Discussing with others", scores: { social: 2, business: 1 } }, { text: "Watching demonstrations", scores: { medical: 1 } }] },
+            
+            // Tech / Cyber
+            { text: "A device stops working. You:", options: [{ text: "Take it apart", scores: { tech: 3, cyber: 1 } }, { text: "Read the manual", scores: { order: 2, logic: 1 } }, { text: "Buy a new one", scores: { business: 1 } }, { text: "Ask a friend to fix it", scores: { social: 1 } }] },
+            { text: "Security vs Convenience:", options: [{ text: "Security above all", scores: { cyber: 3, order: 1 } }, { text: "Balance is key", scores: { business: 1, tech: 1 } }, { text: "Convenience first", scores: { creative: 1, chaos: 1 } }, { text: "Depends on the context", scores: { logic: 2 } }] },
+            { text: "You find a bug in software. You:", options: [{ text: "Report it", scores: { order: 2, tech: 1 } }, { text: "Exploit it", scores: { cyber: 3, chaos: 2 } }, { text: "Ignore it", scores: { social: 1 } }, { text: "Try to fix it", scores: { tech: 3, logic: 1 } }] },
+            
+            // Creative / Chaos
+            { text: "A blank canvas is:", options: [{ text: "Scary", scores: { order: 1 } }, { text: "Exciting", scores: { creative: 3, chaos: 1 } }, { text: "A project", scores: { business: 1 } }, { text: "Messy", scores: { logic: 1 } }] },
+            { text: "Rules are meant to be:", options: [{ text: "Followed strictly", scores: { order: 3, law: 2 } }, { text: "Questioned", scores: { science: 2, logic: 1 } }, { text: "Broken", scores: { chaos: 3, creative: 1 } }, { text: "Improved", scores: { business: 2, leadership: 1 } }] },
+            
+            // Business / Leadership
+            { text: "In a group project, you:", options: [{ text: "Lead the team", scores: { leadership: 3, business: 1 } }, { text: "Do the research", scores: { science: 2, logic: 1 } }, { text: "Make it look good", scores: { creative: 2 } }, { text: "Keep everyone happy", scores: { social: 3 } }] },
+            { text: "Risk taking is:", options: [{ text: "Necessary for growth", scores: { business: 3, chaos: 1 } }, { text: "To be calculated", scores: { logic: 2, finance: 2 } }, { text: "Avoidable", scores: { order: 2, medical: 1 } }, { text: "Fun", scores: { chaos: 3 } }] },
+            
+            // Science / Logic
+            { text: "You see a magic trick. You:", options: [{ text: "Enjoy the show", scores: { creative: 1, social: 1 } }, { text: "Figure out the secret", scores: { logic: 3, science: 2 } }, { text: "Google it", scores: { tech: 1 } }, { text: "Don't care", scores: { chaos: 1 } }] },
+            { text: "Truth is:", options: [{ text: "Objective data", scores: { science: 3, logic: 2 } }, { text: "Subjective experience", scores: { creative: 2, social: 1 } }, { text: "What works", scores: { business: 2 } }, { text: "Complex", scores: { cyber: 1 } }] },
+            
+            // Medical / Social
+            { text: "Someone is hurt. You:", options: [{ text: "Help immediately", scores: { medical: 3, social: 1 } }, { text: "Call 911", scores: { order: 2, logic: 1 } }, { text: "Panic", scores: { chaos: 1 } }, { text: "Take charge of the scene", scores: { leadership: 2 } }] },
+            { text: "Empathy is:", options: [{ text: "A superpower", scores: { social: 3, medical: 2 } }, { text: "A distraction", scores: { logic: 2, cyber: 1 } }, { text: "Useful for sales", scores: { business: 2 } }, { text: "Hard to master", scores: { tech: 1 } }] },
+            
+            // Law / Order
+            { text: "Justice means:", options: [{ text: "Fairness for all", scores: { law: 3, social: 1 } }, { text: "Following the law", scores: { order: 3, law: 2 } }, { text: "Revenge", scores: { chaos: 2 } }, { text: "Balance", scores: { logic: 1 } }] },
+            { text: "A messy desk means:", options: [{ text: "A messy mind", scores: { order: 2 } }, { text: "Genius at work", scores: { creative: 2, chaos: 1 } }, { text: "Productivity", scores: { business: 1 } }, { text: "Nothing", scores: { logic: 1 } }] },
+            
+            // Education / Service
+            { text: "Explaining things is:", options: [{ text: "Fun", scores: { education: 3, social: 1 } }, { text: "Frustrating", scores: { tech: 1, logic: 1 } }, { text: "Necessary", scores: { business: 1 } }, { text: "An art", scores: { creative: 1 } }] },
+            { text: "Service to others is:", options: [{ text: "The highest calling", scores: { service: 3, medical: 1 } }, { text: "A job", scores: { business: 1 } }, { text: "Tiring", scores: { tech: 1 } }, { text: "Rewarding", scores: { education: 2 } }] }
         ];
-
-        // Procedurally generate the rest to hit 150
-        const DB = [];
-        let idCounter = 1;
-
-        // Add base roles
-        ROLES_BASE.forEach(r => {
-            DB.push({
-                id: idCounter++,
-                title: r.t,
-                category: r.c,
-                salary: r.s,
-                desc: r.d,
-                hs: `Focus on ${r.c === 'Cyber' || r.c === 'Tech' ? 'Math, CS, and Physics' : r.c === 'Creative' ? 'Art, Design, and Psychology' : 'English, History, and Math'}. Join ${r.c} clubs.`,
-                courses: ['Intro to ' + r.c, 'Advanced ' + r.t, 'Project Management', 'Ethics in ' + r.c],
-                tags: [r.c.toLowerCase(), 'logic', 'ambition']
-            });
-        });
-
-        // Generate filler roles to reach 150
-        const PREFIXES = ['Senior', 'Junior', 'Lead', 'Chief', 'Assistant', 'Associate'];
-        const DOMAINS = ['Cloud', 'Network', 'System', 'Security', 'Data', 'Web', 'Mobile', 'Game', 'AI', 'Blockchain'];
         
-        while (DB.length < 150) {
-            const domain = DOMAINS[Math.floor(Math.random() * DOMAINS.length)];
-            const cat = ['Tech', 'Cyber', 'Business'][Math.floor(Math.random() * 3)];
-            const title = `${domain} Specialist`;
-            
-            DB.push({
-                id: idCounter++,
-                title: title,
-                category: cat,
-                salary: '$80k-$140k',
-                desc: `Specializes in ${domain.toLowerCase()} technologies and implementation.`,
-                hs: 'Focus on STEM subjects. Participate in hackathons.',
-                courses: [`${domain} Fundamentals`, 'System Architecture', 'Coding 101'],
-                tags: [cat.toLowerCase(), 'tech']
-            });
-        }
+        // Add IDs to questions
+        QUESTIONS.forEach((q, i) => q.id = `q_${i}`);
 
-        // --- ADVANCED QUESTION GENERATION ---
-        // 50+ Hand-crafted, scenario-based questions for true adaptive analysis
-        const QUESTION_POOLS = {
-            // STAGE 1: GENERAL PROFILING (The "Sorting Hat" phase)
-            general: [
-                {
-                    text: "It's Friday night and you have 4 hours of completely free time. What is your instinct?",
-                    options: [
-                        { text: "Tinker with a new gadget or software", scores: { tech: 2, cyber: 1 } },
-                        { text: "Sketch, write, or create something new", scores: { creative: 3 } },
-                        { text: "Plan your schedule for the next month", scores: { business: 2, order: 2 } },
-                        { text: "Go out and meet new people", scores: { social: 3, business: 1 } }
-                    ]
-                },
-                {
-                    text: "You encounter a locked door that you need to get through. What's your first thought?",
-                    options: [
-                        { text: "Look for the key or someone with access", scores: { order: 2, social: 1 } },
-                        { text: "Examine the lock mechanism to pick it", scores: { cyber: 3, logic: 2 } },
-                        { text: "Kick it down", scores: { chaos: 3, leadership: 1 } },
-                        { text: "Find another way around (window/vent)", scores: { creative: 2, logic: 1 } }
-                    ]
-                },
-                {
-                    text: "A friend comes to you with a complex problem. You usually:",
-                    options: [
-                        { text: "Listen and offer emotional support", scores: { social: 3, medical: 1 } },
-                        { text: "Analyze the root cause and propose a fix", scores: { logic: 3, tech: 1 } },
-                        { text: "Take charge and tell them what to do", scores: { leadership: 3, business: 1 } },
-                        { text: "Make a joke to lighten the mood", scores: { creative: 1, chaos: 2 } }
-                    ]
-                },
-                {
-                    text: "You are given a LEGO set without instructions. You:",
-                    options: [
-                        { text: "Build exactly what's on the box by looking at the picture", scores: { order: 2, tech: 1 } },
-                        { text: "Sort all pieces by color and size first", scores: { order: 3, science: 1 } },
-                        { text: "Build something completely different and weird", scores: { creative: 3, chaos: 1 } },
-                        { text: "Build a weapon", scores: { cyber: 1, chaos: 2 } }
-                    ]
-                },
-                {
-                    text: "Which concept appeals to you most?",
-                    options: [
-                        { text: "Absolute Truth", scores: { science: 3, logic: 2 } },
-                        { text: "Limitless Expression", scores: { creative: 3 } },
-                        { text: "System Control", scores: { cyber: 3, leadership: 1 } },
-                        { text: "Financial Freedom", scores: { business: 3 } }
-                    ]
-                }
-            ],
-
-            // STAGE 2: TECH & CYBER (Triggered if Tech/Cyber/Logic is high)
-            tech: [
-                {
-                    text: "Your computer slows down significantly. You:",
-                    options: [
-                        { text: "Open Task Manager/Terminal to kill processes", scores: { tech: 2, cyber: 1 } },
-                        { text: "Restart it and hope for the best", scores: { social: 1 } },
-                        { text: "Scan for malware immediately", scores: { cyber: 3 } },
-                        { text: "Buy a new one", scores: { business: 1 } }
-                    ]
-                },
-                {
-                    text: "You find a vulnerability in a popular website. You:",
-                    options: [
-                        { text: "Report it to the company for a bounty", scores: { cyber: 2, order: 2 } },
-                        { text: "Exploit it to see how far you can get", scores: { cyber: 3, chaos: 2 } },
-                        { text: "Tell your friends but do nothing", scores: { social: 2 } },
-                        { text: "Write a blog post about it anonymously", scores: { tech: 2, creative: 1 } }
-                    ]
-                },
-                {
-                    text: "Code is poetry. Do you agree?",
-                    options: [
-                        { text: "Yes, it must be elegant and clean", scores: { tech: 3, creative: 1 } },
-                        { text: "No, it's a tool. If it works, it works", scores: { business: 2, chaos: 1 } },
-                        { text: "Code is a weapon", scores: { cyber: 3 } },
-                        { text: "I prefer human languages", scores: { social: 3 } }
-                    ]
-                },
-                {
-                    text: "A server crashes at 3 AM. You are on call. You:",
-                    options: [
-                        { text: "Fix it immediately, adrenaline pumping", scores: { tech: 3, leadership: 1 } },
-                        { text: "Automate the fix so it never happens again", scores: { logic: 3, tech: 2 } },
-                        { text: "Call the junior dev to handle it", scores: { leadership: 2, business: 1 } },
-                        { text: "Go back to sleep, it has redundancy", scores: { chaos: 2 } }
-                    ]
-                },
-                {
-                    text: "Which OS do you prefer?",
-                    options: [
-                        { text: "Linux (Kali/Arch)", scores: { cyber: 3, tech: 2 } },
-                        { text: "macOS", scores: { creative: 2, tech: 1 } },
-                        { text: "Windows", scores: { business: 2, tech: 1 } },
-                        { text: "TempleOS", scores: { chaos: 3, logic: 1 } }
-                    ]
-                }
-            ],
-
-            // STAGE 2: CREATIVE & ARTS (Triggered if Creative/Social is high)
-            creative: [
-                {
-                    text: "You have to present an idea. You use:",
-                    options: [
-                        { text: "A beautifully designed slide deck", scores: { creative: 2, business: 1 } },
-                        { text: "A working prototype", scores: { tech: 2, logic: 1 } },
-                        { text: "Just your voice and charisma", scores: { social: 3, leadership: 2 } },
-                        { text: "Interpretive dance", scores: { chaos: 3, creative: 3 } }
-                    ]
-                },
-                {
-                    text: "A blank canvas is:",
-                    options: [
-                        { text: "Terrifying", scores: { order: 1 } },
-                        { text: "An opportunity", scores: { creative: 3 } },
-                        { text: "A problem to be solved", scores: { logic: 2 } },
-                        { text: "Something to sell", scores: { business: 2 } }
-                    ]
-                },
-                {
-                    text: "You notice a typo on a restaurant menu. You:",
-                    options: [
-                        { text: "Point it out to the waiter", scores: { order: 2, social: 1 } },
-                        { text: "Mentally redesign the whole menu", scores: { creative: 3 } },
-                        { text: "Don't care as long as the food is good", scores: { chaos: 1 } },
-                        { text: "Wonder if their billing system has bugs too", scores: { cyber: 2 } }
-                    ]
-                }
-            ],
-
-            // STAGE 2: BUSINESS & LEADERSHIP
-            business: [
-                {
-                    text: "Your team is underperforming. You:",
-                    options: [
-                        { text: "Fire the weakest link", scores: { business: 3, chaos: 1 } },
-                        { text: "Retrain and mentor them", scores: { leadership: 3, social: 2 } },
-                        { text: "Do the work yourself", scores: { tech: 1, order: 2 } },
-                        { text: "Pivot the entire project strategy", scores: { business: 2, creative: 1 } }
-                    ]
-                },
-                {
-                    text: "Money is:",
-                    options: [
-                        { text: "A scorecard", scores: { business: 3 } },
-                        { text: "A resource to build things", scores: { tech: 1, creative: 1 } },
-                        { text: "Security", scores: { order: 2 } },
-                        { text: "An illusion", scores: { chaos: 2, science: 1 } }
-                    ]
-                }
-            ],
-
-            // STAGE 2: SCIENCE & LOGIC
-            science: [
-                {
-                    text: "You see a magic trick. You:",
-                    options: [
-                        { text: "Enjoy the wonder", scores: { creative: 2 } },
-                        { text: "Immediately try to figure out the method", scores: { science: 3, logic: 3 } },
-                        { text: "Google the solution", scores: { tech: 1 } },
-                        { text: "Heckle the magician", scores: { chaos: 2 } }
-                    ]
-                },
-                {
-                    text: "In a debate, you value:",
-                    options: [
-                        { text: "Hard data and facts", scores: { science: 3, logic: 2 } },
-                        { text: "Emotional resonance", scores: { social: 2, creative: 1 } },
-                        { text: "Winning at all costs", scores: { business: 2, leadership: 1 } },
-                        { text: "Confusing your opponent", scores: { chaos: 3 } }
-                    ]
-                }
-            ]
-        };
-
-        // --- APP LOGIC ---
-        const app = {
-    state: {
-        view: 'home',
-        scores: {},
-        qIndex: 0,
-        askedQuestionIds: new Set(),
-        questionSequence: [] // Store the actual sequence of questions
-    },
-
-    init() {
-        this.animateCounters();
-        this.startTypingEffect();
-        this.renderDB();
-        this.setupParticles();
-    },
-
-    navigate(view) {
-        document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
-        document.getElementById(`view-${view}`).classList.remove('hidden');
-        document.getElementById(`view-${view}`).classList.add('fade-in');
-        window.scrollTo(0, 0);
-    },
-
-    startTypingEffect() {
-        const words = ["Cyber", "Tech", "Food", "Career", "True"];
-        let i = 0;
-        const el = document.getElementById('typing-text');
-        setInterval(() => {
-            i = (i + 1) % words.length;
-            el.innerText = words[i] + " Potential";
-        }, 2000);
-    },
-
-    animateCounters() {
-        const counters = document.querySelectorAll('.counter');
-        counters.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
-            const duration = 2000; 
-            const increment = target / (duration / 16);
-            
-            let current = 0;
-            const update = () => {
-                current += increment;
-                if (current < target) {
-                    counter.innerText = Math.ceil(current);
-                    requestAnimationFrame(update);
-                } else {
-                    counter.innerText = target;
-                }
-            };
-            update();
-        });
-    },
-
-    toggleInventory() {
-        const summary = document.getElementById('egg-summary');
-        summary.classList.toggle('hidden');
-        summary.scrollIntoView({ behavior: 'smooth' });
-    },
-
-    // DATABASE
-    renderDB(filter = 'all') {
-        const grid = document.getElementById('careers-grid');
-        grid.innerHTML = '';
-        
-        const filtered = filter === 'all' ? DB : DB.filter(r => r.category === filter);
-        document.getElementById('db-count').innerText = filtered.length;
-
-        filtered.forEach(role => {
-            const card = document.createElement('div');
-            card.className = 'glass p-6 rounded-xl border border-white/5 hover:border-brand-500/50 transition-all hover:-translate-y-1 group';
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">${role.category}</span>
-                    <span class="text-xs text-gray-500 font-mono">${role.salary}</span>
-                </div>
-                <h3 class="text-lg font-bold mb-2 group-hover:text-brand-400 transition-colors">${role.title}</h3>
-                <p class="text-sm text-gray-400 mb-4 line-clamp-2">${role.desc}</p>
-                <div class="text-xs text-gray-500">
-                    <strong>Path:</strong> ${role.hs}
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    },
-
-    filterDB(cat) {
-        this.renderDB(cat);
-    },
-
-    // QUIZ - FIXED VERSION
-    startQuiz() {
-        this.state.scores = { 
-            cyber: 0, tech: 0, creative: 0, business: 0, logic: 0, 
-            chaos: 0, order: 0, social: 0, science: 0, leadership: 0, medical: 0 
-        };
-        this.state.qIndex = 0;
-        this.state.askedQuestionIds = new Set();
-        this.state.questionSequence = this.generateQuestionSequence();
-        this.navigate('quiz');
-        this.renderQuestion();
-    },
-
-    generateQuestionSequence() {
-        // Create unique IDs for all questions first
-        let questionId = 0;
-        Object.keys(QUESTION_POOLS).forEach(poolName => {
-            QUESTION_POOLS[poolName].forEach(q => {
-                if (!q.id) q.id = `${poolName}_${questionId++}`;
-            });
-        });
-
-        // Pre-generate a sequence of 20 diverse questions
-        const sequence = [];
-        
-        // First 5 are always from general pool (in order)
-        for (let i = 0; i < 5 && i < QUESTION_POOLS.general.length; i++) {
-            sequence.push(QUESTION_POOLS.general[i]);
-        }
-
-        // Remaining 15 will be selected adaptively during quiz
-        // (we'll generate them on-the-fly based on user responses)
-        
-        return sequence;
-    },
-
-    getTopCategory() {
-        const entries = Object.entries(this.state.scores);
-        if (entries.length === 0) return 'tech';
-        return entries.reduce((a, b) => a[1] > b[1] ? a : b)[0];
-    },
-
-    getTop3Categories() {
-        return Object.entries(this.state.scores)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3)
-            .map(e => e[0]);
-    },
-
-    getNextQuestion() {
-        // For first 5 questions, use pre-generated sequence
-        if (this.state.qIndex < 5) {
-            return this.state.questionSequence[this.state.qIndex];
-        }
-
-        // After question 5, adaptively choose based on scores
-        const topCategories = this.getTop3Categories();
-        
-        // Determine which pool to use
-        let selectedPool = QUESTION_POOLS.general;
-        
-        for (let category of topCategories) {
-            if (['tech', 'cyber', 'logic'].includes(category)) {
-                selectedPool = QUESTION_POOLS.tech;
-                break;
-            } else if (['creative', 'social', 'chaos'].includes(category)) {
-                selectedPool = QUESTION_POOLS.creative;
-                break;
-            } else if (['business', 'leadership', 'order'].includes(category)) {
-                selectedPool = QUESTION_POOLS.business;
-                break;
-            } else if (['science', 'medical'].includes(category)) {
-                selectedPool = QUESTION_POOLS.science;
-                break;
+        // --- 4. NEURAL ENGINE (TensorFlow.js) ---
+        class NeuralEngine {
+            constructor() {
+                this.model = null;
+                this.isTrained = false;
+                this.roles = DB;
+                this.traits = TRAITS;
+                this.validationAccuracy = 0;
             }
-        }
 
-        // Get questions from selected pool that haven't been asked
-        const availableQuestions = selectedPool.filter(q => 
-            !this.state.askedQuestionIds.has(q.id)
-        );
+            // Generate synthetic data: Map Role Traits -> Role Index
+            generateData(samplesPerRole = 30) {
+                const xs = [];
+                const ys = [];
 
-        // If pool is exhausted, try other pools
-        if (availableQuestions.length === 0) {
-            const allPools = [
-                ...QUESTION_POOLS.general,
-                ...QUESTION_POOLS.tech,
-                ...QUESTION_POOLS.creative,
-                ...QUESTION_POOLS.business,
-                ...QUESTION_POOLS.science
-            ];
-            
-            const anyAvailable = allPools.filter(q => 
-                !this.state.askedQuestionIds.has(q.id)
-            );
+                this.roles.forEach((role, roleIdx) => {
+                    for (let i = 0; i < samplesPerRole; i++) {
+                        // Base vector from role traits
+                        const vector = this.traits.map(t => role.traits[t] || 0);
+                        
+                        // Add noise to simulate human variance
+                        const noisyVector = vector.map(v => {
+                            const noise = (Math.random() - 0.5) * 2; // +/- 1
+                            return Math.max(0, v + noise);
+                        });
 
-            if (anyAvailable.length > 0) {
-                return anyAvailable[Math.floor(Math.random() * anyAvailable.length)];
+                        // Normalize
+                        const maxVal = Math.max(...noisyVector) || 1;
+                        const normVector = noisyVector.map(v => v / maxVal);
+
+                        xs.push(normVector);
+                        ys.push(roleIdx);
+                    }
+                });
+
+                return {
+                    xs: tf.tensor2d(xs),
+                    ys: tf.oneHot(tf.tensor1d(ys, 'int32'), this.roles.length)
+                };
             }
-            
-            // Last resort: generate a unique dynamic question
-            return this.generateDynamicQuestion();
-        }
 
-        // Return random question from available
-        return availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-    },
+            async initAndTrain() {
+                console.log("Initializing Neural Network...");
+                
+                // Model: Input(11) -> Dense(64) -> Dense(32) -> Output(150+)
+                this.model = tf.sequential();
+                this.model.add(tf.layers.dense({ units: 64, activation: 'relu', inputShape: [this.traits.length] }));
+                this.model.add(tf.layers.dropout({ rate: 0.2 }));
+                this.model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
+                this.model.add(tf.layers.dense({ units: this.roles.length, activation: 'softmax' }));
 
-    generateDynamicQuestion() {
-        const topTrait = this.getTopCategory();
-        const dynamicId = `dynamic_${this.state.qIndex}_${Date.now()}`;
-        
-        const scenarios = [
-            {
-                text: `You're working on a ${topTrait}-related project with a tight deadline. Your approach:`,
-                options: [
-                    { text: "Focus on quality, even if it takes longer", scores: { order: 2, logic: 2 } },
-                    { text: "Ship fast, iterate later", scores: { chaos: 2, business: 2 } },
-                    { text: "Balance both speed and quality", scores: { leadership: 2, tech: 1 } },
-                    { text: "Delegate and oversee", scores: { leadership: 3 } }
-                ]
-            },
-            {
-                text: `A major challenge appears in the ${topTrait} domain. You:`,
-                options: [
-                    { text: "Research extensively before acting", scores: { science: 2, logic: 2 } },
-                    { text: "Trust your instincts and dive in", scores: { chaos: 2, creative: 2 } },
-                    { text: "Consult with experts first", scores: { social: 2, order: 1 } },
-                    { text: "Break it down into smaller problems", scores: { logic: 3, tech: 1 } }
-                ]
-            },
-            {
-                text: `You discover a new tool that could revolutionize your ${topTrait} work. You:`,
-                options: [
-                    { text: "Immediately experiment with it", scores: { tech: 3, chaos: 1 } },
-                    { text: "Read all documentation first", scores: { order: 3, logic: 1 } },
-                    { text: "Wait for community feedback", scores: { social: 2, order: 1 } },
-                    { text: "Stick with proven methods", scores: { order: 2 } }
-                ]
-            }
-        ];
+                this.model.compile({
+                    optimizer: tf.train.adam(0.005),
+                    loss: 'categoricalCrossentropy',
+                    metrics: ['accuracy']
+                });
 
-        const question = scenarios[Math.floor(Math.random() * scenarios.length)];
-        question.id = dynamicId;
-        return question;
-    },
+                // Generate Data
+                const { xs, ys } = this.generateData(20); // 20 * 150 = 3000 samples
+                
+                // Train
+                await this.model.fit(xs, ys, {
+                    epochs: 15,
+                    shuffle: true,
+                    callbacks: {
+                        onEpochEnd: (epoch, logs) => {
+                            // console.log(`Epoch ${epoch}: loss=${logs.loss.toFixed(4)}, acc=${logs.acc.toFixed(4)}`);
+                        }
+                    }
+                });
 
-    renderQuestion() {
-        if (this.state.qIndex >= 20) {
-            this.showResults();
-            return;
-        }
-
-        const q = this.getNextQuestion();
-        
-        // Mark this question as asked
-        this.state.askedQuestionIds.add(q.id);
-
-        document.getElementById('q-current').innerText = this.state.qIndex + 1;
-        document.getElementById('question-text').innerText = q.text;
-        
-        // Update progress
-        const pct = ((this.state.qIndex) / 20) * 100;
-        document.getElementById('progress-bar').style.width = `${pct}%`;
-        
-        // Adaptive confidence
-        const topScore = Math.max(...Object.values(this.state.scores));
-        const totalScore = Object.values(this.state.scores).reduce((a, b) => a + b, 0);
-        const confidence = this.state.qIndex > 0 
-            ? Math.min(99, Math.floor((topScore / totalScore) * 100)) 
-            : 0;
-        document.getElementById('confidence-score').innerText = `${confidence}%`;
-
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        
-        q.options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
-            btn.innerHTML = `
-                <span>${opt.text}</span>
-                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-            `;
-            btn.onclick = () => this.handleAnswer(opt.scores);
-            container.appendChild(btn);
-        });
-    },
-
-    handleAnswer(scores) {
-        // Add scores
-        for (let key in scores) {
-            if (!this.state.scores[key]) this.state.scores[key] = 0;
-            this.state.scores[key] += scores[key];
-        }
-        this.state.qIndex++;
-        this.renderQuestion();
-    },
-
-    showResults() {
-        this.navigate('results');
-        
-        // Calculate top category
-        const topCat = this.getTopCategory();
-        
-        // Better matching algorithm
-        const categoryMatches = DB.filter(r => 
-            r.category.toLowerCase() === topCat || 
-            r.tags.includes(topCat)
-        );
-        
-        // Score each match based on tag overlap with top 3 traits
-        const top3 = this.getTop3Categories();
-        const scoredMatches = categoryMatches.map(role => {
-            let score = 0;
-            top3.forEach((trait, index) => {
-                if (role.tags.includes(trait)) {
-                    score += (3 - index); // Weight by rank
+                // Self-Evaluation
+                const evalResult = this.model.evaluate(xs, ys);
+                this.validationAccuracy = evalResult[1].dataSync()[0];
+                console.log(`Model Trained. Accuracy: ${(this.validationAccuracy * 100).toFixed(2)}%`);
+                
+                // Update UI
+                const accElement = document.getElementById('accuracy-counter');
+                if (accElement) {
+                    const realAcc = Math.floor(this.validationAccuracy * 100);
+                    accElement.setAttribute('data-target', realAcc);
+                    accElement.innerText = realAcc;
                 }
-            });
-            return { role, score };
-        });
 
-        // Sort by score and pick best match
-        scoredMatches.sort((a, b) => b.score - a.score);
-        const match = scoredMatches.length > 0 
-            ? scoredMatches[0].role 
-            : DB[Math.floor(Math.random() * DB.length)];
-        
-        document.getElementById('result-title').innerText = match.title;
-        document.getElementById('result-desc').innerText = match.desc;
-        document.getElementById('result-salary').innerText = match.salary;
-        document.getElementById('result-edu').innerText = match.courses.join(', ');
-        document.getElementById('result-hs').innerText = match.hs;
-        
-        const coursesDiv = document.getElementById('result-courses');
-        coursesDiv.innerHTML = match.courses.map(c => 
-            `<span class="px-2 py-1 bg-white/10 rounded text-xs">${c}</span>`
-        ).join('');
+                this.isTrained = true;
+                xs.dispose(); ys.dispose();
+            }
 
-        this.renderChart();
-        this.fireConfetti();
-    },
+            predict(traitScores) {
+                if (!this.isTrained) return [];
 
-    renderChart() {
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        if (window.myChart) window.myChart.destroy();
-        
-        const sortedTraits = Object.entries(this.state.scores)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 6);
+                return tf.tidy(() => {
+                    const vector = this.traits.map(t => traitScores[t] || 0);
+                    const maxVal = Math.max(...vector) || 1;
+                    const normVector = vector.map(v => v / maxVal);
+                    
+                    const input = tf.tensor2d([normVector]);
+                    const prediction = this.model.predict(input);
+                    const probabilities = prediction.dataSync();
+                    
+                    const result = [];
+                    for (let i = 0; i < probabilities.length; i++) {
+                        result.push({ role: this.roles[i], prob: probabilities[i] });
+                    }
+                    return result.sort((a, b) => b.prob - a.prob);
+                });
+            }
 
-        window.myChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: sortedTraits.map(s => s[0].toUpperCase()),
-                datasets: [{
-                    label: 'Profile',
-                    data: sortedTraits.map(s => s[1]),
-                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                    borderColor: '#0ea5e9',
-                    pointBackgroundColor: '#fff'
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        angleLines: { color: 'rgba(255,255,255,0.1)' },
-                        grid: { color: 'rgba(255,255,255,0.1)' },
-                        pointLabels: { color: '#9ca3af', font: { size: 10 } },
-                        ticks: { display: false }
+            calculateEntropy(probs) {
+                return probs.reduce((acc, p) => {
+                    if (p < 0.001) return acc;
+                    return acc - p * Math.log2(p);
+                }, 0);
+            }
+
+            // ADAPTIVE LOGIC: Select question that minimizes expected entropy
+            getBestQuestion(currentScores, availableQuestions) {
+                if (!this.isTrained) return availableQuestions[0];
+
+                // Optimization: Only check a subset of questions to keep UI responsive
+                const candidates = availableQuestions.length > 10 
+                    ? availableQuestions.sort(() => 0.5 - Math.random()).slice(0, 8) 
+                    : availableQuestions;
+
+                let bestQ = null;
+                let minExpectedEntropy = Infinity;
+
+                for (const q of candidates) {
+                    let expectedEntropy = 0;
+                    
+                    // Simulate answering each option
+                    for (const opt of q.options) {
+                        const tempScores = { ...currentScores };
+                        for (let key in opt.scores) {
+                            tempScores[key] = (tempScores[key] || 0) + opt.scores[key];
+                        }
+                        
+                        // Fast predict (we can optimize this by not sorting)
+                        const preds = this.predict(tempScores);
+                        const probs = preds.map(p => p.prob);
+                        const entropy = this.calculateEntropy(probs);
+                        
+                        expectedEntropy += entropy;
+                    }
+
+                    if (expectedEntropy < minExpectedEntropy) {
+                        minExpectedEntropy = expectedEntropy;
+                        bestQ = q;
                     }
                 }
+
+                return bestQ || availableQuestions[0];
             }
-        });
-    },
-
-    fireConfetti() {
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#0ea5e9', '#818cf8', '#ffffff']
-        });
-    },
-
-    setupParticles() {
-        const canvas = document.getElementById('particle-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const particles = [];
-        for(let i=0; i<50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                r: Math.random() * 2,
-                d: Math.random() * Math.PI * 2
-            });
         }
-        
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
-            particles.forEach(p => {
-                p.x += Math.cos(p.d) * 0.5;
-                p.y += Math.sin(p.d) * 0.5;
-                if(p.x < 0) p.x = canvas.width;
-                if(p.x > canvas.width) p.x = 0;
-                if(p.y < 0) p.y = canvas.height;
-                if(p.y > canvas.height) p.y = 0;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                ctx.fill();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
-    },
 
-    // GOD MODE (Reward)
-    enableGodMode() {
-        document.body.classList.add('matrix-mode');
-        const summary = document.getElementById('egg-summary');
-        summary.innerHTML = `
-            <h4 class="text-green-500 font-bold mb-4 text-xl">⚡ GOD MODE ACTIVATED</h4>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="app.forceMatch('Cyber')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CYBER</button>
-                <button onclick="app.forceMatch('Business')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CEO</button>
-                <button onclick="app.maxStats()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">MAX STATS</button>
-                <button onclick="app.toggleGravity()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">ZERO GRAVITY</button>
-            </div>
-        `;
-    },
+        // --- 5. APP LOGIC ---
+        const app = {
+            state: {
+                view: 'home',
+                scores: {},
+                qIndex: 0,
+                askedQuestionIds: new Set(),
+                history: []
+            },
+            neuralEngine: new NeuralEngine(),
 
-    forceMatch(cat) {
-        this.state.scores[cat.toLowerCase()] = 999;
-        this.showResults();
-    },
+            async init() {
+                this.animateCounters();
+                this.startTypingEffect();
+                this.renderDB();
+                this.setupParticles();
+                
+                // Search Listener
+                const searchInput = document.getElementById('global-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+                    // Add keyboard shortcut listener (Cmd+K)
+                    document.addEventListener('keydown', (e) => {
+                        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                            e.preventDefault();
+                            searchInput.focus();
+                        }
+                    });
+                }
 
-    maxStats() {
-        for(let k in this.state.scores) this.state.scores[k] = 100;
-        this.renderChart();
-    },
+                // Train in background
+                setTimeout(() => this.neuralEngine.initAndTrain(), 500);
+            },
 
-    toggleGravity() {
-        document.body.style.transform = document.body.style.transform ? '' : 'rotate(180deg)';
-        document.body.style.transition = 'transform 2s ease';
-    }
-};
+            navigate(view) {
+                document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`view-${view}`).classList.remove('hidden');
+                document.getElementById(`view-${view}`).classList.add('fade-in');
+                window.scrollTo(0, 0);
+            },
+
+            startTypingEffect() {
+                const words = ["Cyber", "Tech", "Future", "Career", "True"];
+                let i = 0;
+                const el = document.getElementById('typing-text');
+                setInterval(() => {
+                    i = (i + 1) % words.length;
+                    el.innerText = words[i] + " Potential";
+                }, 2000);
+            },
+
+            animateCounters() {
+                const counters = document.querySelectorAll('.counter');
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000; 
+                    const increment = target / (duration / 16);
+                    let current = 0;
+                    const update = () => {
+                        current += increment;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current);
+                            requestAnimationFrame(update);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    update();
+                });
+            },
+
+            toggleInventory() {
+                const summary = document.getElementById('egg-summary');
+                summary.classList.toggle('hidden');
+                summary.scrollIntoView({ behavior: 'smooth' });
+            },
+
+            renderDB(data = DB) {
+                const grid = document.getElementById('careers-grid');
+                grid.innerHTML = '';
+                
+                document.getElementById('db-count').innerText = data.length;
+
+                // Limit display to 50 to prevent DOM lag, unless searching
+                const displayData = data.length > 50 ? data.slice(0, 50) : data;
+
+                if (data.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No roles found matching your criteria.</div>`;
+                    return;
+                }
+
+                displayData.forEach(role => {
+                    const card = document.createElement('div');
+                    card.className = 'glass p-6 rounded-xl border border-white/5 hover:border-brand-500/50 transition-all hover:-translate-y-1 group';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">${role.category}</span>
+                            <span class="text-xs text-gray-500 font-mono">${role.salary.mid}</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-brand-400 transition-colors">${role.title}</h3>
+                        <p class="text-sm text-gray-400 mb-4 line-clamp-2">${role.why}</p>
+                        <div class="text-xs text-gray-500">
+                            <strong>Entry:</strong> ${role.entry}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            },
+
+            filterDB(cat) {
+                const filtered = cat === 'all' ? DB : DB.filter(r => r.category === cat);
+                this.renderDB(filtered);
+            },
+
+            handleSearch(query) {
+                const q = query.toLowerCase();
+                
+                // Auto-navigate to careers view if typing
+                if (q.length > 0 && this.state.view !== 'careers') {
+                    this.navigate('careers');
+                }
+
+                const filtered = DB.filter(role => 
+                    role.title.toLowerCase().includes(q) || 
+                    role.category.toLowerCase().includes(q) ||
+                    role.skills.some(s => s.toLowerCase().includes(q)) ||
+                    role.why.toLowerCase().includes(q)
+                );
+                
+                this.renderDB(filtered);
+            },
+
+            startQuiz() {
+                if (!this.neuralEngine.isTrained) {
+                    alert("Neural Network is initializing... please wait 5 seconds.");
+                    return;
+                }
+                this.state.scores = {};
+                TRAITS.forEach(t => this.state.scores[t] = 0);
+                this.state.qIndex = 0;
+                this.state.askedQuestionIds = new Set();
+                this.navigate('quiz');
+                this.renderQuestion();
+            },
+
+            getNextQuestion() {
+                const available = QUESTIONS.filter(q => !this.state.askedQuestionIds.has(q.id));
+                if (available.length === 0) return null;
+
+                // First 3 questions random to seed
+                if (this.state.qIndex < 3) {
+                    return available[Math.floor(Math.random() * available.length)];
+                }
+
+                return this.neuralEngine.getBestQuestion(this.state.scores, available);
+            },
+
+            renderQuestion() {
+                if (this.state.qIndex >= 15) {
+                    this.showResults();
+                    return;
+                }
+
+                const q = this.getNextQuestion();
+                if (!q) {
+                    this.showResults();
+                    return;
+                }
+                
+                this.state.askedQuestionIds.add(q.id);
+
+                document.getElementById('q-current').innerText = this.state.qIndex + 1;
+                document.getElementById('q-total').innerText = 15;
+                document.getElementById('question-text').innerText = q.text;
+                
+                const pct = ((this.state.qIndex) / 15) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+                
+                // Confidence
+                const preds = this.neuralEngine.predict(this.state.scores);
+                const topProb = preds.length ? preds[0].prob : 0;
+                const confidence = Math.floor(topProb * 100);
+                document.getElementById('confidence-score').innerText = `${confidence}%`;
+
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
+                    btn.innerHTML = `
+                        <span>${opt.text}</span>
+                        <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    `;
+                    btn.onclick = () => this.handleAnswer(opt.scores);
+                    container.appendChild(btn);
+                });
+            },
+
+            handleAnswer(scores) {
+                for (let key in scores) {
+                    if (this.state.scores[key] !== undefined) {
+                        this.state.scores[key] += scores[key];
+                    }
+                }
+                this.state.qIndex++;
+                this.renderQuestion();
+            },
+
+            showResults() {
+                this.navigate('results');
+                
+                const preds = this.neuralEngine.predict(this.state.scores);
+                const topMatch = preds[0];
+                const role = topMatch.role;
+                const confidence = Math.floor(topMatch.prob * 100);
+
+                document.getElementById('result-title').innerText = role.title;
+                document.getElementById('result-desc').innerText = role.why;
+                document.getElementById('result-salary').innerText = role.salary.mid;
+                document.getElementById('result-edu').innerText = role.college.join(', ');
+                document.getElementById('result-hs').innerText = role.hs.join(', ');
+                document.getElementById('match-percentage').innerText = confidence;
+                
+                const coursesDiv = document.getElementById('result-courses');
+                coursesDiv.innerHTML = role.skills.slice(0, 4).map(c => 
+                    `<span class="px-2 py-1 bg-white/10 rounded text-xs">${c}</span>`
+                ).join('');
+
+                // EXPANDED DETAILS
+                const expandedDiv = document.getElementById('result-expanded');
+                expandedDiv.innerHTML = `
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Career Path</h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li><span class="text-brand-500">Entry:</span> ${role.entry}</li>
+                                <li><span class="text-brand-500">Mid:</span> ${role.mid}</li>
+                                <li><span class="text-brand-500">Senior:</span> ${role.adv}</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Cognitive Profile</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${role.cognitive.map(c => `<span class="px-2 py-1 border border-white/10 rounded text-xs text-gray-300">${c}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Why You?</h4>
+                            <p class="text-sm text-gray-400">${role.why}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Potential Challenges</h4>
+                            <p class="text-sm text-gray-400">${role.struggle}</p>
+                        </div>
+                    </div>
+                `;
+
+                this.renderChart();
+                this.fireConfetti();
+            },
+
+            renderChart() {
+                const ctx = document.getElementById('radarChart').getContext('2d');
+                if (window.myChart) window.myChart.destroy();
+                
+                const sortedTraits = Object.entries(this.state.scores)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+
+                window.myChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: sortedTraits.map(s => s[0].toUpperCase()),
+                        datasets: [{
+                            label: 'Profile',
+                            data: sortedTraits.map(s => s[1]),
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: '#0ea5e9',
+                            pointBackgroundColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(255,255,255,0.1)' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
+                                ticks: { display: false }
+                            }
+                        }
+                    }
+                });
+            },
+
+            fireConfetti() {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#0ea5e9', '#818cf8', '#ffffff']
+                });
+            },
+
+            setupParticles() {
+                const canvas = document.getElementById('particle-bg');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const particles = [];
+                for(let i=0; i<50; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 2,
+                        d: Math.random() * Math.PI * 2
+                    });
+                }
+                
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
+                    particles.forEach(p => {
+                        p.x += Math.cos(p.d) * 0.5;
+                        p.y += Math.sin(p.d) * 0.5;
+                        if(p.x < 0) p.x = canvas.width;
+                        if(p.x > canvas.width) p.x = 0;
+                        if(p.y < 0) p.y = canvas.height;
+                        if(p.y > canvas.height) p.y = 0;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                        ctx.fill();
+                    });
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            },
+
+            enableGodMode() {
+                document.body.classList.add('matrix-mode');
+                const summary = document.getElementById('egg-summary');
+                summary.innerHTML = `
+                    <h4 class="text-green-500 font-bold mb-4 text-xl">⚡ GOD MODE ACTIVATED</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="app.forceMatch('Cyber')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CYBER</button>
+                        <button onclick="app.forceMatch('Business')" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">FORCE: CEO</button>
+                        <button onclick="app.maxStats()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">MAX STATS</button>
+                        <button onclick="app.toggleGravity()" class="p-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black text-xs font-mono">ZERO GRAVITY</button>
+                    </div>
+                `;
+            },
+
+            forceMatch(cat) {
+                this.state.scores[cat.toLowerCase()] = 999;
+                this.showResults();
+            },
+
+            maxStats() {
+                for(let k in this.state.scores) this.state.scores[k] = 100;
+                this.renderChart();
+            },
+
+            toggleGravity() {
+                document.body.style.transform = document.body.style.transform ? '' : 'rotate(180deg)';
+                document.body.style.transition = 'transform 2s ease';
+            }
+        };
 
         // --- EASTER EGGS ---
         const eggHunt = {
             found: new Set(),
             total: 5,
-            
             collect(id) {
                 if (this.found.has(id)) return;
                 this.found.add(id);
-                
-                // UI Feedback
                 const btn = document.getElementById('inventory-btn');
                 btn.classList.remove('hidden');
                 btn.classList.add('animate-bounce');
                 document.getElementById('egg-count').innerText = this.found.size;
-                
-                // Toast
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-4 right-4 bg-brand-600 text-white px-6 py-3 rounded-lg shadow-xl z-50 fade-in';
                 toast.innerHTML = `<i class="fas fa-trophy mr-2"></i> Secret Found: ${id.replace('_', ' ').toUpperCase()}`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
-
                 if (this.found.size === this.total) {
                     document.getElementById('egg-summary').classList.remove('hidden');
-                    app.enableGodMode(); // NEW REWARD
+                    app.enableGodMode();
                     confetti({ particleCount: 500, spread: 360 });
                 }
             },
-
-            trigger(id) {
-                this.collect(id);
-            }
+            trigger(id) { this.collect(id); }
         };
 
-        // Konami Code
         let kKeys = [];
         const konami = "ArrowUp,ArrowUp,ArrowDown,ArrowDown,ArrowLeft,ArrowRight,ArrowLeft,ArrowRight,b,a";
         window.addEventListener('keydown', (e) => {
@@ -1182,9 +1410,7 @@
             }
         });
 
-        // Init
         window.onload = () => app.init();
-
     </script>
 </body>
 </html>
