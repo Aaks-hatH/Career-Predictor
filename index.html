@@ -133,7 +133,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer group" onclick="app.navigate('home')">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform bg-black">
-                    <img src="https://cdn.pixabay.com/photo/2020/01/07/22/36/cyber-4748849_150.png" alt="Logo" class="w-full h-full object-cover p-1">
+                    <img src="https://pixabay.com/get/g9c18804bb97db337df20f1515088f2d44e7335c2d4da4eae05ef4af6da55e4101db28555f29875267952f10510db4e8f53c7fa3f5640f3fe490662f26f34f3c5_640.png" alt="Logo" class="w-full h-full object-cover p-1">
                 </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-lg tracking-tight leading-none">FutureLink</span>
@@ -187,8 +187,9 @@
             </p>
 
             <div class="flex flex-col md:flex-row gap-5 fade-in delay-300 mb-20">
-                <button onclick="app.startQuiz()" class="group relative px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-lg hover:shadow-brand-500/25">
-                    <span class="relative z-10 flex items-center gap-2">
+                <button onclick="app.startQuiz()" class="group relative px-10 py-5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-full font-bold text-xl overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(14,165,233,0.4)] hover:-translate-y-1 border border-brand-400/20">
+                    <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-700 skew-x-12 -translate-x-full"></div>
+                    <span class="relative z-10 flex items-center gap-3">
                         Begin Assessment <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </span>
                 </button>
@@ -249,6 +250,71 @@
                     </div>
                 </div>
             </div>
+
+            <!-- PROCESS EXPLANATION -->
+            <div class="mt-32 w-full text-left fade-in delay-300 relative">
+                <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-500/50 to-transparent hidden md:block"></div>
+                
+                <h2 class="text-3xl md:text-4xl font-bold mb-16 pl-0 md:pl-16">How The Algorithm Works</h2>
+
+                <div class="space-y-16">
+                    <!-- Step 1 -->
+                    <div class="relative pl-0 md:pl-16 group">
+                        <div class="hidden md:flex absolute left-[27px] top-2 w-4 h-4 bg-dark-bg border-2 border-brand-500 rounded-full z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(14,165,233,0.5)]"></div>
+                        <div class="glass p-8 rounded-2xl border border-white/5 hover:border-brand-500/30 transition-all hover:-translate-y-1">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center text-brand-400 font-bold">01</div>
+                                <h3 class="text-xl font-bold">Data Ingestion & Analysis</h3>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed">
+                                The system begins by collecting multi-dimensional data points from your responses. We don't just analyze *what* you choose, but *how* you choose it—measuring decision speed, hesitation patterns, and consistency across related questions.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative pl-0 md:pl-16 group">
+                        <div class="hidden md:flex absolute left-[27px] top-2 w-4 h-4 bg-dark-bg border-2 border-purple-500 rounded-full z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+                        <div class="glass p-8 rounded-2xl border border-white/5 hover:border-purple-500/30 transition-all hover:-translate-y-1">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">02</div>
+                                <h3 class="text-xl font-bold">Neural Pattern Recognition</h3>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed">
+                                Our neural network compares your behavioral patterns against a proprietary dataset of successful professionals in 150+ roles. It identifies subtle correlations—like the link between musical ability and cryptography—that standard tests miss.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative pl-0 md:pl-16 group">
+                        <div class="hidden md:flex absolute left-[27px] top-2 w-4 h-4 bg-dark-bg border-2 border-emerald-500 rounded-full z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                        <div class="glass p-8 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all hover:-translate-y-1">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">03</div>
+                                <h3 class="text-xl font-bold">Chaos & Order Evaluation</h3>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed">
+                                We evaluate your response to unstructured problems and high-pressure scenarios to determine your "Chaos Factor". This is crucial for distinguishing between roles like Incident Response (High Chaos) and Compliance Auditing (High Order).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative pl-0 md:pl-16 group">
+                        <div class="hidden md:flex absolute left-[27px] top-2 w-4 h-4 bg-dark-bg border-2 border-orange-500 rounded-full z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(249,115,22,0.5)]"></div>
+                        <div class="glass p-8 rounded-2xl border border-white/5 hover:border-orange-500/30 transition-all hover:-translate-y-1">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold">04</div>
+                                <h3 class="text-xl font-bold">Precision Role Matching</h3>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed">
+                                Finally, the algorithm triangulates your profile across 7 core dimensions to pinpoint the exact career path where your natural instincts become your greatest professional asset, providing a match confidence score for each role.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- VIEW: ABOUT -->
@@ -272,10 +338,10 @@
                             </div>
                         </div>
                         <p class="text-gray-300 leading-relaxed mb-6">
-                            I am a passionate developer with a deep interest in Cybersecurity and Ethical Hacking. My journey involves breaking systems to build them stronger. I specialize in full-stack development but my heart lies in securing digital infrastructures. I believe in the power of open source and continuous learning.
+                            I am Aakshat Hariharan, a visionary developer and cybersecurity specialist dedicated to bridging the gap between human potential and digital security. With a background in full-stack engineering and ethical hacking, I created FutureLink to revolutionize how we approach career discovery in the tech world. My mission is to empower individuals to find their niche in the vast cyber ecosystem, whether it's defending critical infrastructure or architecting the next generation of secure software.
                         </p>
                         <p class="text-gray-300 leading-relaxed mb-6">
-                            This platform is a testament to my belief that understanding one's own psychology is the first step to mastering any technical field. Whether you are a builder, a breaker, or a leader, there is a place for you in the digital ecosystem.
+                            My journey began with a simple curiosity about how systems break, which evolved into a passion for building resilient digital fortresses. I believe that true security comes from understanding the human element behind the code. This platform is a testament to that belief—using advanced psychological profiling to match your unique cognitive patterns with the role you were born to master.
                         </p>
                         <div class="flex gap-4 mt-8">
                             <a href="https://github.com/Aaks-hatH" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-all"><i class="fab fa-github"></i></a>
