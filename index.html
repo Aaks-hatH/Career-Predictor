@@ -1143,15 +1143,16 @@
             async initAndTrain() {
                 logDebug('TRAINING', "Initializing Neural Network...");
                 
-                // Model: Input(11) -> Dense(128) -> Dropout -> Dense(64) -> Output(150+)
+                // OPTIMIZED Model: Input(11) -> Dense(64) -> Dropout -> Dense(32) -> Output(150+)
+                // Reduced complexity for faster training while maintaining accuracy
                 this.model = tf.sequential();
-                this.model.add(tf.layers.dense({ units: 128, activation: 'relu', inputShape: [this.traits.length] }));
-                this.model.add(tf.layers.dropout({ rate: 0.3 }));
-                this.model.add(tf.layers.dense({ units: 64, activation: 'relu' }));
+                this.model.add(tf.layers.dense({ units: 64, activation: 'relu', inputShape: [this.traits.length] }));
+                this.model.add(tf.layers.dropout({ rate: 0.2 }));
+                this.model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
                 this.model.add(tf.layers.dense({ units: this.roles.length, activation: 'softmax' }));
 
                 this.model.compile({
-                    optimizer: tf.train.adam(0.002),
+                    optimizer: tf.train.adam(0.003),
                     loss: 'categoricalCrossentropy',
                     metrics: ['accuracy']
                 });
@@ -1164,11 +1165,17 @@
                 logDebug('TRAINING', "Starting training loop (50 epochs)...");
                 await this.model.fit(xs, ys, {
                     epochs: 50,
-                    batchSize: 32,
+                    batchSize: 64,
                     shuffle: true,
                     callbacks: {
                         onEpochEnd: (epoch, logs) => {
-                            if (epoch % 5 === 0) {
+                            // Early stopping for speed
+                            if (logs.acc >= 0.99) {
+                                this.model.stopTraining = true;
+                                logDebug('TRAINING', `Reached 99% accuracy at epoch ${epoch}. Stopping early.`);
+                            }
+
+                            if (epoch % 5 === 0 || this.model.stopTraining) {
                                 logDebug('TRAINING', `Epoch ${epoch}: loss=${logs.loss.toFixed(4)}, acc=${logs.acc.toFixed(4)}`);
                             }
                         }
