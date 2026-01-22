@@ -178,11 +178,11 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-lg tracking-tight leading-none">FutureLink</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Career Intelligence</span>
+                    <span class="text-[10px] text-gray-300 uppercase tracking-widest">Career Intelligence</span>
                 </div>
             </div>
             
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
                 <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('home')">Home</a>
                 <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('about')">About Aakshat</a>
                 <a href="#" class="hover:text-white transition-colors" onclick="app.navigate('careers')">Database</a>
@@ -195,10 +195,10 @@
 
             <div class="flex items-center gap-4">
                 <button id="inventory-btn" onclick="app.toggleInventory()" class="relative p-2 hover:bg-white/5 rounded-full transition-colors group hidden" title="Secrets">
-                    <i class="fas fa-gem text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                    <i class="fas fa-gem text-gray-300 group-hover:text-brand-400 transition-colors"></i>
                     <span id="egg-count" class="absolute -top-1 -right-1 bg-brand-500 text-[10px] w-4 h-4 flex items-center justify-center rounded-full text-white shadow-lg shadow-brand-500/50">0</span>
                 </button>
-                <button onclick="app.startQuiz()" class="bg-white text-dark-bg hover:bg-gray-100 px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transform hover:-translate-y-0.5">
+                <button onclick="app.startQuiz()" aria-label="Start Analysis" class="bg-white text-dark-bg hover:bg-gray-100 px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transform hover:-translate-y-0.5">
                     Start Analysis
                 </button>
             </div>
@@ -223,12 +223,12 @@
                 <span class="text-gradient cursor-pointer hover:opacity-80 transition-opacity typing-cursor" id="typing-text" onclick="eggHunt.trigger('title_glitch')">Cyber Potential</span>
             </h1>
 
-            <p class="text-xl text-gray-400 max-w-3xl mb-12 fade-in delay-200 leading-relaxed">
+            <p class="text-xl text-gray-300 max-w-3xl mb-12 fade-in delay-200 leading-relaxed">
                 Welcome to the advanced career analysis interface. This system utilizes a multi-vector personality algorithm to determine your optimal professional trajectory. Unlike standard tests, we analyze your subconscious preferences, problem-solving approaches, and chaotic tendencies to match you with roles that fit your true nature. Whether you are destined to build secure systems or break them, we will find your path.
             </p>
 
             <div class="flex flex-col md:flex-row gap-5 fade-in delay-300 mb-20">
-                <button onclick="app.startQuiz()" class="group relative px-10 py-5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-full font-bold text-xl overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(14,165,233,0.4)] hover:-translate-y-1 border border-brand-400/20">
+                <button onclick="app.startQuiz()" aria-label="Start Analysis" class="group relative px-10 py-5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-full font-bold text-xl overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(14,165,233,0.4)] hover:-translate-y-1 border border-brand-400/20">
                     <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-700 skew-x-12 -translate-x-full"></div>
                     <span class="relative z-10 flex items-center gap-3">
                         Begin Assessment <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
@@ -267,7 +267,7 @@
                             <i class="fas fa-brain text-xl"></i>
                         </div>
                         <h3 class="text-xl font-bold mb-3">Adaptive Intelligence</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">
+                        <p class="text-gray-300 text-sm leading-relaxed">
                             Our algorithm doesn't just ask questions; it learns. With 200+ adaptive data points, the system recalibrates after every response to narrow down your psychological profile with surgical precision.
                         </p>
                     </div>
@@ -421,7 +421,7 @@
                         </p>
                     </div>
                     <div class="pt-4">
-                        <button onclick="app.startQuiz()" class="text-white border-b border-brand-500 pb-1 hover:text-brand-400 transition-colors">
+                        <button onclick="app.startQuiz()" aria-label="Start Analysis" class="text-white border-b border-brand-500 pb-1 hover:text-brand-400 transition-colors">
                             Experience the logic yourself <i class="fas fa-arrow-right ml-2 text-xs"></i>
                         </button>
                     </div>
@@ -613,7 +613,7 @@
                     
                     <div class="bg-brand-900/20 p-6 border-t border-white/5 flex justify-between items-center">
                         <button onclick="app.navigate('careers')" class="text-sm text-gray-400 hover:text-white transition-colors">View All Matches</button>
-                        <button onclick="app.startQuiz()" class="px-6 py-2 bg-white text-dark-bg rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Retake Analysis</button>
+                        <button onclick="app.startQuiz()" aria-label="Start Analysis" class="px-6 py-2 bg-white text-dark-bg rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Retake Analysis</button>
                     </div>
                 </div>
             </div>
@@ -683,7 +683,7 @@
                             <button onclick="app.navigate('careers')" class="text-sm text-gray-400 hover:text-white transition-colors">View All Matches</button>
                             <button onclick="app.clearData()" class="text-sm text-red-400 hover:text-red-300 transition-colors">Clear Data</button>
                         </div>
-                        <button onclick="app.startQuiz()" class="px-6 py-2 bg-white text-dark-bg rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Retake Analysis</button>
+                        <button onclick="app.startQuiz()" aria-label="Start Analysis" class="px-6 py-2 bg-white text-dark-bg rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Retake Analysis</button>
                     </div>
                 </div>
             </div>
@@ -715,7 +715,11 @@
 
     <!-- LOGIC -->
     <script>
+        
         // --- 1. CONFIG & CONSTANTS ---
+        const MAX_QUESTIONS = 15;
+        const TRAINING_EPOCHS = 40;
+        const TRAINING_SAMPLES = 50;
         const TRAITS = ['cyber', 'tech', 'creative', 'business', 'logic', 'chaos', 'order', 'social', 'science', 'leadership', 'medical'];
         
         // --- 2. ROLE DATABASE GENERATOR ---
@@ -1153,6 +1157,8 @@
             }
 
             async initAndTrain() {
+                try {
+                const l=document.getElementById('nn-loading'); if(l) l.classList.remove('hidden');
                 logDebug('TRAINING', "Initializing Neural Network...");
                 
                 // OPTIMIZED Model: Input(11) -> Dense(64) -> Dropout -> Dense(32) -> Output(150+)
@@ -1171,12 +1177,12 @@
 
                 // Generate Data
                 logDebug('TRAINING', "Generating synthetic dataset...");
-                const { xs, ys } = this.generateData(50); 
+                const { xs, ys } = this.generateData(TRAINING_SAMPLES); 
                 
                 // Train
-                logDebug('TRAINING', "Starting training loop (50 epochs)...");
+                logDebug('TRAINING', `Starting training loop (${TRAINING_EPOCHS} epochs)...`);
                 await this.model.fit(xs, ys, {
-                    epochs: 50,
+                    epochs: TRAINING_EPOCHS,
                     batchSize: 64,
                     shuffle: true,
                     callbacks: {
@@ -1199,7 +1205,7 @@
                 this.validationAccuracy = evalResult[1].dataSync()[0];
                 const accPercent = (this.validationAccuracy * 100).toFixed(2);
                 logDebug('TRAINING', `Model Trained. Final Accuracy: ${accPercent}%`);
-                console.log(`Model Trained. Accuracy: ${accPercent}%`);
+                
                 
                 // Update UI
                 const accElement = document.getElementById('accuracy-counter');
@@ -1209,8 +1215,15 @@
                     accElement.innerText = realAcc;
                 }
 
+                if(l) l.classList.add('hidden');
                 this.isTrained = true;
-                xs.dispose(); ys.dispose();
+                
+                    xs.dispose(); ys.dispose();
+                } catch (e) {
+                    console.error("NN Error", e);
+                    const loading = document.getElementById('nn-loading');
+                    if(loading) loading.innerText = "Error: " + e.message;
+                }
             }
 
             predict(traitScores) {
@@ -1299,7 +1312,7 @@
 
             async init() {
                 // Check History
-                const history = JSON.parse(localStorage.getItem('futurelink_history') || '[]');
+                let history = []; try { history = JSON.parse(localStorage.getItem('futurelink_history') || '[]'); } catch(e) { console.error(e); }
                 if (history.length > 0) {
                     this.state.history = history;
                     this.state.user = history[history.length - 1];
@@ -1484,7 +1497,7 @@
             },
 
             renderQuestion() {
-                if (this.state.qIndex >= 15) {
+                if (this.state.qIndex >= MAX_QUESTIONS) {
                     this.showResults();
                     return;
                 }
@@ -1498,10 +1511,10 @@
                 this.state.askedQuestionIds.add(q.id);
 
                 document.getElementById('q-current').innerText = this.state.qIndex + 1;
-                document.getElementById('q-total').innerText = 15;
+                document.getElementById('q-total').innerText = MAX_QUESTIONS;
                 document.getElementById('question-text').innerText = q.text;
                 
-                const pct = ((this.state.qIndex) / 15) * 100;
+                const pct = ((this.state.qIndex) / MAX_QUESTIONS) * 100;
                 document.getElementById('progress-bar').style.width = `${pct}%`;
                 
                 // Confidence
@@ -1516,6 +1529,7 @@
                 q.options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'w-full text-left p-4 rounded-xl bg-white/5 hover:bg-brand-600 hover:text-white transition-all border border-white/5 hover:border-brand-400 flex justify-between items-center group';
+                    btn.setAttribute('aria-label', opt.text);
                     btn.innerHTML = `
                         <span>${opt.text}</span>
                         <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
@@ -1553,7 +1567,7 @@
                     };
                     
                     // Save to history
-                    const history = JSON.parse(localStorage.getItem('futurelink_history') || '[]');
+                    let history = []; try { history = JSON.parse(localStorage.getItem('futurelink_history') || '[]'); } catch(e) { console.error(e); }
                     history.push(userProfile);
                     localStorage.setItem('futurelink_history', JSON.stringify(history));
                     this.state.history = history;
@@ -1564,7 +1578,7 @@
                 const role = topMatch.role;
                 const confidence = Math.floor(topMatch.prob * 100);
 
-                document.getElementById('result-title').innerText = role.title;
+                document.getElementById('result-title').textContent = role.title;
                 document.getElementById('result-desc').innerText = role.why;
                 document.getElementById('result-salary').innerText = role.salary.mid;
                 document.getElementById('result-edu').innerText = role.college.join(', ');
@@ -1611,7 +1625,7 @@
 
             renderChart() {
                 const ctx = document.getElementById('radarChart').getContext('2d');
-                if (window.myChart) window.myChart.destroy();
+                if (window.myChart) { window.myChart.destroy(); window.myChart = null; }
                 
                 const sortedTraits = Object.entries(this.state.scores)
                     .sort((a, b) => b[1] - a[1])
@@ -1668,6 +1682,7 @@
                 }
                 
                 function animate() {
+                    if (document.hidden) { requestAnimationFrame(animate); return; }
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
                     particles.forEach(p => {
@@ -1964,6 +1979,10 @@
         <div id="debug-content" class="space-y-2">
             <div class="text-gray-500 italic">Waiting for activity...</div>
         </div>
+    </div>
+
+    <div id="nn-loading" class="fixed bottom-4 left-4 bg-black/90 text-brand-400 px-4 py-2 rounded-full text-xs font-mono hidden z-50 border border-brand-500/30 shadow-lg flex items-center gap-2">
+        <i class="fas fa-circle-notch fa-spin"></i> Initializing Neural Core...
     </div>
 </body>
 </html>
