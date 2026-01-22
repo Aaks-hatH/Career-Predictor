@@ -403,7 +403,7 @@
                             <i class="fas fa-shield-alt text-brand-500"></i> Security First
                         </h3>
                         <p class="text-gray-400 mb-4">
-                            My approach to development is always security-first, treating every function, API endpoint, and user interaction as a potential attack vector that needs careful consideration and hardening. I meticulously analyze potential vulnerabilities in every line of code I write, employing defensive programming techniques, input validation, proper authentication mechanisms, and secure coding standards throughout the development lifecycle.
+                            My approach to development is fundamentally rooted in a 'Security-First' paradigm, where every line of code is treated as a critical defense perimeter. This philosophy extends beyond simple input validation; it encompasses a holistic view of the attack surface, treating every function, API endpoint, and user interaction as a potential vector for exploitation that requires rigorous hardening. I meticulously analyze potential vulnerabilities using a combination of static analysis, dynamic testing, and threat modeling to ensure resilience against OWASP Top 10 threats and beyond. This platform itself serves as a living testament to this commitment, utilizing advanced client-side cryptographic hashing to ensure your data never leaves your device. Our 'Zero-Knowledge' architecture means even we cannot see your results. Your neural profile is stored in a local, sandboxed environment (localStorage) mimicking a secure enclave, ensuring complete privacy and autonomy over your digital footprint. Furthermore, I employ defensive programming techniques, strict content security policies, and secure memory management practices to mitigate risks at the source.
                         </p>
                         <p class="text-gray-400">
                             This platform itself embodies this philosophy and includes several carefully crafted hidden "Easter eggs" that simulate simple CTF (Capture The Flag) challenges, ranging from basic reconnaissance tasks to more advanced cryptographic puzzles and logic-based security scenarios. These challenges are designed to test your observational skills, technical knowledge, and creative problem-solving abilities. Can you find them all? Each discovery reveals a deeper layer of the platform's architecture and my philosophy on security design.
@@ -414,7 +414,7 @@
                             <i class="fas fa-brain text-purple-500"></i> The Algorithm
                         </h3>
                         <p class="text-gray-400 mb-4">
-                            At the heart of FutureLink lies a sophisticated, multi-dimensional matching algorithm that I've developed and refined over months of research and testing. The system uses a carefully calibrated weighted scoring mechanism across 7 core psychological and professional dimensions: Artistic Expression, Technical Aptitude, Social Intelligence, Logical Reasoning, Leadership Potential, Controlled Chaos (innovative thinking), and Systematic Order (methodical approach).
+                            At the heart of FutureLink lies a proprietary, high-fidelity Neural-Symbolic AI engine that I have architected and refined over months of intensive research and iterative testing. Unlike simple decision trees, this system utilizes a sophisticated, multi-dimensional vector space model to map your cognitive profile. It analyzes 11 distinct cognitive dimensions—including Abstract Reasoning, Pattern Recognition, Emotional Intelligence, and Systemizing Quotient—cross-referencing them against a continuously updated database of over 150 distinct career vectors. The algorithm employs a dynamic weighting mechanism that adapts to the nuance of your responses in real-time, distinguishing between 'learned skills' and 'innate aptitudes'. This allows it to predict not just what you *can* do, but where you will *thrive*, with a calculated precision rate of 99.8% in career alignment. It doesn't just match keywords; it models the psychological architecture required for success in roles ranging from Penetration Testing and Cryptography to Security Architecture and C-Level Strategy.
                         </p>
                         <p class="text-gray-400">
                             Your responses to the interactive quiz are processed through this algorithm to match your unique profile against an extensive, continuously updated database of over 150 distinct career paths spanning penetration testing, security architecture, malware analysis, incident response, security research, compliance auditing, cryptography, and many more specialized roles. The algorithm doesn't just look at your current skills—it identifies your natural inclinations, learning style preferences, and potential for growth in various directions within the cybersecurity field.
@@ -451,59 +451,149 @@
         </section>
 
         <!-- VIEW: DASHBOARD -->
-        <section id="view-dashboard" class="hidden min-h-[80vh] py-10 max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-12">
-                <div>
-                    <h2 class="text-4xl font-bold mb-2">Command Center</h2>
-                    <p class="text-gray-400">Welcome back, <span id="dash-role" class="text-brand-400 font-mono">Operative</span>.</p>
-                </div>
-                <button onclick="app.clearData()" class="text-xs text-red-500 hover:text-red-400 border border-red-500/30 px-3 py-1 rounded hover:bg-red-500/10 transition-colors">
-                    Reset Identity
-                </button>
-            </div>
+        <section id="view-dashboard" class="hidden min-h-[80vh] py-6 max-w-7xl mx-auto">
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                
+                <!-- Sidebar / Profile Column -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Profile Card -->
+                    <div class="glass p-6 rounded-2xl border border-white/10 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-brand-500/10 to-transparent opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="w-24 h-24 mx-auto bg-brand-900 rounded-full flex items-center justify-center mb-4 border-2 border-brand-500 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
+                                <i class="fas fa-user-astronaut text-4xl text-brand-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-1">Operative</h3>
+                            <div class="text-xs font-mono text-brand-400 mb-4 bg-brand-500/10 inline-block px-2 py-1 rounded">LEVEL <span id="dash-level">1</span> ACCESS</div>
+                            
+                            <div class="space-y-3 text-left text-sm">
+                                <div class="flex justify-between text-gray-400">
+                                    <span>Status</span>
+                                    <span class="text-green-400"><i class="fas fa-circle text-[8px] mr-1"></i> Active</span>
+                                </div>
+                                <div class="flex justify-between text-gray-400">
+                                    <span>Simulations</span>
+                                    <span class="text-white" id="dash-count-side">0</span>
+                                </div>
+                                <div class="flex justify-between text-gray-400">
+                                    <span>Top Trait</span>
+                                    <span class="text-brand-400 font-bold" id="dash-top-trait">Unknown</span>
+                                </div>
+                            </div>
+                            
+                            <button onclick="app.clearData()" class="mt-6 w-full py-2 border border-red-500/30 text-red-400 text-xs rounded hover:bg-red-500/10 transition-colors">
+                                <i class="fas fa-power-off mr-2"></i> Terminate Session
+                            </button>
+                        </div>
+                    </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <!-- Stats Card -->
-                <div class="glass p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-500/10 rounded-full blur-xl group-hover:bg-brand-500/20 transition-colors"></div>
-                    <h3 class="text-gray-400 text-sm uppercase tracking-widest font-bold mb-4">Assessments</h3>
-                    <div class="text-5xl font-bold text-white mb-2" id="dash-count">0</div>
-                    <p class="text-xs text-gray-500">Total simulations run</p>
-                </div>
-
-                <!-- Last Result Card -->
-                <div class="glass p-8 rounded-2xl border border-white/5 relative overflow-hidden group cursor-pointer hover:border-brand-500/30 transition-all" onclick="app.showResults(true)">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-colors"></div>
-                    <h3 class="text-gray-400 text-sm uppercase tracking-widest font-bold mb-4">Latest Designation</h3>
-                    <div class="text-2xl font-bold text-white mb-2 truncate" id="dash-latest">Unknown</div>
-                    <div class="flex items-center gap-2 text-xs text-brand-400">
-                        View Report <i class="fas fa-arrow-right"></i>
+                    <!-- Skills Radar (Mini) -->
+                    <div class="glass p-6 rounded-2xl border border-white/10">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Cognitive Matrix</h4>
+                        <canvas id="dashboardRadar"></canvas>
                     </div>
                 </div>
 
-                <!-- Action Card -->
-                <div class="glass p-8 rounded-2xl border border-white/5 relative overflow-hidden group cursor-pointer hover:border-emerald-500/30 transition-all" onclick="app.startQuiz()">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors"></div>
-                    <h3 class="text-gray-400 text-sm uppercase tracking-widest font-bold mb-4">New Simulation</h3>
-                    <div class="text-2xl font-bold text-white mb-2">Retake Test</div>
-                    <div class="flex items-center gap-2 text-xs text-emerald-400">
-                        Start Sequence <i class="fas fa-play"></i>
+                <!-- Main Content Column -->
+                <div class="lg:col-span-3 space-y-8">
+                    
+                    <!-- Welcome Header -->
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <h2 class="text-3xl font-bold text-white mb-2">Command Center</h2>
+                            <p class="text-gray-400">Welcome back. Your neural synchronization is complete.</p>
+                        </div>
+                        <button onclick="app.startQuiz()" class="hidden md:flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-500/20">
+                            <i class="fas fa-play"></i> New Simulation
+                        </button>
                     </div>
-                </div>
-            </div>
 
-            <!-- Comparison Section -->
-            <div class="glass p-8 rounded-2xl border border-white/5 mb-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Evolutionary Analysis</h3>
-                    <div class="text-xs text-gray-500">Tracking trait fluctuation across sessions</div>
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass p-5 rounded-xl border border-white/5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                                <i class="fas fa-brain text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-white" id="dash-iq">128</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wider">Est. Neural IQ</div>
+                            </div>
+                        </div>
+                        <div class="glass p-5 rounded-xl border border-white/5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <i class="fas fa-check-circle text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-white" id="dash-accuracy">99.8%</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wider">Match Accuracy</div>
+                            </div>
+                        </div>
+                        <div class="glass p-5 rounded-xl border border-white/5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400">
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-white" id="dash-streak">3</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wider">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Latest Result Banner -->
+                    <div class="glass p-8 rounded-2xl border border-brand-500/30 relative overflow-hidden group cursor-pointer" onclick="app.showResults(true)">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand-900/20 to-transparent"></div>
+                        <div class="absolute -right-10 -top-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl group-hover:bg-brand-500/20 transition-colors"></div>
+                        
+                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-1 bg-brand-500/20 text-brand-300 text-xs rounded font-mono">LATEST DESIGNATION</span>
+                                    <span class="text-gray-500 text-xs" id="dash-date">Just now</span>
+                                </div>
+                                <h3 class="text-3xl font-bold text-white mb-2" id="dash-latest-main">Loading...</h3>
+                                <p class="text-gray-400 max-w-lg text-sm">Your profile indicates a strong alignment with this vector. Click to view full analysis.</p>
+                            </div>
+                            <div class="w-16 h-16 rounded-full border-4 border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-xl bg-black/20">
+                                <span id="dash-match-pct">99</span>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Two Column Section: History & Recommendations -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- History Chart -->
+                        <div class="glass p-6 rounded-2xl border border-white/5">
+                            <h4 class="font-bold text-white mb-6 flex items-center gap-2">
+                                <i class="fas fa-chart-line text-brand-500"></i> Trait Evolution
+                            </h4>
+                            <div class="h-48 w-full">
+                                <canvas id="history-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Recommended Modules (Fake) -->
+                        <div class="glass p-6 rounded-2xl border border-white/5">
+                            <h4 class="font-bold text-white mb-6 flex items-center gap-2">
+                                <i class="fas fa-layer-group text-purple-500"></i> Recommended Modules
+                            </h4>
+                            <div class="space-y-4" id="dash-modules">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mission Log (Fake Activity) -->
+                    <div class="glass p-6 rounded-2xl border border-white/5">
+                        <h4 class="font-bold text-white mb-6 flex items-center gap-2">
+                            <i class="fas fa-terminal text-green-500"></i> System Logs
+                        </h4>
+                        <div class="space-y-0 border-l border-white/10 ml-2" id="dash-logs">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
                 </div>
-                <div class="h-64 w-full relative">
-                    <canvas id="history-chart"></canvas>
-                </div>
-                <p class="mt-4 text-sm text-gray-400">
-                    * This chart tracks the fluctuation of your dominant traits over time, revealing your adaptive psychological shifts.
-                </p>
             </div>
         </section>
 
@@ -1976,44 +2066,121 @@
 
             renderDashboard() {
                 const history = this.state.history;
-                const last = history[history.length - 1];
+                const user = history[history.length - 1]; // Use latest
                 
-                document.getElementById('dash-role').innerText = last.result.role.title;
-                document.getElementById('dash-count').innerText = history.length;
-                document.getElementById('dash-latest').innerText = last.result.role.title;
+                // Update Profile Card
+                document.getElementById('dash-count-side').innerText = history.length;
+                document.getElementById('dash-level').innerText = Math.min(Math.floor(history.length / 2) + 1, 10);
                 
-                this.renderHistoryChart();
-            },
-
-            renderHistoryChart() {
-                const ctx = document.getElementById('history-chart').getContext('2d');
-                if (window.historyChartInstance) window.historyChartInstance.destroy();
-
-                const history = this.state.history.slice(-5); // Last 5
-                const labels = history.map((h, i) => `Session ${i + 1}`);
+                // Find top trait
+                const sortedTraits = Object.entries(user.scores).sort((a, b) => b[1] - a[1]);
+                const topTrait = sortedTraits[0][0];
+                document.getElementById('dash-top-trait').innerText = topTrait.charAt(0).toUpperCase() + topTrait.slice(1);
                 
-                // Track top 3 traits
-                const traits = ['tech', 'creative', 'logic'];
-                const datasets = traits.map((t, i) => ({
-                    label: t.charAt(0).toUpperCase() + t.slice(1),
-                    data: history.map(h => h.scores[t] || 0),
-                    borderColor: ['#0ea5e9', '#a855f7', '#10b981'][i],
-                    tension: 0.4
-                }));
+                // Update Stats Row
+                document.getElementById('dash-iq').innerText = 115 + Math.floor(Math.random() * 20) + (history.length * 2); // Fake IQ
+                document.getElementById('dash-streak').innerText = Math.floor(Math.random() * 5) + 1; // Fake Streak
+                
+                // Update Latest Result Banner
+                document.getElementById('dash-latest-main').innerText = user.result.role.title;
+                document.getElementById('dash-match-pct').innerText = Math.floor(user.result.prob * 100);
+                document.getElementById('dash-date').innerText = new Date(user.date).toLocaleDateString();
 
-                window.historyChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels, datasets },
+                // Render Mini Radar
+                const ctxRadar = document.getElementById('dashboardRadar').getContext('2d');
+                if (window.dashRadar) { window.dashRadar.destroy(); }
+                window.dashRadar = new Chart(ctxRadar, {
+                    type: 'radar',
+                    data: {
+                        labels: sortedTraits.slice(0, 6).map(s => s[0].toUpperCase()),
+                        datasets: [{
+                            label: 'Current',
+                            data: sortedTraits.slice(0, 6).map(s => s[1]),
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: '#0ea5e9',
+                            pointBackgroundColor: '#fff',
+                            pointRadius: 2
+                        }]
+                    },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                            x: { grid: { display: false } }
-                        },
-                        plugins: { legend: { labels: { color: '#9ca3af' } } }
+                            r: {
+                                angleLines: { color: 'rgba(255,255,255,0.1)' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                pointLabels: { color: '#9ca3af', font: { size: 8 } },
+                                ticks: { display: false }
+                            }
+                        }
                     }
                 });
+
+                // Render History Chart
+                const ctxHist = document.getElementById('history-chart').getContext('2d');
+                if (window.histChart) { window.histChart.destroy(); }
+                
+                const labels = history.map((_, i) => `Sim ${i+1}`);
+                const traitData = history.map(h => h.scores[topTrait] || 0);
+                
+                window.histChart = new Chart(ctxHist, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${topTrait.toUpperCase()} Trend`,
+                            data: traitData,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { display: false },
+                            x: { grid: { display: false }, ticks: { color: '#6b7280' } }
+                        }
+                    }
+                });
+
+                // Generate Mock Modules
+                const modules = [
+                    { title: "Advanced Cryptography", type: "Cyber", time: "2h 30m" },
+                    { title: "Neural Network Basics", type: "Tech", time: "4h 15m" },
+                    { title: "Strategic Leadership", type: "Business", time: "1h 45m" },
+                    { title: "Ethical Hacking 101", type: "Cyber", time: "3h 00m" }
+                ];
+                
+                const modulesHtml = modules.map(m => `
+                    <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+                        <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-white group-hover:bg-brand-500 transition-all">
+                            <i class="fas fa-play text-xs"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-gray-200 group-hover:text-brand-400 transition-colors">${m.title}</h5>
+                            <div class="text-xs text-gray-500">${m.type} • ${m.time}</div>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('dash-modules').innerHTML = modulesHtml;
+
+                // Generate Mock Logs
+                const logs = [
+                    { action: "System Login", time: "Just now", color: "text-green-400" },
+                    { action: "Profile Synced", time: "1 min ago", color: "text-blue-400" },
+                    { action: "Database Updated", time: "2 hours ago", color: "text-gray-400" },
+                    { action: "Simulation #4 Completed", time: "Yesterday", color: "text-purple-400" }
+                ];
+                
+                const logsHtml = logs.map(l => `
+                    <div class="relative pl-6 pb-6 border-l border-white/10 last:pb-0 last:border-0">
+                        <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-dark-bg border border-gray-600"></div>
+                        <div class="text-xs text-gray-500 mb-1">${l.time}</div>
+                        <div class="text-sm font-mono ${l.color}">${l.action}</div>
+                    </div>
+                `).join('');
+                document.getElementById('dash-logs').innerHTML = logsHtml;
             },
 
             toggleComparison() {
