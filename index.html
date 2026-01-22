@@ -721,6 +721,19 @@
         const TRAINING_EPOCHS = 40;
         const TRAINING_SAMPLES = 50;
         const TRAITS = ['cyber', 'tech', 'creative', 'business', 'logic', 'chaos', 'order', 'social', 'science', 'leadership', 'medical'];
+        const TRAIT_DESCRIPTIONS = {
+            cyber: "digital security instincts",
+            tech: "technical aptitude",
+            creative: "divergent thinking patterns",
+            business: "strategic value assessment",
+            logic: "deductive reasoning capabilities",
+            chaos: "adaptability in high-entropy situations",
+            order: "structured methodological approach",
+            social: "human-centric intelligence",
+            science: "empirical analysis skills",
+            leadership: "command presence",
+            medical: "diagnostic empathy"
+        };
         
         // --- 2. ROLE DATABASE GENERATOR ---
         // Generates 150+ distinct roles with 17 fields each
@@ -1309,6 +1322,14 @@
                 history: []
             },
             neuralEngine: new NeuralEngine(),
+            getBreakdown(scores, role) {
+                const topTraits = Object.keys(role.traits)
+                    .sort((a, b) => (scores[b] || 0) - (scores[a] || 0))
+                    .slice(0, 3);
+                const traitNames = topTraits.map(t => TRAIT_DESCRIPTIONS[t] || t).join(', ');
+                return `Our algorithm matched you to <strong>${role.title}</strong> primarily due to your exceptional <strong>${traitNames}</strong>. Your cognitive profile indicates you would excel in this environment.`;
+            },
+
 
             async init() {
                 // Check History
@@ -1592,8 +1613,7 @@
 
                 // EXPANDED DETAILS
                 const expandedDiv = document.getElementById('result-expanded');
-                expandedDiv.innerHTML = `
-                    <div class="grid md:grid-cols-2 gap-6">
+                expandedDiv.innerHTML = `<div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Career Path</h4>
                             <ul class="text-sm text-gray-400 space-y-1">
@@ -1608,6 +1628,10 @@
                                 ${role.cognitive.map(c => `<span class="px-2 py-1 border border-white/10 rounded text-xs text-gray-300">${c}</span>`).join('')}
                             </div>
                         </div>
+                        <div class="md:col-span-2 bg-brand-500/10 p-4 rounded-xl border border-brand-500/20">
+                            <h4 class="font-bold text-brand-400 mb-2 text-sm uppercase tracking-wider"><i class="fas fa-microchip mr-2"></i> Neural Match Analysis</h4>
+                            <p class="text-sm text-gray-300 leading-relaxed">${this.getBreakdown(userProfile.scores, role)}</p>
+                        </div>
                         <div class="md:col-span-2">
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Why You?</h4>
                             <p class="text-sm text-gray-400">${role.why}</p>
@@ -1616,8 +1640,7 @@
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Potential Challenges</h4>
                             <p class="text-sm text-gray-400">${role.struggle}</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
                 this.renderChart();
                 this.fireConfetti();
@@ -1751,8 +1774,7 @@
                 ).join('');
 
                 const expandedDiv = document.getElementById('account-expanded');
-                expandedDiv.innerHTML = `
-                    <div class="grid md:grid-cols-2 gap-6">
+                expandedDiv.innerHTML = `<div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Career Path</h4>
                             <ul class="text-sm text-gray-400 space-y-1">
@@ -1767,6 +1789,10 @@
                                 ${role.cognitive.map(c => `<span class="px-2 py-1 border border-white/10 rounded text-xs text-gray-300">${c}</span>`).join('')}
                             </div>
                         </div>
+                        <div class="md:col-span-2 bg-brand-500/10 p-4 rounded-xl border border-brand-500/20">
+                            <h4 class="font-bold text-brand-400 mb-2 text-sm uppercase tracking-wider"><i class="fas fa-microchip mr-2"></i> Neural Match Analysis</h4>
+                            <p class="text-sm text-gray-300 leading-relaxed">${this.getBreakdown(user.scores, role)}</p>
+                        </div>
                         <div class="md:col-span-2">
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Why You?</h4>
                             <p class="text-sm text-gray-400">${role.why}</p>
@@ -1775,8 +1801,7 @@
                             <h4 class="font-bold text-white mb-2 text-sm uppercase tracking-wider">Potential Challenges</h4>
                             <p class="text-sm text-gray-400">${role.struggle}</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
                 this.renderAccountChart();
             },
