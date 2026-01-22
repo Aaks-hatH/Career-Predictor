@@ -1429,7 +1429,8 @@
                     }
                 }
             },
-\n            async init() {
+
+            async init() {
                 // Check History
                 let history = []; try { history = JSON.parse(localStorage.getItem('futurelink_history') || '[]'); } catch(e) { console.error(e); }
                 if (history.length > 0) {
